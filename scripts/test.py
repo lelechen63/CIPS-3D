@@ -157,8 +157,8 @@ class CIPS_3D_Demo(object):
           camera_lookup=cur_camera_lookup,
           **curriculum)
         #====
-        tmp_frm = (frame.squeeze() + 1) * 0.5 * 255
-        tmp_frm = tmp_frm.detach().cpu().numpy().permute(1,2,0)
+        tmp_frm = (frame.squeeze().permute(1,2,0) + 1) * 0.5 * 255
+        tmp_frm = tmp_frm.detach().cpu().numpy()
         print (tmp_frm.shape)
         img_name = Path(f'{idx}.png')
         cv2.imwrite(f"{outdir}/{output_name}", tmp_frm)
