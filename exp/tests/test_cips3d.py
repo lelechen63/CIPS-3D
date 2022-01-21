@@ -610,20 +610,17 @@ class Testing_ffhq_exp(unittest.TestCase):
         # export CUDA_VISIBLE_DEVICES=$cuda_devices
         # export RUN_NUM=$run_num
 
-        export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
+        export CUDA_VISIBLE_DEVICES=0,1
         export PORT=12345
-        export TIME_STR=1
-        export PYTHONPATH=.
-        python -c "from tl2.launch.tests.test_launch import Testing_Launch_v1;\
-          Testing_Launch_v1().test_launch_ddp(debug=False)" \
-          --tl_opts root_obs s3://$bucket/ZhouPeng/ \
-          --tl_outdir results/train_ffhq_256/train_ffhq_256-20210726_202423_412
-          # --tl_outdir results/$resume_dir
+        export TIME_STR=0
+        export PYTHONPATH=.:./tl2_lib
+        python -c "from exp.tests.test_cips3d import Testing_ffhq_exp;\
+          Testing_ffhq_exp().test__gen_images(debug=False)"
 
     :return:
     """
     if 'CUDA_VISIBLE_DEVICES' not in os.environ:
-      os.environ['CUDA_VISIBLE_DEVICES'] = '0,1'
+      os.environ['CUDA_VISIBLE_DEVICES'] = '1'
     if 'TIME_STR' not in os.environ:
       os.environ['TIME_STR'] = '0'
     if 'RUN_NUM' not in os.environ:
@@ -1105,8 +1102,9 @@ class Testing_ffhq_exp_v1(unittest.TestCase):
     dd = eval(title)
     dd[f'{bucket_root}/results/CIPS-3D/ffhq_exp_v1/train_ffhq-20220109_174243_622'] = \
       {'20220109_174243_622-ffhq_r64-gpu.8x4-num_steps.12': f"{log_file}", }
-    dd[f'{bucket_root}/results/CIPS-3D/ffhq_exp_v1/train_ffhq-20220114_093931_594'] = \
-      {'20220114_093931_594-ffhq_r64-gpu.8x4-num_steps.48': f"{log_file}", }
+    # dd[f'{bucket_root}/results/CIPS-3D/ffhq_exp_v1/train_ffhq-20220114_093931_594'] = \
+    #   {'20220114_093931_594-ffhq_r64-gpu.8x4-num_steps.48': f"{log_file}", }
+
 
     dd['properties'] = {'title': title,
                         # 'xlim': [0, 3000000],
@@ -1121,10 +1119,26 @@ class Testing_ffhq_exp_v1(unittest.TestCase):
     dd = eval(title)
     dd[f'{bucket_root}/results/CIPS-3D/ffhq_exp_v1/train_ffhq-20220111_034327_756'] = \
       {'20220111_034327_756-ffhq_r128-gpu.8x4-aux.F-num_steps.12': f"{log_file}", }
+    dd[f'{bucket_root}/results/CIPS-3D/ffhq_exp_v1/train_ffhq-20220114_115800_280'] = \
+      {'20220114_115800_280-ffhq_r128-gpu.8x4-aux.F-num_steps.36': f"{log_file}", }
 
     dd['properties'] = {'title': title,
                         # 'xlim': [0, 3000000],
                         'ylim': [0, 50]
+                        }
+    default_dicts[title] = dd
+    show_max.append(False)
+
+    FID_r256 = collections.defaultdict(dict)
+    title = 'FID_r256'
+    log_file = 'textdir/eval.ma0.FID.log'
+    dd = eval(title)
+    dd[f'{bucket_root}/results/CIPS-3D/ffhq_exp_v1/train_ffhq_high-20220118_144003_691'] = \
+      {'20220118_144003_691-ffhq_r256-gpu.8x4-aux.F-num_steps.12': f"{log_file}", }
+
+    dd['properties'] = {'title': title,
+                        # 'xlim': [0, 3000000],
+                        # 'ylim': [0, 50]
                         }
     default_dicts[title] = dd
     show_max.append(False)
@@ -1318,6 +1332,107 @@ class Testing_ffhq_exp_v1(unittest.TestCase):
     # modelarts_utils.modelarts_sync_results_dir(global_cfg, join=True)
     pass
 
+  def test_train_ffhq_high(self, debug=True):
+    """
+    Usage:
+
+        # export CUDA_VISIBLE_DEVICES=$cuda_devices
+        # export RUN_NUM=$run_num
+
+        export CUDA_VISIBLE_DEVICES=1
+        export PORT=12345
+        export TIME_STR=0
+        export PYTHONPATH=.:./tl2_lib
+        python -c "from exp.tests.test_cips3d import Testing_ffhq_exp_v1;\
+          Testing_ffhq_exp_v1().test_train_ffhq_high(debug=False)" \
+          --tl_opts \
+            batch_size 4 img_size 64  warmup_D True \
+          --tl_outdir
+
+
+    :return:
+    """
+    if 'CUDA_VISIBLE_DEVICES' not in os.environ:
+      os.environ['CUDA_VISIBLE_DEVICES'] = '1'
+    if 'TIME_STR' not in os.environ:
+      os.environ['TIME_STR'] = '0'
+    if 'RUN_NUM' not in os.environ:
+      os.environ['RUN_NUM'] = '0'
+    from tl2 import tl2_utils
+    from tl2.launch.launch_utils import \
+      (get_command_and_outdir, setup_outdir_and_yaml, get_append_cmd_str, start_cmd_run)
+
+    tl_opts_list = tl2_utils.parser_args_from_list(name="--tl_opts", argv_list=sys.argv, type='list')
+    tl_opts = ' '.join(tl_opts_list)
+    print(f'tl_opts:\n {tl_opts}')
+
+    if debug:
+      # sys.argv.extend(['--tl_outdir', 'results/ffhq_exp/train_ffhq'])
+      pass
+    command, outdir = get_command_and_outdir(self, func_name=sys._getframe().f_code.co_name, file=__file__)
+    resume = os.path.isdir(f"{outdir}/ckptdir/resume") and \
+             tl2_utils.parser_args_from_list(name="--tl_outdir", argv_list=sys.argv, type='str') is not None
+    argv_str = f"""
+                --tl_config_file exp/cips3d/configs/ffhq_exp_v1.yaml
+                --tl_command {command}
+                --tl_outdir {outdir}
+                {"--tl_resume --tl_resumedir " + outdir if resume else ""}
+                --tl_opts {tl_opts}
+                """
+    args, cfg = setup_outdir_and_yaml(argv_str, return_cfg=True)
+
+    if int(os.environ['RUN_NUM']) > 0:
+      run_command = f"""
+                  python -c "from tl2.modelarts.tests.test_run import TestingRun;\
+                        TestingRun().test_run_v2(number={os.environ['RUN_NUM']}, )" \
+                        --tl_opts root_obs {cfg.root_obs}
+                  """
+      p = tl2_utils.Worker(name='Run', args=(run_command,))
+      p.start()
+
+    n_gpus = len(os.environ['CUDA_VISIBLE_DEVICES'].split(','))
+    PORT = os.environ.get('PORT', 12345)
+
+    os.environ['DNNLIB_CACHE_DIR'] = "cache_dnnlib"
+    os.environ['TORCH_EXTENSIONS_DIR'] = "cache_torch_extensions"
+    os.environ['PATH'] = f"{os.path.dirname(sys.executable)}:{os.environ['PATH']}"
+    os.environ['MAX_JOBS '] = "8"
+
+    cmd_str = f"""
+        python 
+        exp/cips3d/scripts/train.py
+        --port {PORT}
+
+        {get_append_cmd_str(args)}
+        """
+    if debug:
+      cmd_str += f"""
+                  --tl_debug
+                  --tl_opts num_workers 0
+                  """
+    else:
+      cmd_str += f"""
+                  --tl_opts num_workers {n_gpus} 
+                    {tl_opts}
+                  """
+    start_cmd_run(cmd_str)
+    # from tl2.launch.launch_utils import update_parser_defaults_from_yaml, global_cfg
+    # from tl2.modelarts import moxing_utils
+
+    # update_parser_defaults_from_yaml(parser)
+    # if rank == 0:
+    #   moxing_utils.setup_tl_outdir_obs(global_cfg)
+    #   moxing_utils.modelarts_sync_results_dir(global_cfg, join=True)
+
+    # moxing_utils.modelarts_sync_results_dir(global_cfg, join=True)
+
+    # modelarts_utils.setup_tl_outdir_obs(global_cfg)
+    # modelarts_utils.modelarts_sync_results_dir(global_cfg, join=True)
+    # modelarts_utils.prepare_dataset(global_cfg.get('modelarts_download', {}), global_cfg=global_cfg)
+    #
+    # modelarts_utils.prepare_dataset(global_cfg.get('modelarts_upload', {}), global_cfg=global_cfg, download=False)
+    # modelarts_utils.modelarts_sync_results_dir(global_cfg, join=True)
+    pass
 
 class Testing_finetuning_exp(unittest.TestCase):
 
@@ -1461,6 +1576,34 @@ class Testing_afhq_exp(unittest.TestCase):
 
     bucket_root = "/home/ma-user/work/ZhouPeng/bucket_3690/"
 
+    FID_afhq_r64 = collections.defaultdict(dict)
+    title = 'FID_afhq_r64'
+    log_file = 'textdir/eval.ma0.FID.log'
+    dd = eval(title)
+    dd[f'{bucket_root}/results/CIPS-3D/afhq_exp/train_afhq-20220120_122125_662'] = \
+      {'20220120_122125_662-afhq_r64-gpu.8x4-finetune.F-aux.T-num_steps.48': f"{log_file}", }
+
+    dd['properties'] = {'title': title,
+                        # 'xlim': [0, 3000000],
+                        # 'ylim': [0, 50]
+                        }
+    default_dicts[title] = dd
+    show_max.append(False)
+
+    FID_afhq_r128 = collections.defaultdict(dict)
+    title = 'FID_afhq_r128'
+    log_file = 'textdir/eval.ma0.FID.log'
+    dd = eval(title)
+    dd[f'{bucket_root}/results/CIPS-3D/afhq_exp/train_afhq-20220121_090048_760'] = \
+      {'20220121_090048_760-afhq_r128-gpu.8x4-finetune.F-aux.T-num_steps.24': f"{log_file}", }
+
+    dd['properties'] = {'title': title,
+                        # 'xlim': [0, 3000000],
+                        # 'ylim': [0, 50]
+                        }
+    default_dicts[title] = dd
+    show_max.append(False)
+
     FID_r128 = collections.defaultdict(dict)
     title = 'FID_r128'
     log_file = 'textdir/eval.ma0.FID.log'
@@ -1509,6 +1652,10 @@ class Testing_afhq_exp(unittest.TestCase):
     #   {'20220112_151835_162-afhq_cat_r128-gpu.8x4-finetune.T-aux.F': f"{log_file}", }
     dd[f'{bucket_root}/results/CIPS-3D/afhq_exp/train_afhq_cat-20220113_210353_416'] = \
       {'20220113_210353_416-afhq_cat_r128-gpu.8x4-finetune.T-aux.F-num_steps.36': f"{log_file}", }
+    dd[f'{bucket_root}/results/CIPS-3D/afhq_exp/train_afhq_cat-20220114_185938_751'] = \
+      {'20220114_185938_751-afhq_cat_r128-aux.F-num_steps.24-nerf_noise_disable.T': f"{log_file}", }
+    dd[f'{bucket_root}/results/CIPS-3D/afhq_exp/train_afhq_cat-20220114_191837_314'] = \
+      {'20220114_191837_314-afhq_cat_r128-aux.T-num_steps.12-nerf_noise_disable.T': f"{log_file}", }
 
     dd['properties'] = {'title': title,
                         # 'xlim': [0, 3000000],
@@ -1521,11 +1668,23 @@ class Testing_afhq_exp(unittest.TestCase):
     title = 'FID_cat_r256'
     log_file = 'textdir/eval.ma0.FID.log'
     dd = eval(title)
-    dd[f'{bucket_root}/results/CIPS-3D/afhq_exp/train_afhq_cat_high-20220114_091445_392'] = \
-      {'20220114_091445_392-afhq_cat_r256-gpu.8x4-finetune.T-aux.F-num_steps.12': f"{log_file}", }
+    # dd[f'{bucket_root}/results/CIPS-3D/afhq_exp/train_afhq_cat_high-20220114_112900_020'] = \
+    #   {'20220114_112900_020-afhq_cat_r256-gpu.8x4-finetune.T-aux.F-num_steps.12': f"{log_file}", }
+    # dd[f'{bucket_root}/results/CIPS-3D/afhq_exp/train_afhq_cat_high-20220114_114448_735'] = \
+    #   {'20220114_114448_735-afhq_cat_r256-num_steps.24-R1.10-nerf_noise_disable.F': f"{log_file}", }
+    # dd[f'{bucket_root}/results/CIPS-3D/afhq_exp/train_afhq_cat_high-20220114_143143_586'] = \
+    #   {'20220114_143143_586-afhq_cat_r256-num_steps.24-R1.20-nerf_noise_disable.F': f"{log_file}", }
+    # dd[f'{bucket_root}/results/CIPS-3D/afhq_exp/train_afhq_cat_high-20220114_144612_347'] = \
+    #   {'20220114_144612_347-afhq_cat_r256-num_steps.24-R1.20-nerf_noise_disable.T': f"{log_file}", }
+    dd[f'{bucket_root}/results/CIPS-3D/afhq_exp/train_afhq_cat_high-20220114_165819_026'] = \
+      {'20220114_165819_026-afhq_cat_r256-num_steps.24-R1.10-nerf_noise_disable.T': f"{log_file}", }
+    dd[f'{bucket_root}/results/CIPS-3D/afhq_exp/train_afhq_cat_high-20220118_090720_512'] = \
+      {'20220118_090720_512-afhq_cat_r256-aux.F-num_steps.24-R1.10-nerf_noise_disable.T': f"{log_file}", }
+    dd[f'{bucket_root}/results/CIPS-3D/afhq_exp/train_afhq_cat_high-20220118_091548_726'] = \
+      {'20220118_091548_726-afhq_cat_r256-aux.T-num_steps.12-R1.10-nerf_noise_disable.T': f"{log_file}", }
 
     dd['properties'] = {'title': title,
-                        # 'xlim': [0, 3000000],
+                        'xlim': [0, 300000],
                         # 'ylim': [0, 50]
                         }
     default_dicts[title] = dd
@@ -1551,7 +1710,7 @@ class Testing_afhq_exp(unittest.TestCase):
         # export CUDA_VISIBLE_DEVICES=$cuda_devices
         # export RUN_NUM=$run_num
 
-        export CUDA_VISIBLE_DEVICES=0,1
+        export CUDA_VISIBLE_DEVICES=0
         export PORT=12345
         export TIME_STR=0
         export PYTHONPATH=.:./tl2_lib

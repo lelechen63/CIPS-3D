@@ -89,7 +89,8 @@ G_kwargs: &G_kwargs
 _build_generator:
   G_cfg: *G_cfg_3D2D
   G_kwargs: *G_kwargs
-  network_pkl: cache_pretrained/cips3d/G_ema_ffhq.pth
+  network_pkl: "/home/ma-user/work/ZhouPeng/bucket_3690/results/CIPS-3D/ffhq_exp_v1/\
+    train_ffhq_high-20220118_144003_691/ckptdir/resume/G_ema.pth"
 
 
 D_cfg: &D_cfg

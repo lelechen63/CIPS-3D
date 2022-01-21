@@ -1,7 +1,7 @@
 set -x
 
 # v2
-# bash = bash CIPS-3D/exp/cips3d/bash/afhq_exp/train_afhq_cat_r256.sh 0 bucket-3690
+
 
 # Env vars e.g.
 PROJ_NAME=CIPS-3D
@@ -62,14 +62,25 @@ export PORT=12345
 #
 export PYTHONPATH=.:./tl2_lib
 
+# bash = bash CIPS-3D/exp/cips3d/bash/afhq_exp/train_afhq_cat_r256.sh 0 bucket-3690
+
+# python -c "from exp.tests.test_cips3d import Testing_afhq_exp;\
+#   Testing_afhq_exp().test_train_afhq_cat_high(debug=False)" \
+#   --tl_opts \
+#     batch_size 4 img_size 256 total_iters 200000 \
+#     gen_lr 0.0001 disc_lr 0.0005 r1_lambda 10. nerf_noise_disable True \
+#     warmup_D True fade_steps 10000 \
+#     train_aux_img False G_kwargs.num_steps 12 \
+#     load_finetune True finetune_dir results/CIPS-3D/afhq_exp/train_afhq_cat-20220114_191837_314/ckptdir/best_fid
+
 python -c "from exp.tests.test_cips3d import Testing_afhq_exp;\
-  Testing_afhq_exp().test_train_afhq_cat_high(debug=False)" \
-  --tl_opts \
-    batch_size 4 img_size 256 total_iters 200000 \
-    gen_lr 0.0001 disc_lr 0.0005 \
-    warmup_D True fade_steps 10000 \
-    train_aux_img False G_kwargs.num_steps 12 \
-    load_finetune True finetune_dir results/CIPS-3D/afhq_exp/train_afhq_cat-20220113_210353_416/ckptdir/best_fid
+ Testing_afhq_exp().test_train_afhq_cat_high(debug=False)" \
+ --tl_opts \
+   batch_size 4 img_size 256 total_iters 200000 \
+   gen_lr 0.0001 disc_lr 0.0005 r1_lambda 10. nerf_noise_disable True \
+   warmup_D True fade_steps 10000 \
+   train_aux_img False G_kwargs.num_steps 24 \
+   load_finetune True finetune_dir results/CIPS-3D/afhq_exp/train_afhq_cat-20220114_185938_751/ckptdir/best_fid
 
 
 
