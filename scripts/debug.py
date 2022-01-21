@@ -18,8 +18,10 @@ from tl2.proj.pil import pil_utils
 from tl2.proj.cv2 import cv2_utils
 from tl2.proj.fvcore.checkpoint import Checkpointer
 from tl2.proj.logger.logging_utils_v2 import get_logger
-
 from exp.comm import comm_utils
+
+
+
 
 class CIPS_3D_Demo(object):
   def __init__(self):
@@ -65,6 +67,8 @@ class CIPS_3D_Demo(object):
 
     mode, model_pkl = network_pkl.split(':')
     model_pkl = model_pkl.strip(' ')
+
+    
     generator = build_model(cfg=cfg.G_cfg).to(device)
     Checkpointer(generator).load_state_dict_from_file(model_pkl)
 
@@ -141,13 +145,6 @@ class CIPS_3D_Demo(object):
         pitch = pitchs[idx]
         fov = fov_list[idx]
         curriculum['fov'] = fov
-
-        print ('cur_camera_pos', cur_camera_pos)
-        print ('cur_camera_lookup', cur_camera_lookup)
-        print ('yaw', yaw)
-        print ('pitch', pitch)
-        
-
 
         frame, depth_map = generator.forward_camera_pos_and_lookup(
           zs=zs,
