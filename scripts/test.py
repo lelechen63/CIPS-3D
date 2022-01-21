@@ -158,6 +158,7 @@ class CIPS_3D_Demo(object):
           **curriculum)
         #====
         tmp_frm = (frame.squeeze() + 1) * 0.5 * 255
+        tmp_frm = tmp_frm.numpy()
         print (tmp_frm.shape)
         img_name = Path(f'{idx}.png')
         cv2.imwrite(f"{outdir}/{output_name}", tmp_frm)
