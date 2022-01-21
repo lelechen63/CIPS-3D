@@ -156,6 +156,11 @@ class CIPS_3D_Demo(object):
           camera_pos=cur_camera_pos,
           camera_lookup=cur_camera_lookup,
           **curriculum)
+        #====
+        tmp_frm = (frame.squeeze() + 1) * 0.5 * 255
+        print (tmp_frm.shape)
+        img_name = Path(f'{idx}.png')
+        cv2.imwrite(f"{outdir}/{output_name}", tmp_frm)
         frame_pil = comm_utils.to_pil(frame)
 
         st_utils.st_image(frame_pil, caption=f"{frame_pil.size}, seed={seed}",
