@@ -18,7 +18,7 @@ from tl2.proj.pil import pil_utils
 from tl2.proj.cv2 import cv2_utils
 from tl2.proj.fvcore.checkpoint import Checkpointer
 from tl2.proj.logger.logging_utils_v2 import get_logger
-
+import cv2
 from exp.comm import comm_utils
 
 class CIPS_3D_Demo(object):
