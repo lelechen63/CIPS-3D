@@ -168,7 +168,7 @@ class CIPS_3D_Demo(object):
         tmp_frm = cv2.cvtColor(tmp_frm, cv2.COLOR_RGB2BGR)
 
         cv2.imwrite(img_name, tmp_frm)
-        info[img_name] = {'cur_camera_pos':cur_camera_pos.numpy(), 'yaw': yaw.numpy(),"pitch": pitch.numpy()}
+        info[img_name] = {'cur_camera_pos':cur_camera_pos.detach().cpu().numpy(), 'yaw': yaw.detach().cpu().numpy(),"pitch": pitch.detach().cpu().numpy()}
         frame_pil = comm_utils.to_pil(frame)
 
         st_utils.st_image(frame_pil, caption=f"{frame_pil.size}, seed={seed}",
