@@ -20,7 +20,7 @@ from tl2.proj.fvcore.checkpoint import Checkpointer
 from tl2.proj.logger.logging_utils_v2 import get_logger
 import cv2
 from exp.comm import comm_utils
-
+import json
 class CIPS_3D_Demo(object):
   def __init__(self):
 
@@ -131,6 +131,7 @@ class CIPS_3D_Demo(object):
       'z_inr': torch.randn((1, 512), device=device),
     }
 
+    info = {}
     with torch.no_grad():
       for idx in tqdm.tqdm(range(len(xyz))):
         curriculum['h_mean'] = 0
@@ -162,11 +163,12 @@ class CIPS_3D_Demo(object):
         #====
         tmp_frm = (frame.squeeze().permute(1,2,0) + 1) * 0.5 * 255
         tmp_frm = tmp_frm.detach().cpu().numpy()
-        print (tmp_frm.shape)
         img_name = Path(f'{idx}.png')
         img_name = f"{outdir}/{img_name}"
-        print (img_name)
+        tmp_frm = cv2.cvtColor(tmp_frm, cv2.COLOR_RGB2BGR)
+
         cv2.imwrite(img_name, tmp_frm)
+        info[img_name] = {'cur_camera_pos':cur_camera_pos, 'yaw': yaw,"pitch": pitch}
         frame_pil = comm_utils.to_pil(frame)
 
         st_utils.st_image(frame_pil, caption=f"{frame_pil.size}, seed={seed}",
@@ -174,7 +176,8 @@ class CIPS_3D_Demo(object):
         video_f.write(frame_pil)
     
       video_f.release(st_video=True)
-
+      with open(outdir +'/json_data.json', 'w') as outfile:
+        json.dump(info, outfile)
     pass
 
 
