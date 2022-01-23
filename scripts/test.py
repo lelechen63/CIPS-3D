@@ -174,10 +174,10 @@ class CIPS_3D_Demo(object):
         st_utils.st_image(frame_pil, caption=f"{frame_pil.size}, seed={seed}",
                           debug=debug, st_empty=st_image)
         video_f.write(frame_pil)
-        with open(f"{outdir}/info.json", "w") as outfile:
-          json.dump(info, outfile)
+        
       video_f.release(st_video=True)
-      
+      with open(f"{outdir}/info.json", "w") as outfile:
+        json.dump(info, outfile)
     pass
 
 
