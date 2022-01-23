@@ -18,11 +18,10 @@ from tl2.proj.pil import pil_utils
 from tl2.proj.cv2 import cv2_utils
 from tl2.proj.fvcore.checkpoint import Checkpointer
 from tl2.proj.logger.logging_utils_v2 import get_logger
+import cv2
 from exp.comm import comm_utils
-
-
-
-
+import json
+import pickle
 class CIPS_3D_Demo(object):
   def __init__(self):
 
@@ -56,6 +55,9 @@ class CIPS_3D_Demo(object):
     seed = 1
     # trajectory
     trajectory_mode = st_utils.selectbox('trajectory_mode', cfg.trajectory_mode, sidebar=True)
+    # print (type(trajectory_mode))
+    # print (trajectory_mode)
+    trajectory_mode = 'yaw'
     forward_points = st_utils.number_input('forward_points', cfg.forward_points, sidebar=True)
 
     # ****************************************************************************
@@ -67,8 +69,6 @@ class CIPS_3D_Demo(object):
 
     mode, model_pkl = network_pkl.split(':')
     model_pkl = model_pkl.strip(' ')
-
-    
     generator = build_model(cfg=cfg.G_cfg).to(device)
     Checkpointer(generator).load_state_dict_from_file(model_pkl)
 
@@ -132,37 +132,47 @@ class CIPS_3D_Demo(object):
       'z_inr': torch.randn((1, 512), device=device),
     }
 
+    info = {}
     with torch.no_grad():
-      for idx in tqdm.tqdm(range(len(xyz))):
-        curriculum['h_mean'] = 0
-        curriculum['v_mean'] = 0
-        curriculum['h_stddev'] = 0
-        curriculum['v_stddev'] = 0
+      idx = 0
+    curriculum['h_mean'] = 0
+    curriculum['v_mean'] = 0
+    curriculum['h_stddev'] = 0
+    curriculum['v_stddev'] = 0
 
-        cur_camera_pos = xyz[[idx]]
-        cur_camera_lookup = lookup[[idx]]
-        yaw = yaws[idx]
-        pitch = pitchs[idx]
-        fov = fov_list[idx]
-        curriculum['fov'] = fov
+    cur_camera_pos = xyz[[idx]]
+    cur_camera_lookup = lookup[[idx]]
+    yaw = yaws[idx]
+    pitch = pitchs[idx]
+    fov = fov_list[idx]
+    curriculum['fov'] = fov
 
-        frame, depth_map = generator.forward_camera_pos_and_lookup(
-          zs=zs,
-          return_aux_img=False,
-          forward_points=forward_points ** 2,
-          camera_pos=cur_camera_pos,
-          camera_lookup=cur_camera_lookup,
-          **curriculum)
-        frame_pil = comm_utils.to_pil(frame)
-
-        st_utils.st_image(frame_pil, caption=f"{frame_pil.size}, seed={seed}",
-                          debug=debug, st_empty=st_image)
-        video_f.write(frame_pil)
+    print ('cur_camera_pos', cur_camera_pos)
+    print ('cur_camera_lookup', cur_camera_lookup)
+    print ('yaw', yaw)
+    print ('pitch', pitch)
     
-      video_f.release(st_video=True)
+    frame, depth_map = generator.forward_camera_pos_and_lookup(
+        zs=zs,
+        return_aux_img=False,
+        forward_points=forward_points ** 2,
+        camera_pos=cur_camera_pos,
+        camera_lookup=cur_camera_lookup,
+        **curriculum)
+    #====
+    tmp_frm = (frame.squeeze().permute(1,2,0) + 1) * 0.5 * 255
+    tmp_frm = tmp_frm.detach().cpu().numpy()
+    img_name = Path(f'{idx}.png')
+    img_name = f"{outdir}/{img_name}"
+    tmp_frm = cv2.cvtColor(tmp_frm, cv2.COLOR_RGB2BGR)
 
-    pass
+    cv2.imwrite(img_name, tmp_frm)
+    
 
+    info[img_name] = {'cur_camera_pos':cur_camera_pos.detach().cpu().numpy(), 'yaw': yaw,"pitch": pitch, 
+                            'z_nerf': zs['z_nerf'].detach().cpu().numpy(),'z_inr':  zs['z_inr'].detach().cpu().numpy()  }
+    with open(f"{outdir}/{gt.pkl}", 'wb') as handle:
+        pickle.dump(info, handle, protocol=pickle.HIGHEST_PROTOCOL)  
 
 
 def main(outdir,
