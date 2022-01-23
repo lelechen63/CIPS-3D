@@ -171,7 +171,7 @@ class CIPS_3D_Demo(object):
 
     info[img_name] = {'cur_camera_pos':cur_camera_pos.detach().cpu().numpy(), 'yaw': yaw,"pitch": pitch, 
                             'z_nerf': zs['z_nerf'].detach().cpu().numpy(),'z_inr':  zs['z_inr'].detach().cpu().numpy()  }
-    with open(f"{outdir}/{gt.pkl}", 'wb') as handle:
+    with open(f"{outdir}/gt.pkl", 'wb') as handle:
         pickle.dump(info, handle, protocol=pickle.HIGHEST_PROTOCOL)  
 
 
