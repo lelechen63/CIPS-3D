@@ -124,14 +124,6 @@ class CIPS_3D_Demo(object):
 
     torch.manual_seed(seed)
     zs = generator.get_zs(1)
-    # # shape=(1, 256)
-    # # z = torch.randn((1, 256), device=device)
-
-    # zs = {
-    #   'z_nerf': torch.randn((1, 256), device=device),
-    #   'z_inr': torch.randn((1, 512), device=device),
-    # }
-
     info = {}
     with torch.no_grad():
       idx = 0
@@ -169,7 +161,7 @@ class CIPS_3D_Demo(object):
     cv2.imwrite(img_name, tmp_frm)
     
 
-    info[img_name] = {'cur_camera_pos':cur_camera_pos.detach().cpu().numpy(), 'yaw': yaw,"pitch": pitch, 
+    info[img_name] = {"xyz": xyz.detach().cpu().numpy(), 'cur_camera_pos':cur_camera_pos.detach().cpu().numpy(), 'yaw': yaw,"pitch": pitch, 
                             'z_nerf': zs['z_nerf'].detach().cpu().numpy(),'z_inr':  zs['z_inr'].detach().cpu().numpy()  }
     with open(f"{outdir}/gt.pkl", 'wb') as handle:
         pickle.dump(info, handle, protocol=pickle.HIGHEST_PROTOCOL)  
