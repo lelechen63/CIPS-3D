@@ -161,7 +161,9 @@ class CIPS_3D_Demo(object):
         tmp_frm = tmp_frm.detach().cpu().numpy()
         print (tmp_frm.shape)
         img_name = Path(f'{idx}.png')
-        cv2.imwrite(f"{outdir}/{output_name}", tmp_frm)
+        img_name = f"{outdir}/{img_name}"
+        print (img_name)
+        cv2.imwrite(img_name, tmp_frm)
         frame_pil = comm_utils.to_pil(frame)
 
         st_utils.st_image(frame_pil, caption=f"{frame_pil.size}, seed={seed}",
