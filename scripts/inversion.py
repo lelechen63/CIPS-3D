@@ -115,7 +115,7 @@ class CIPS_3D_Demo(object):
     #====
     tmp_frm = (frame.squeeze().permute(1,2,0) + 1) * 0.5 * 255
     tmp_frm = tmp_frm.detach().cpu().numpy()
-    img_name = Path(f'generated.png')
+    img_name = Path(f'generated2.png')
     img_name = f"{outdir}/{img_name}"
     tmp_frm = cv2.cvtColor(tmp_frm, cv2.COLOR_RGB2BGR)
 
