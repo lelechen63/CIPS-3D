@@ -66,7 +66,8 @@ class CIPS_3D_Demo(object):
 
     with open(f"{outdir}/gt.pkl", 'rb') as handle:
         info = pickle.load(handle)
-    print (info.keys())
+    
+    info = info['results/model_interpolation/0.png']
     print ('++++++++++++++++++++++++++++')
     xyz = info['cur_camera_pos']
     xyz = torch.from_numpy(xyz).to(device)
