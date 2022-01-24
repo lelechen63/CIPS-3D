@@ -24,7 +24,7 @@ import json
 import pickle
 import torch.nn.functional as F
 import dnnlib
-
+import PIL
 
 class CIPS_3D_Demo(object):
   def __init__(self):
