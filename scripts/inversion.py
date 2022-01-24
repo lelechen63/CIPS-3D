@@ -104,12 +104,6 @@ class CIPS_3D_Demo(object):
     #   'z_nerf': torch.from_numpy(info['z_nerf']).to(device),
     #   'z_inr': torch.from_numpy(info['z_inr']).to(device),
     # }
-    zs = {
-      'z_nerf': torch.randn((1, 256), device=device),
-      'z_inr': torch.randn((1, 512), device=device),
-    }
-    optimizer = torch.optim.Adam([zs['z_nerf']] + [zs['z_inr']] , betas=(0.9, 0.999), lr=initial_learning_rate)
-    
     num_steps                  = 8000
     w_avg_samples              = 10000
     initial_learning_rate      = 0.1
@@ -119,7 +113,12 @@ class CIPS_3D_Demo(object):
     noise_ramp_length          = 0.75    
     regularize_noise_weight    = 1e5
 
-
+    zs = {
+      'z_nerf': torch.randn((1, 256), device=device),
+      'z_inr': torch.randn((1, 512), device=device),
+    }
+    optimizer = torch.optim.Adam([zs['z_nerf']] + [zs['z_inr']] , betas=(0.9, 0.999), lr=initial_learning_rate)
+    
     idx = 0
     curriculum['h_mean'] = 0
     curriculum['v_mean'] = 0
