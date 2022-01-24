@@ -3,7 +3,7 @@ from pathlib import Path
 import math
 import numpy as np
 import os
-import tqdm
+from tqdm import tqdm
 import streamlit as st
 import torch
 import sys
