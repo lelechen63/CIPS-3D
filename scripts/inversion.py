@@ -155,6 +155,7 @@ class CIPS_3D_Demo(object):
         reg_loss += (zs['z_inr']*torch.roll(zs['z_inr'], shifts=1, dims=3)).mean()**2
 
         loss = reg_loss * regularize_noise_weight + dist
+        
         print ('reg_loss:' reg_loss, 'dist:' dist)
         # Step
         optimizer.zero_grad(set_to_none=True)
