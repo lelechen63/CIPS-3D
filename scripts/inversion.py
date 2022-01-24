@@ -152,8 +152,8 @@ class CIPS_3D_Demo(object):
         print (zs['z_nerf'].shape)
       
         
-        reg_loss = (zs['z_nerf']*torch.roll(zs['z_nerf'], shifts=1, dims=3)).mean()**2
-        reg_loss += (zs['z_inr']*torch.roll(zs['z_inr'], shifts=1, dims=2)).mean()**2
+        reg_loss = zs['z_nerf'].mean()**2
+        reg_loss += zs['z_inr'].mean()**2
 
         loss = reg_loss * regularize_noise_weight + dist
 
