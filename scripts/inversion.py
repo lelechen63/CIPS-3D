@@ -66,7 +66,7 @@ class CIPS_3D_Demo(object):
 
     # Load VGG16 feature detector.
     url = 'https://nvlabs-fi-cdn.nvidia.com/stylegan2-ada-pytorch/pretrained/metrics/vgg16.pt'
-    with dnnlib.util.open_url(url) as f:
+    with dnnlib.open_url(url) as f:
         vgg16 = torch.jit.load(f).eval().to(device)
 
     # Features for target image.
@@ -158,7 +158,7 @@ class CIPS_3D_Demo(object):
         loss = reg_loss * regularize_noise_weight + dist
 
         print ('++++++++')
-        # print ('reg_loss:' reg_loss, 'dist:' dist)
+        print ('reg_loss:', reg_loss, 'dist:', dist)
         # Step
         optimizer.zero_grad(set_to_none=True)
         loss.backward()
