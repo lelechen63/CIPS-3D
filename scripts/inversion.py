@@ -114,8 +114,8 @@ class CIPS_3D_Demo(object):
     regularize_noise_weight    = 1e5
 
     zs = {
-      'z_nerf': torch.randn((1, 256), device=device),
-      'z_inr': torch.randn((1, 512), device=device),
+      'z_nerf': torch.randn((1, 256), device=device, requires_grad=True),
+      'z_inr': torch.randn((1, 512), device=device, requires_grad=True),
     }
     optimizer = torch.optim.Adam([zs['z_nerf']] + [zs['z_inr']] , betas=(0.9, 0.999), lr=initial_learning_rate)
     
