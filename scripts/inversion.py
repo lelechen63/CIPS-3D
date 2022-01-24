@@ -156,12 +156,12 @@ class CIPS_3D_Demo(object):
 
         loss = reg_loss * regularize_noise_weight + dist
 
-        print ('++++++++')
-        print ('reg_loss:' reg_loss, 'dist:' dist)
-        # Step
-        optimizer.zero_grad(set_to_none=True)
-        loss.backward()
-        optimizer.step()
+        # print ('++++++++')
+        # print ('reg_loss:' reg_loss, 'dist:' dist)
+        # # Step
+        # optimizer.zero_grad(set_to_none=True)
+        # loss.backward()
+        # optimizer.step()
 
 
     tmp_frm = (frame.squeeze().permute(1,2,0) + 1) * 0.5 * 255
