@@ -111,7 +111,7 @@ class CIPS_3D_Demo(object):
     lr_rampdown_length         = 0.25
     lr_rampup_length           = 0.05
     noise_ramp_length          = 0.75    
-    regularize_noise_weight    = 1e5
+    regularize_noise_weight    = 1
 
     zs = {
       'z_nerf': torch.randn((1, 256), device=device, requires_grad=True),
@@ -130,7 +130,7 @@ class CIPS_3D_Demo(object):
     fov = fov_list[idx]
     curriculum['fov'] = fov
     
-    for step in range(num_steps):
+    for step in tqdm(range(num_steps)):
 
         synth_images, depth_map = generator.forward_camera_pos_and_lookup(
             zs=zs,
@@ -147,17 +147,13 @@ class CIPS_3D_Demo(object):
 
         # Features for synth images.
         synth_features = vgg16(synth_images, resize_images=False, return_lpips=True)
-        dist = (target_features - synth_features).square().sum()
-
-        print (zs['z_nerf'].shape)
-      
+        dist = (target_features - synth_features).square().sum()      
         
         reg_loss = zs['z_nerf'].mean()**2
         reg_loss += zs['z_inr'].mean()**2
 
         loss = reg_loss * regularize_noise_weight + dist
 
-        print ('++++++++')
         print ('reg_loss:', reg_loss, 'dist:', dist)
         # Step
         optimizer.zero_grad(set_to_none=True)
