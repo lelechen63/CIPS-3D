@@ -77,10 +77,10 @@ class CIPS_3D_Demo(object):
     fov_list = [fov] * len(xyz)
     
     # zs = generator.get_zs(1)
-    # zs = {
-    #   'z_nerf': torch.from_numpy(info['z_nerf']).to(device),
-    #   'z_inr': torch.from_numpy(info['z_inr']).to(device),
-    # }
+    zs = {
+      'z_nerf': torch.from_numpy(info['z_nerf']).to(device),
+      'z_inr': torch.randn((1, 512), device=device),
+    }
     zs = {
       'z_nerf': torch.randn((1, 256), device=device),
       'z_inr': torch.randn((1, 512), device=device),
