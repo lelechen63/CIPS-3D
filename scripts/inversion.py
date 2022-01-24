@@ -22,6 +22,9 @@ import cv2
 from exp.comm import comm_utils
 import json
 import pickle
+import torch.nn.functional as F
+
+
 class CIPS_3D_Demo(object):
   def __init__(self):
 
@@ -59,6 +62,26 @@ class CIPS_3D_Demo(object):
     generator = build_model(cfg=cfg.G_cfg).to(device)
     Checkpointer(generator).load_state_dict_from_file(model_pkl)
 
+
+    # Load VGG16 feature detector.
+    url = 'https://nvlabs-fi-cdn.nvidia.com/stylegan2-ada-pytorch/pretrained/metrics/vgg16.pt'
+    with dnnlib.util.open_url(url) as f:
+        vgg16 = torch.jit.load(f).eval().to(device)
+
+    # Features for target image.
+    # Load target image.
+    target_pil = PIL.Image.open('results/model_interpolation/0.png')
+    image = np.array(target_pil)
+    target_uint8 = image.astype(np.uint8)
+    target=torch.tensor(target_uint8.transpose([2, 0, 1]), device=device)
+
+    target_images = target.unsqueeze(0).to(device).to(torch.float32)
+    if target_images.shape[2] > 256:
+        target_images = F.interpolate(target_images, size=(256, 256), mode='area')
+    target_features = vgg16(target_images, resize_images=False, return_lpips=True)
+
+
+
     curriculum = comm_utils.get_metadata_from_json(metafile=cfg.metadata,
                                                    num_steps=num_steps,
                                                    image_size=image_size,
@@ -76,15 +99,24 @@ class CIPS_3D_Demo(object):
     pitch = info['pitch']
     fov_list = [fov] * len(xyz)
     
-    # zs = generator.get_zs(1)
-    zs = {
-      'z_nerf': torch.from_numpy(info['z_nerf']).to(device),
-      'z_inr': torch.randn((1, 512), device=device),
-    }
+    # zs = {
+    #   'z_nerf': torch.from_numpy(info['z_nerf']).to(device),
+    #   'z_inr': torch.from_numpy(info['z_inr']).to(device),
+    # }
     zs = {
       'z_nerf': torch.randn((1, 256), device=device),
       'z_inr': torch.randn((1, 512), device=device),
     }
+    optimizer = torch.optim.Adam([zs['z_nerf']] + [zs['z_inr']] ), betas=(0.9, 0.999), lr=initial_learning_rate)
+    
+    num_steps                  = 8000
+    w_avg_samples              = 10000
+    initial_learning_rate      = 0.1
+    initial_noise_factor       = 0.05
+    lr_rampdown_length         = 0.25
+    lr_rampup_length           = 0.05
+    noise_ramp_length          = 0.75    
+    regularize_noise_weight    = 1e5
 
 
     idx = 0
@@ -95,24 +127,41 @@ class CIPS_3D_Demo(object):
 
     cur_camera_pos = xyz[[idx]]
     cur_camera_lookup = lookup[[idx]]
-    # yaw = yaws[idx]
-    # pitch = pitchs[idx]
     fov = fov_list[idx]
     curriculum['fov'] = fov
-
-    print ('cur_camera_pos', cur_camera_pos)
-    print ('cur_camera_lookup', cur_camera_lookup)
-    print ('yaw', yaw)
-    print ('pitch', pitch)
     
-    frame, depth_map = generator.forward_camera_pos_and_lookup(
-        zs=zs,
-        return_aux_img=False,
-        forward_points=forward_points ** 2,
-        camera_pos=cur_camera_pos,
-        camera_lookup=cur_camera_lookup,
-        **curriculum)
-    #====
+    for step in range(num_steps):
+
+        synth_images, depth_map = generator.forward_camera_pos_and_lookup(
+            zs=zs,
+            return_aux_img=False,
+            forward_points=forward_points ** 2,
+            camera_pos=cur_camera_pos,
+            camera_lookup=cur_camera_lookup,
+            **curriculum)
+        
+        # Downsample image to 256x256 if it's larger than that. VGG was built for 224x224 images.
+        synth_images = (synth_images + 1) * (255/2)
+        if synth_images.shape[2] > 256:
+            synth_images = F.interpolate(synth_images, size=(256, 256), mode='area')
+
+        # Features for synth images.
+        synth_features = vgg16(synth_images, resize_images=False, return_lpips=True)
+        dist = (target_features - synth_features).square().sum()
+
+
+        
+        reg_loss = (zs['z_nerf']*torch.roll(zs['z_nerf'], shifts=1, dims=3)).mean()**2
+        reg_loss += (zs['z_inr']*torch.roll(zs['z_inr'], shifts=1, dims=3)).mean()**2
+
+        loss = reg_loss * regularize_noise_weight + dist
+        print ('reg_loss:' reg_loss, 'dist:' dist)
+        # Step
+        optimizer.zero_grad(set_to_none=True)
+        loss.backward()
+        optimizer.step()
+
+
     tmp_frm = (frame.squeeze().permute(1,2,0) + 1) * 0.5 * 255
     tmp_frm = tmp_frm.detach().cpu().numpy()
     img_name = Path(f'generated2.png')
@@ -122,10 +171,6 @@ class CIPS_3D_Demo(object):
     cv2.imwrite(img_name, tmp_frm)
     
 
-    # info[img_name] = { 'cur_camera_pos':cur_camera_pos.detach().cpu().numpy(), 'yaw': yaw,"pitch": pitch, 
-    #                         'z_nerf': zs['z_nerf'].detach().cpu().numpy(),'z_inr':  zs['z_inr'].detach().cpu().numpy()  }
-    # with open(f"{outdir}/gt.pkl", 'wb') as handle:
-    #     pickle.dump(info, handle, protocol=pickle.HIGHEST_PROTOCOL)  
 
 
 def main(outdir,
