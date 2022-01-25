@@ -1450,6 +1450,7 @@ class GeneratorNerfINR(GeneratorNerfINR_base):
           )
           print (cur_inr_img.requires_grad,';---------')
           inr_img_output[b:b + 1, head:tail] = cur_inr_img
+          print (inr_img_output.requires_grad,';---++------')
           if return_aux_img:
             aux_img_output[b:b + 1, head:tail] = cur_aux_img
           head += forward_points
