@@ -77,13 +77,10 @@ class CIPS_3D_Demo(object):
     target=torch.tensor(target_uint8.transpose([2, 0, 1]), device=device)
 
     target_images = target.unsqueeze(0).to(device).to(torch.float32)
-    print (target_images.max(), target_images.min(),'+++++++')
 
     if target_images.shape[2] > 256:
         target_images = F.interpolate(target_images, size=(256, 256), mode='area')
     target_features = vgg16(target_images, resize_images=False, return_lpips=True)
-
-    print (target_images.max(), target_images.min(),'+++++++')
 
     curriculum = comm_utils.get_metadata_from_json(metafile=cfg.metadata,
                                                    num_steps=num_steps,
@@ -143,43 +140,31 @@ class CIPS_3D_Demo(object):
             **curriculum)
         
         # Downsample image to 256x256 if it's larger than that. VGG was built for 224x224 images.
-        print (synth_images.max(), synth_images.min(),'++++++---------+')
         synth_images = (synth_images + 1) * (255/2)
         if synth_images.shape[2] > 256:
             synth_images = F.interpolate(synth_images, size=(256, 256), mode='area')
-        print (synth_images.max(), synth_images.min(),'++++-------++---------+1')
-        print (synth_images.shape)
         # Features for synth images.
         synth_features = vgg16(synth_images, resize_images=False, return_lpips=True)
-        print (synth_images.max(), synth_images.min(),'++++-------++---------+2')
         dist = (target_features - synth_features).square().sum()      
-        print (synth_images.max(), synth_images.min(),'++++-------++---------+3')
         
         reg_loss = zs['z_nerf'].mean()**2
         reg_loss += zs['z_inr'].mean()**2
-        print (synth_images.max(), synth_images.min(),'++++-------++---------+4')
         loss = reg_loss * regularize_noise_weight + dist
-        print (synth_images.max(), synth_images.min(),'++++-------++---------+5')
         print ('reg_loss:', reg_loss, 'dist:', dist)
         
         # Step
         optimizer.zero_grad(set_to_none=True)
         loss.backward()
-        print (synth_images.max(), synth_images.min(),'++++-------++---------+6')
         optimizer.step()
-
-        print (synth_images.max(), synth_images.min(),'++++-------++---------+7')
         if step % 100 == 0:
             synth_images = (synth_images + 1) * (255/2)
             tmp_frm = (synth_images.squeeze().permute(1,2,0) )
-            print (tmp_frm.shape, tmp_frm.max(), tmp_frm.min())
             tmp_frm = tmp_frm.detach().cpu().numpy()
             img_name = Path(f'generated2_{step}.png')
             img_name = f"{outdir}/{img_name}"
             tmp_frm = cv2.cvtColor(tmp_frm, cv2.COLOR_RGB2BGR)
 
             cv2.imwrite(img_name, tmp_frm)
-        print (gg)
 
 
 
