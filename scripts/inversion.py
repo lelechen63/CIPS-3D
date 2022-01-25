@@ -75,6 +75,7 @@ class CIPS_3D_Demo(object):
     image = np.array(target_pil)
     target_uint8 = image.astype(np.uint8)
     target=torch.tensor(target_uint8.transpose([2, 0, 1]), device=device)
+    print (target.max(), target.min(),'+++++++')
 
     target_images = target.unsqueeze(0).to(device).to(torch.float32)
     if target_images.shape[2] > 256:
@@ -141,6 +142,7 @@ class CIPS_3D_Demo(object):
             **curriculum)
         
         # Downsample image to 256x256 if it's larger than that. VGG was built for 224x224 images.
+        print (synth_images.max(), synth_images.min(),'++++++---------+')
         synth_images = (synth_images + 1) * (255/2)
         if synth_images.shape[2] > 256:
             synth_images = F.interpolate(synth_images, size=(256, 256), mode='area')
@@ -155,13 +157,14 @@ class CIPS_3D_Demo(object):
         loss = reg_loss * regularize_noise_weight + dist
 
         print ('reg_loss:', reg_loss, 'dist:', dist)
+        print (gg)
         # Step
         optimizer.zero_grad(set_to_none=True)
         loss.backward()
         optimizer.step()
         if step % 100 == 0:
 
-            tmp_frm = (synth_images.squeeze().permute(1,2,0) + 1) 
+            tmp_frm = (synth_images.squeeze().permute(1,2,0) + 1) * (255/2)
             tmp_frm = tmp_frm.detach().cpu().numpy()
             img_name = Path(f'generated2_{step}.png')
             img_name = f"{outdir}/{img_name}"
