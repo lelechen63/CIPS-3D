@@ -157,7 +157,7 @@ class CIPS_3D_Demo(object):
         loss = reg_loss * regularize_noise_weight + dist
 
         print ('reg_loss:', reg_loss, 'dist:', dist)
-        print (gg)
+        
         # Step
         optimizer.zero_grad(set_to_none=True)
         loss.backward()
@@ -172,7 +172,7 @@ class CIPS_3D_Demo(object):
             tmp_frm = cv2.cvtColor(tmp_frm, cv2.COLOR_RGB2BGR)
 
             cv2.imwrite(img_name, tmp_frm)
-            
+        print (gg)
 
 
 
