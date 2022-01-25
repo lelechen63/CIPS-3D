@@ -164,7 +164,8 @@ class CIPS_3D_Demo(object):
         optimizer.step()
         if step % 100 == 0:
 
-            tmp_frm = (synth_images.squeeze().permute(1,2,0) + 1) * (255/2)
+            tmp_frm = (synth_images.squeeze().permute(1,2,0) )
+            print (tmp_frm.shape, tmp_frm.max(), tmp_frm.min())
             tmp_frm = tmp_frm.detach().cpu().numpy()
             img_name = Path(f'generated2_{step}.png')
             img_name = f"{outdir}/{img_name}"
