@@ -126,7 +126,7 @@ class CIPS_3D_Demo(object):
     }
     optimizer = torch.optim.Adam([zs['z_nerf']] + [zs['z_inr']] , betas=(0.9, 0.999), lr=initial_learning_rate)
     print (zs['z_nerf'].requires_grad, '+++++++++++++++')
-    print (gg)
+    
     idx = 0
     curriculum['h_mean'] = 0
     curriculum['v_mean'] = 0
@@ -147,7 +147,8 @@ class CIPS_3D_Demo(object):
             camera_pos=cur_camera_pos,
             camera_lookup=cur_camera_lookup,
             **curriculum)
-        print (synth_images.)
+        print (synth_images.requires_grad,'=---------')
+        print (gg)
         l1 = l1loss(synth_images, target_images)
         # Downsample image to 256x256 if it's larger than that. VGG was built for 224x224 images.
         # synth_images = (synth_images + 1) * (255/2)
