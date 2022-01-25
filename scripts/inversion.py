@@ -170,7 +170,7 @@ class CIPS_3D_Demo(object):
 
         print (synth_images.max(), synth_images.min(),'++++-------++---------+7')
         if step % 100 == 0:
-
+            synth_images = (synth_images + 1) * (255/2)
             tmp_frm = (synth_images.squeeze().permute(1,2,0) )
             print (tmp_frm.shape, tmp_frm.max(), tmp_frm.min())
             tmp_frm = tmp_frm.detach().cpu().numpy()
