@@ -1389,9 +1389,9 @@ class GeneratorNerfINR(GeneratorNerfINR_base):
     # batch_size = z.shape[0]
     batch_size = list(style_dict.values())[0].shape[0]
 
-
     if forward_points is not None:
       # stage forward
+      print '0--00000000000'
       with torch.no_grad():
         num_points = img_size ** 2
         inr_img_output = torch.zeros((batch_size, num_points, 3), device=device)
@@ -1458,6 +1458,7 @@ class GeneratorNerfINR(GeneratorNerfINR_base):
         pitch = torch.cat(pitch_list, dim=0)
         yaw = torch.cat(yaw_list, dim=0)
     else:
+      print '0--2220000'
       transformed_points, \
       transformed_ray_directions_expanded, \
       transformed_ray_origins, \
@@ -1481,7 +1482,7 @@ class GeneratorNerfINR(GeneratorNerfINR_base):
         camera_pos=camera_pos,
         camera_lookup=camera_lookup,
       )
-      print ('=====00011==',transformed_points.requires_grad)
+      
       transformed_points = rearrange(transformed_points, "b (h w s) c -> b (h w) s c", h=img_size, s=num_steps)
       transformed_ray_directions_expanded = rearrange(transformed_ray_directions_expanded,
                                                       "b (h w s) c -> b (h w) s c", h=img_size, s=num_steps)
