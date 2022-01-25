@@ -1391,7 +1391,7 @@ class GeneratorNerfINR(GeneratorNerfINR_base):
 
     if forward_points is not None:
       # stage forward
-      print '0--00000000000'
+      print ('0--11111')
       with torch.no_grad():
         num_points = img_size ** 2
         inr_img_output = torch.zeros((batch_size, num_points, 3), device=device)
@@ -1458,7 +1458,7 @@ class GeneratorNerfINR(GeneratorNerfINR_base):
         pitch = torch.cat(pitch_list, dim=0)
         yaw = torch.cat(yaw_list, dim=0)
     else:
-      print '0--2220000'
+      print ('0--2220000')
       transformed_points, \
       transformed_ray_directions_expanded, \
       transformed_ray_origins, \
