@@ -26,6 +26,8 @@ import torch.nn.functional as F
 import dnnlib
 import PIL
 from torch import nn
+from torchvision import transforms
+
 class CIPS_3D_Demo(object):
   def __init__(self):
 
