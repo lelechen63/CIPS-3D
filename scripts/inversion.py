@@ -145,7 +145,7 @@ class CIPS_3D_Demo(object):
         synth_images, depth_map = generator.forward_camera_pos_and_lookup(
             zs=zs,
             return_aux_img=False,
-            forward_points=forward_points ** 2,
+            forward_points= None ,#forward_points ** 2,
             camera_pos=cur_camera_pos,
             camera_lookup=cur_camera_lookup,
             **curriculum)
