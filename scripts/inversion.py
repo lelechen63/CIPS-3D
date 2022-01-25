@@ -146,7 +146,7 @@ class CIPS_3D_Demo(object):
         synth_images = (synth_images + 1) * (255/2)
         if synth_images.shape[2] > 256:
             synth_images = F.interpolate(synth_images, size=(256, 256), mode='area')
-
+        print (synth_images.max(), synth_images.min(),'++++-------++---------+')
         # Features for synth images.
         synth_features = vgg16(synth_images, resize_images=False, return_lpips=True)
         dist = (target_features - synth_features).square().sum()      
