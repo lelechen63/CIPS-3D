@@ -159,16 +159,16 @@ class CIPS_3D_Demo(object):
         optimizer.zero_grad(set_to_none=True)
         loss.backward()
         optimizer.step()
+        if step % 100 == 0:
 
+            tmp_frm = (synth_images.squeeze().permute(1,2,0) + 1) 
+            tmp_frm = tmp_frm.detach().cpu().numpy()
+            img_name = Path(f'generated2_{step}.png')
+            img_name = f"{outdir}/{img_name}"
+            tmp_frm = cv2.cvtColor(tmp_frm, cv2.COLOR_RGB2BGR)
 
-    tmp_frm = (frame.squeeze().permute(1,2,0) + 1) * 0.5 * 255
-    tmp_frm = tmp_frm.detach().cpu().numpy()
-    img_name = Path(f'generated2.png')
-    img_name = f"{outdir}/{img_name}"
-    tmp_frm = cv2.cvtColor(tmp_frm, cv2.COLOR_RGB2BGR)
-
-    cv2.imwrite(img_name, tmp_frm)
-    
+            cv2.imwrite(img_name, tmp_frm)
+            
 
 
 
