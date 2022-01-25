@@ -146,24 +146,28 @@ class CIPS_3D_Demo(object):
         synth_images = (synth_images + 1) * (255/2)
         if synth_images.shape[2] > 256:
             synth_images = F.interpolate(synth_images, size=(256, 256), mode='area')
-        print (synth_images.max(), synth_images.min(),'++++-------++---------+')
+        print (synth_images.max(), synth_images.min(),'++++-------++---------+1')
         print (synth_images.shape)
         # Features for synth images.
         synth_features = vgg16(synth_images, resize_images=False, return_lpips=True)
+        print (synth_images.max(), synth_images.min(),'++++-------++---------+2')
         dist = (target_features - synth_features).square().sum()      
+        print (synth_images.max(), synth_images.min(),'++++-------++---------+3')
         
         reg_loss = zs['z_nerf'].mean()**2
         reg_loss += zs['z_inr'].mean()**2
-
+        print (synth_images.max(), synth_images.min(),'++++-------++---------+4')
         loss = reg_loss * regularize_noise_weight + dist
-
+        print (synth_images.max(), synth_images.min(),'++++-------++---------+5')
         print ('reg_loss:', reg_loss, 'dist:', dist)
         
         # Step
         optimizer.zero_grad(set_to_none=True)
         loss.backward()
+        print (synth_images.max(), synth_images.min(),'++++-------++---------+6')
         optimizer.step()
-        print (synth_images.max(), synth_images.min(),'++++-------++---------+')
+
+        print (synth_images.max(), synth_images.min(),'++++-------++---------+7')
         if step % 100 == 0:
 
             tmp_frm = (synth_images.squeeze().permute(1,2,0) )
