@@ -78,7 +78,7 @@ class CIPS_3D_Demo(object):
     # cv2
     target_img = cv2.imread('results/model_interpolation/0.png')
     convert_tensor = transforms.ToTensor()
-    target_img = convert_tensor(target_images)
+    target_img = convert_tensor(target_img)
     #pil
     # target_pil = PIL.Image.open('results/model_interpolation/0.png')
     # image = np.array(target_pil)
