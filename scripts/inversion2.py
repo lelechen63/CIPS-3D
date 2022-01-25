@@ -20,6 +20,8 @@ from tl2.proj.fvcore.checkpoint import Checkpointer
 from tl2.proj.logger.logging_utils_v2 import get_logger
 import cv2
 from exp.comm import comm_utils
+from exp.dev.nerf_inr.models.generator_nerf_inr_v16 import GeneratorNerfINR
+
 import json
 import pickle
 import torch.nn.functional as F
@@ -59,11 +61,19 @@ class CIPS_3D_Demo(object):
     forward_points = st_utils.number_input('forward_points', cfg.forward_points, sidebar=True)
 
     device = torch.device('cuda')
+    generator = GeneratorNerfINR(
+        z_dim = 256,
+        nerf_cfg = cfg.nerf_cfg,
+        inr_cfg = cfg.inr_cfg,
+        mapping_nerf_cfg =cfg.mapping_nerf_cfg,
+        mapping_inr_cfg =cfg.mapping_inr_cfg
+    )
 
-    mode, model_pkl = network_pkl.split(':')
-    model_pkl = model_pkl.strip(' ')
-    generator = build_model(cfg=cfg.G_cfg).to(device)
-    Checkpointer(generator).load_state_dict_from_file(model_pkl)
+    # mode, model_pkl = network_pkl.split(':')
+    # model_pkl = model_pkl.strip(' ')
+    # generator = build_model(cfg=cfg.G_cfg).to(device)
+    generator.load_state_dict(torch.load('datasets/pretrained/train_ffhq_high-20220105_143314_190/resume_iter_645500'))
+    # Checkpointer(generator).load_state_dict_from_file(model_pkl)
 
 
     # Load VGG16 feature detector.

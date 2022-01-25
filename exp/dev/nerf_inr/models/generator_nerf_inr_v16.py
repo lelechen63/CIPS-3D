@@ -1852,7 +1852,7 @@ class GeneratorNerfINR(GeneratorNerfINR_base):
     - pixels: (b, 3, h, w)
     - pitch_yaw: (b, 2)
     """
-
+    print ('!!!!!!!!!!!!!!!!!!!!!!!!')
     # mapping network
     if global_cfg.tl_debug:
       VerboseModel.forward_verbose(self.mapping_network_nerf,
