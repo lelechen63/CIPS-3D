@@ -1481,7 +1481,7 @@ class GeneratorNerfINR(GeneratorNerfINR_base):
         camera_pos=camera_pos,
         camera_lookup=camera_lookup,
       )
-
+      print ('=====00011==',transformed_points.requires_grad)
       transformed_points = rearrange(transformed_points, "b (h w s) c -> b (h w) s c", h=img_size, s=num_steps)
       transformed_ray_directions_expanded = rearrange(transformed_ray_directions_expanded,
                                                       "b (h w s) c -> b (h w) s c", h=img_size, s=num_steps)
