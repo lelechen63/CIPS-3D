@@ -149,11 +149,11 @@ class CIPS_3D_Demo(object):
         l1 = (target_images - synth_images).square().sum()  
         # print (target_images.max(), target_images.min(),synth_images.max(), synth_images.min(),'+++++++' )
         
-        reg_loss = zs['z_nerf'].mean()**2
-        reg_loss += zs['z_inr'].mean()**2
-        loss = reg_loss * regularize_noise_weight + dist + l1
-        print ('reg_loss:', reg_loss, 'dist:', dist,  'l1:', l1)
-        
+        # reg_loss = zs['z_nerf'].mean()**2
+        # reg_loss += zs['z_inr'].mean()**2
+        # loss = reg_loss * regularize_noise_weight + dist + l1
+        # print ('reg_loss:', reg_loss, 'dist:', dist,  'l1:', l1)
+        loss = l1
         # Step
         optimizer.zero_grad(set_to_none=True)
         loss.backward()
