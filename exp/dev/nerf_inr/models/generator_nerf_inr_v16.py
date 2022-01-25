@@ -1392,73 +1392,73 @@ class GeneratorNerfINR(GeneratorNerfINR_base):
     if forward_points is not None:
       # stage forward
       print ('0--11111')
-      # with torch.no_grad():
-      num_points = img_size ** 2
-      inr_img_output = torch.zeros((batch_size, num_points, 3), device=device)
-      if return_aux_img:
-        aux_img_output = torch.zeros((batch_size, num_points, 3), device=device)
-      pitch_list = []
-      yaw_list = []
-      for b in range(batch_size):
-        transformed_points, \
-        transformed_ray_directions_expanded, \
-        transformed_ray_origins, \
-        transformed_ray_directions, \
-        z_vals, \
-        pitch, \
-        yaw = comm_utils.get_world_points_and_direction(
-          batch_size=1,
-          num_steps=num_steps,
-          img_size=img_size,
-          fov=fov,
-          ray_start=ray_start,
-          ray_end=ray_end,
-          h_stddev=h_stddev,
-          v_stddev=v_stddev,
-          h_mean=h_mean,
-          v_mean=v_mean,
-          sample_dist=sample_dist,
-          lock_view_dependence=lock_view_dependence,
-          device=device,
-          camera_pos=camera_pos,
-          camera_lookup=camera_lookup,
-        )
-        pitch_list.append(pitch)
-        yaw_list.append(yaw)
-
-        transformed_points = rearrange(transformed_points, "b (h w s) c -> b (h w) s c", h=img_size, s=num_steps)
-        transformed_ray_directions_expanded = rearrange(transformed_ray_directions_expanded,
-                                                        "b (h w s) c -> b (h w) s c", h=img_size, s=num_steps)
-        head = 0
-        while head < num_points:
-          tail = head + forward_points
-          cur_style_dict = self.get_batch_style_dict(b=b, style_dict=style_dict)
-          cur_inr_img, cur_aux_img = self.points_forward(
-            style_dict=cur_style_dict,
-            transformed_points=transformed_points[:, head:tail],
-            transformed_ray_directions_expanded=transformed_ray_directions_expanded[:, head:tail],
+      with torch.no_grad():
+        num_points = img_size ** 2
+        inr_img_output = torch.zeros((batch_size, num_points, 3), device=device)
+        if return_aux_img:
+          aux_img_output = torch.zeros((batch_size, num_points, 3), device=device)
+        pitch_list = []
+        yaw_list = []
+        for b in range(batch_size):
+          transformed_points, \
+          transformed_ray_directions_expanded, \
+          transformed_ray_origins, \
+          transformed_ray_directions, \
+          z_vals, \
+          pitch, \
+          yaw = comm_utils.get_world_points_and_direction(
+            batch_size=1,
             num_steps=num_steps,
-            hierarchical_sample=hierarchical_sample,
-            z_vals=z_vals[:, head:tail],
-            clamp_mode=clamp_mode,
-            nerf_noise=nerf_noise,
-            transformed_ray_origins=transformed_ray_origins[:, head:tail],
-            transformed_ray_directions=transformed_ray_directions[:, head:tail],
-            white_back=white_back,
-            last_back=last_back,
-            return_aux_img=return_aux_img,
+            img_size=img_size,
+            fov=fov,
+            ray_start=ray_start,
+            ray_end=ray_end,
+            h_stddev=h_stddev,
+            v_stddev=v_stddev,
+            h_mean=h_mean,
+            v_mean=v_mean,
+            sample_dist=sample_dist,
+            lock_view_dependence=lock_view_dependence,
+            device=device,
+            camera_pos=camera_pos,
+            camera_lookup=camera_lookup,
           )
-          print (cur_inr_img.requires_grad,';---------')
-          inr_img_output[b:b + 1, head:tail] = cur_inr_img
-          print (inr_img_output.requires_grad,';---++------')
-          if return_aux_img:
-            aux_img_output[b:b + 1, head:tail] = cur_aux_img
-          head += forward_points
-      inr_img = inr_img_output
-      if return_aux_img:
-        aux_img = aux_img_output
-      pitch = torch.cat(pitch_list, dim=0)
-      yaw = torch.cat(yaw_list, dim=0)
+          pitch_list.append(pitch)
+          yaw_list.append(yaw)
+
+          transformed_points = rearrange(transformed_points, "b (h w s) c -> b (h w) s c", h=img_size, s=num_steps)
+          transformed_ray_directions_expanded = rearrange(transformed_ray_directions_expanded,
+                                                          "b (h w s) c -> b (h w) s c", h=img_size, s=num_steps)
+          head = 0
+          while head < num_points:
+            tail = head + forward_points
+            cur_style_dict = self.get_batch_style_dict(b=b, style_dict=style_dict)
+            cur_inr_img, cur_aux_img = self.points_forward(
+              style_dict=cur_style_dict,
+              transformed_points=transformed_points[:, head:tail],
+              transformed_ray_directions_expanded=transformed_ray_directions_expanded[:, head:tail],
+              num_steps=num_steps,
+              hierarchical_sample=hierarchical_sample,
+              z_vals=z_vals[:, head:tail],
+              clamp_mode=clamp_mode,
+              nerf_noise=nerf_noise,
+              transformed_ray_origins=transformed_ray_origins[:, head:tail],
+              transformed_ray_directions=transformed_ray_directions[:, head:tail],
+              white_back=white_back,
+              last_back=last_back,
+              return_aux_img=return_aux_img,
+            )
+            print (cur_inr_img.requires_grad,';---------')
+            inr_img_output[b:b + 1, head:tail] = cur_inr_img
+            print (inr_img_output.requires_grad,';---++------')
+            if return_aux_img:
+              aux_img_output[b:b + 1, head:tail] = cur_aux_img
+            head += forward_points
+        inr_img = inr_img_output
+        if return_aux_img:
+          aux_img = aux_img_output
+        pitch = torch.cat(pitch_list, dim=0)
+        yaw = torch.cat(yaw_list, dim=0)
     else:
       transformed_points, \
       transformed_ray_directions_expanded, \
