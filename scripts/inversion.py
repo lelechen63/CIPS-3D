@@ -75,14 +75,15 @@ class CIPS_3D_Demo(object):
     image = np.array(target_pil)
     target_uint8 = image.astype(np.uint8)
     target=torch.tensor(target_uint8.transpose([2, 0, 1]), device=device)
-    print (target.max(), target.min(),'+++++++')
 
     target_images = target.unsqueeze(0).to(device).to(torch.float32)
+    print (target_images.max(), target_images.min(),'+++++++')
+
     if target_images.shape[2] > 256:
         target_images = F.interpolate(target_images, size=(256, 256), mode='area')
     target_features = vgg16(target_images, resize_images=False, return_lpips=True)
 
-
+    print (target_images.max(), target_images.min(),'+++++++')
 
     curriculum = comm_utils.get_metadata_from_json(metafile=cfg.metadata,
                                                    num_steps=num_steps,
