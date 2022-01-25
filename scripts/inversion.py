@@ -138,7 +138,7 @@ class CIPS_3D_Demo(object):
     fov = fov_list[idx]
     curriculum['fov'] = fov
     
-    generator = copy.deepcopy(generator).eval().requires_grad_(False).to(device)
+    generator = copy.deepcopy(generator).requires_grad_(True).to(device)
 
     for step in tqdm(range(num_steps)):
 
