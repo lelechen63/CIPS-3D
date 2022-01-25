@@ -1500,7 +1500,7 @@ class GeneratorNerfINR(GeneratorNerfINR_base):
         last_back=last_back,
         return_aux_img=return_aux_img,
       )
-
+    print ('=====111==',inr_img.requires_grad)
     inr_img = rearrange(inr_img, "b (h w) c -> b c h w", h=img_size)
     if global_cfg.tl_debug:
       VerboseModel.forward_verbose(self.filters,
@@ -1516,7 +1516,7 @@ class GeneratorNerfINR(GeneratorNerfINR_base):
       pitch_yaw = torch.cat([pitch_yaw, pitch_yaw])
     else:
       imgs = inr_img
-
+    print ('=====222==',imgs.requires_grad)
     return imgs, pitch_yaw
 
   def part_grad_forward(self,
@@ -1897,7 +1897,6 @@ class GeneratorNerfINR(GeneratorNerfINR_base):
       )
       return imgs, pitch_yaw
     else:
-      print ('@@@@@@@@@@@@@@@@@@')
       imgs, pitch_yaw = self.whole_grad_forward(
         style_dict=style_dict,
         img_size=img_size,
