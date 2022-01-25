@@ -138,6 +138,8 @@ class CIPS_3D_Demo(object):
     fov = fov_list[idx]
     curriculum['fov'] = fov
     
+    generator = copy.deepcopy(generator).eval().requires_grad_(False).to(device)
+
     for step in tqdm(range(num_steps)):
 
         synth_images, depth_map = generator.forward_camera_pos_and_lookup(
