@@ -322,11 +322,13 @@ if __name__ == "__main__":
     
     pbar = tqdm(enumerate(input_iter), total=num_files)
     for idx, image in pbar:
-        if idx > k * 7000 and idx < (k+1)*7000:
+        if idx > k * 70000 and idx < (k+1)*70000:
             try:
-                util.check_mkdir(config.savefolder + image['label'][:-4])
-                params = fitting.run(image['img'], vis_folder = config.savefolder + image['label'][:-4])
-                
+                if not os.path.exists( config.savefolder + image['label'][:-4] + '/flame_p.pickle'):
+                    util.check_mkdir(config.savefolder + image['label'][:-4])
+                    params = fitting.run(image['img'], vis_folder = config.savefolder + image['label'][:-4])
+                else:
+                    print (idx, image['label'],'======')
             except:
                 print (idx, image['label'])
                 continue 
