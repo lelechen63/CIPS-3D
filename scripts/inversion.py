@@ -147,6 +147,7 @@ class CIPS_3D_Demo(object):
         if synth_images.shape[2] > 256:
             synth_images = F.interpolate(synth_images, size=(256, 256), mode='area')
         print (synth_images.max(), synth_images.min(),'++++-------++---------+')
+        print (synth_images.shape)
         # Features for synth images.
         synth_features = vgg16(synth_images, resize_images=False, return_lpips=True)
         dist = (target_features - synth_features).square().sum()      
@@ -162,6 +163,7 @@ class CIPS_3D_Demo(object):
         optimizer.zero_grad(set_to_none=True)
         loss.backward()
         optimizer.step()
+        print (synth_images.max(), synth_images.min(),'++++-------++---------+')
         if step % 100 == 0:
 
             tmp_frm = (synth_images.squeeze().permute(1,2,0) )
