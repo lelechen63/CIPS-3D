@@ -1897,6 +1897,7 @@ class GeneratorNerfINR(GeneratorNerfINR_base):
       )
       return imgs, pitch_yaw
     else:
+      print ('@@@@@@@@@@@@@@@@@@')
       imgs, pitch_yaw = self.whole_grad_forward(
         style_dict=style_dict,
         img_size=img_size,
