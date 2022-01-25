@@ -1448,6 +1448,7 @@ class GeneratorNerfINR(GeneratorNerfINR_base):
             last_back=last_back,
             return_aux_img=return_aux_img,
           )
+          print (cur_inr_img.requires_grad,';---------')
           inr_img_output[b:b + 1, head:tail] = cur_inr_img
           if return_aux_img:
             aux_img_output[b:b + 1, head:tail] = cur_aux_img
