@@ -31,6 +31,7 @@ from torch import nn
 from torchvision import transforms
 
 from tl2.modelarts import modelarts_utils, moxing_utils
+from torch.nn.parallel import DistributedDataParallel as DDP
 
 class CIPS_3D_Demo(object):
   def __init__(self):
