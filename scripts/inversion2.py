@@ -36,7 +36,7 @@ import torch.distributed as dist
 
 
 
-def setup_ddp(rank, world_size, port):
+def setup_ddp(rank):
   
 
   # initialize the process group
@@ -58,7 +58,7 @@ class CIPS_3D_Demo(object):
             **kwargs):
     rank = 0
 
-    # setup_ddp(rank, 8, '12345')
+    setup_ddp(rank)
 
 
     network_pkl = st_utils.selectbox('network_pkl', cfg.network_pkl)
