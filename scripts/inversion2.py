@@ -163,9 +163,6 @@ class CIPS_3D_Demo(object):
     grad_points = 256 ** 2
     
     
-
-    cv2.imwrite(img_name, tmp_frm)
-
     for step in tqdm(range(num_steps)):
 
         # synth_images, depth_map = generator.forward_camera_pos_and_lookup(
