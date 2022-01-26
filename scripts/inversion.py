@@ -140,6 +140,12 @@ class CIPS_3D_Demo(object):
     
     generator.eval()
     for step in tqdm(range(num_steps)):
+        lr_ramp = min(1.0, (1.0 - t) / lr_rampdown_length)
+        lr_ramp = 0.5 - 0.5 * np.cos(lr_ramp * np.pi)
+        lr_ramp = lr_ramp * min(1.0, t / lr_rampup_length)
+        lr = initial_learning_rate * lr_ramp
+        for param_group in optimizer.param_groups:
+            param_group['lr'] = lr
 
         synth_images, depth_map = generator.forward_camera_pos_and_lookup(
             zs=zs,
@@ -166,13 +172,13 @@ class CIPS_3D_Demo(object):
         # Features for synth images.
         synth_features = vgg16(synth_images, resize_images=False, return_lpips=True)
         dist = (target_features - synth_features).square().sum()      
-        # l1 = (target_images - synth_images).square().sum()  
+        l1 = (target_images - synth_images).square().sum()  
         # print (target_images.max(), target_images.min(),synth_images.max(), synth_images.min(),'+++++++' )
         l1 = 0
-        # reg_loss = zs['z_nerf'].mean()**2
-        # reg_loss += zs['z_inr'].mean()**2
-        reg_loss = 0
-        loss = reg_loss * regularize_noise_weight + dist + l1
+        reg_loss = zs['z_nerf'].mean()**2
+        reg_loss += zs['z_inr'].mean()**2
+        # reg_loss = 0
+        loss = reg_loss * regularize_noise_weight + dist + l1 * 1e-4
         print ('reg_loss:', reg_loss, 'dist:', dist,  'l1:', l1)
         
         # Step
