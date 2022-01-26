@@ -65,28 +65,18 @@ class CIPS_3D_Demo(object):
     generator = build_model(cfg=cfg.G_cfg).to(device)
     Checkpointer(generator).load_state_dict_from_file(model_pkl)
 
-
     # Load VGG16 feature detector.
     url = 'https://nvlabs-fi-cdn.nvidia.com/stylegan2-ada-pytorch/pretrained/metrics/vgg16.pt'
     with dnnlib.open_url(url) as f:
         vgg16 = torch.jit.load(f).eval().to(device)
 
     # Features for target image.
-    # Load target image.
-    l1loss =  nn.L1Loss()
-    l1loss   = l1loss.to(device)
-    # cv2
-    # target_img = cv2.imread('results/model_interpolation/0.png')
-    # convert_tensor = transforms.ToTensor()
-    # target_img = convert_tensor(target_img)
-    # target_images = target_img.unsqueeze(0).to(device).to(torch.float32)
     #pil
     target_pil = PIL.Image.open('results/model_interpolation/0.png')
     image = np.array(target_pil)
     target_uint8 = image.astype(np.uint8)
     target=torch.tensor(target_uint8.transpose([2, 0, 1]), device=device)
     target_images = target.unsqueeze(0).to(device).to(torch.float32)
-    print (target_images.shape)
     if target_images.shape[2] > 256:
         target_images = F.interpolate(target_images, size=(256, 256), mode='area')
     target_features = vgg16(target_images, resize_images=False, return_lpips=True)
@@ -95,10 +85,9 @@ class CIPS_3D_Demo(object):
                                                    num_steps=num_steps,
                                                    image_size=image_size,
                                                    psi=psi)
-
+    # get the info: paired zs, xyz, yaw, pitch,
     with open(f"{outdir}/gt.pkl", 'rb') as handle:
         info = pickle.load(handle)
-    
     info = info['results/model_interpolation/0.png']
     print ('++++++++++++++++++++++++++++')
     xyz = info['cur_camera_pos']
@@ -121,12 +110,6 @@ class CIPS_3D_Demo(object):
     noise_ramp_length          = 0.75    
     regularize_noise_weight    = 1
 
-    zs = {
-      'z_nerf': torch.randn((1, 256), device=device, requires_grad=True),
-      'z_inr': torch.randn((1, 512), device=device, requires_grad=True),
-    }
-    optimizer = torch.optim.Adam([zs['z_nerf']] + [zs['z_inr']] , betas=(0.9, 0.999), lr=initial_learning_rate)
-    
     idx = 0
     curriculum['h_mean'] = 0
     curriculum['v_mean'] = 0
@@ -139,6 +122,29 @@ class CIPS_3D_Demo(object):
     curriculum['fov'] = fov
     
     generator.eval()
+    # check the correctness of the params
+    synth_images, depth_map = generator.forward_camera_pos_and_lookup(
+        zs=zs,
+        return_aux_img= False,
+        forward_points= forward_points ** 2,
+        camera_pos= cur_camera_pos,
+        grad_points = forward_points ** 2,
+        camera_lookup=cur_camera_lookup,
+        **curriculum)
+
+    synth_images = (synth_images + 1) * (255/2)
+    tmp_frm = (synth_images.squeeze().permute(1,2,0) )
+    tmp_frm = tmp_frm.detach().cpu().numpy()
+    tmp_frm = cv2.cvtColor(tmp_frm, cv2.COLOR_RGB2BGR)
+    cv2.imwrite(f"{outdir}/reconstructed.png", tmp_frm)
+                               
+    # optimize the zs.
+    zs = {
+      'z_nerf': torch.randn((1, 256), device=device, requires_grad=True),
+      'z_inr': torch.randn((1, 512), device=device, requires_grad=True),
+    }
+    optimizer = torch.optim.Adam([zs['z_nerf']] + [zs['z_inr']] , betas=(0.9, 0.999), lr=initial_learning_rate)
+    
     for step in tqdm(range(num_steps)):
         t = step / num_steps
         lr_ramp = min(1.0, (1.0 - t) / lr_rampdown_length)
@@ -156,17 +162,8 @@ class CIPS_3D_Demo(object):
             grad_points = forward_points ** 2,
             camera_lookup=cur_camera_lookup,
             **curriculum)
-        # synth_images = (synth_images + 1) * (255/2)
-        # tmp_frm = (synth_images.squeeze().permute(1,2,0) )
-        # tmp_frm = tmp_frm.detach().cpu().numpy()
-        # img_name = Path(f'generated3.png')
-        # img_name = f"{outdir}/{img_name}"
-        # tmp_frm = cv2.cvtColor(tmp_frm, cv2.COLOR_RGB2BGR)
 
-        # cv2.imwrite(img_name, tmp_frm)
-        
         # Downsample image to 256x256 if it's larger than that. VGG was built for 224x224 images.
-        print (synth_images.requires_grad,'============')
         synth_images = (synth_images + 1) * (255/2)
         if synth_images.shape[2] > 256:
             synth_images = F.interpolate(synth_images, size=(256, 256), mode='area')
@@ -190,7 +187,7 @@ class CIPS_3D_Demo(object):
             synth_images = (synth_images + 1) * (255/2)
             tmp_frm = (synth_images.squeeze().permute(1,2,0) )
             tmp_frm = tmp_frm.detach().cpu().numpy()
-            img_name = Path(f'generated2_{step}.png')
+            img_name = Path(f'generated_{step}.png')
             img_name = f"{outdir}/{img_name}"
             tmp_frm = cv2.cvtColor(tmp_frm, cv2.COLOR_RGB2BGR)
 
