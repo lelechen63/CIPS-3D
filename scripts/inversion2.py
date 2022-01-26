@@ -30,6 +30,8 @@ import PIL
 from torch import nn
 from torchvision import transforms
 
+from tl2.modelarts import modelarts_utils, moxing_utils
+
 class CIPS_3D_Demo(object):
   def __init__(self):
 
