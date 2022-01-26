@@ -180,7 +180,7 @@ class CIPS_3D_Demo(object):
         reg_loss += zs['z_inr'].mean()**2
         # reg_loss = 0
         loss = reg_loss * regularize_noise_weight + dist + l1 * 1e-4
-        print ('reg_loss:', reg_loss, 'dist:', dist,  'l1:', l1)
+        print ('reg_loss:', reg_loss.data, 'dist:', dist.data,  'l1:', l1.data)
         
         # Step
         optimizer.zero_grad(set_to_none=True)
@@ -195,8 +195,11 @@ class CIPS_3D_Demo(object):
             tmp_frm = cv2.cvtColor(tmp_frm, cv2.COLOR_RGB2BGR)
 
             cv2.imwrite(img_name, tmp_frm)
-
-
+            info ={}
+            info[img_name] = {"xyz": xyz.detach().cpu().numpy(), 'cur_camera_pos':cur_camera_pos.detach().cpu().numpy(), 'yaw': yaw,"pitch": pitch, 
+                            'z_nerf': zs['z_nerf'].detach().cpu().numpy(),'z_inr':  zs['z_inr'].detach().cpu().numpy()  }
+            with open(f"{outdir}/output.pkl", 'wb') as handle:
+                pickle.dump(info, handle, protocol=pickle.HIGHEST_PROTOCOL)  
 
 def main(outdir,
          cfg_file,
