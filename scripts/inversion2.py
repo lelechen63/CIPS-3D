@@ -121,7 +121,6 @@ class CIPS_3D_Demo(object):
         info = pickle.load(handle)
     
     info = info['results/model_interpolation/0.png']
-    print ('++++++++++++++++++++++++++++')
     xyz = info['cur_camera_pos']
     xyz = torch.from_numpy(xyz).to(device)
     lookup = -xyz 
@@ -147,7 +146,6 @@ class CIPS_3D_Demo(object):
       'z_inr': torch.randn((1, 512), device=device, requires_grad=True),
     }
     optimizer = torch.optim.Adam([zs['z_nerf']] + [zs['z_inr']] , betas=(0.9, 0.999), lr=initial_learning_rate)
-    print (zs['z_nerf'].requires_grad, '+++++++++++++++')
     
     idx = 0
     curriculum['h_mean'] = 0
@@ -183,7 +181,6 @@ class CIPS_3D_Demo(object):
                                     **curriculum)
 
         
-        print (synth_images.requires_grad,'=---------')
         l1 = l1loss(synth_images, target_images)
         # Downsample image to 256x256 if it's larger than that. VGG was built for 224x224 images.
         # synth_images = (synth_images + 1) * (255/2)
@@ -199,6 +196,7 @@ class CIPS_3D_Demo(object):
         # reg_loss += zs['z_inr'].mean()**2
         # loss = reg_loss * regularize_noise_weight + dist + l1
         # print ('reg_loss:', reg_loss, 'dist:', dist,  'l1:', l1)
+        print  (l1)
         loss = l1
         # Step
         optimizer.zero_grad(set_to_none=True)
