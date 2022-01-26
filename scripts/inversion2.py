@@ -47,9 +47,6 @@ class CIPS_3D_Demo(object):
             **kwargs):
     rank = 0
 
-    setup_ddp(rank)
-
-
     network_pkl = st_utils.selectbox('network_pkl', cfg.network_pkl)
     model_pkl_input = st_utils.text_input('model_pkl', "", sidebar=False)
 
