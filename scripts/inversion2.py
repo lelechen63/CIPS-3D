@@ -184,7 +184,6 @@ class CIPS_3D_Demo(object):
 
         
         print (synth_images.requires_grad,'=---------')
-        print (gg)
         l1 = l1loss(synth_images, target_images)
         # Downsample image to 256x256 if it's larger than that. VGG was built for 224x224 images.
         # synth_images = (synth_images + 1) * (255/2)
