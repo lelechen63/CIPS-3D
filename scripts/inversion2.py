@@ -64,10 +64,10 @@ class CIPS_3D_Demo(object):
     print (cfg)
     generator = GeneratorNerfINR(
         z_dim = 256,
-        nerf_cfg = cfg.nerf_cfg,
-        inr_cfg = cfg.inr_cfg,
-        mapping_nerf_cfg =cfg.mapping_nerf_cfg,
-        mapping_inr_cfg =cfg.mapping_inr_cfg
+        nerf_cfg = cfg.G_cfg.nerf_cfg,
+        inr_cfg = cfg.G_cfg.inr_cfg,
+        mapping_nerf_cfg =cfg.G_cfg.mapping_nerf_cfg,
+        mapping_inr_cfg =cfg.G_cfg.mapping_inr_cfg
     )
     # ddp
     rank == 0
