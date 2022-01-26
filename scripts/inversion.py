@@ -76,6 +76,9 @@ class CIPS_3D_Demo(object):
     target_uint8 = image.astype(np.uint8)
     target=torch.tensor(target_uint8.transpose([2, 0, 1]), device=device)
     target_images = target.unsqueeze(0).to(device).to(torch.float32)
+    
+    img = cv2.imread()
+
     if target_images.shape[2] > 256:
         target_images = F.interpolate(target_images, size=(256, 256), mode='area')
     target_features = vgg16(target_images, resize_images=False, return_lpips=True)
@@ -123,7 +126,6 @@ class CIPS_3D_Demo(object):
         # grad_points = forward_points ** 2,
         camera_lookup=cur_camera_lookup,
         **curriculum)
-
     synth_images = (synth_images + 1) * (255/2)
     tmp_frm = (synth_images.squeeze().permute(1,2,0) )
     tmp_frm = tmp_frm.detach().cpu().numpy()
@@ -133,9 +135,7 @@ class CIPS_3D_Demo(object):
                                
     # optimize the zs.
     num_steps                  = 8000
-    w_avg_samples              = 10000
     initial_learning_rate      = 0.1
-    initial_noise_factor       = 0.05
     lr_rampdown_length         = 0.25
     lr_rampup_length           = 0.05
     noise_ramp_length          = 0.75    
@@ -146,7 +146,9 @@ class CIPS_3D_Demo(object):
       'z_inr': torch.randn((1, 512), device=device, requires_grad=True),
     }
     optimizer = torch.optim.Adam([zs['z_nerf']] + [zs['z_inr']] , betas=(0.9, 0.999), lr=initial_learning_rate)
-    
+    l1loss =  nn.L1Loss()
+    l1loss   = l1loss.to(device)
+
 
     for step in tqdm(range(num_steps)):
         t = step / num_steps
@@ -154,6 +156,7 @@ class CIPS_3D_Demo(object):
         lr_ramp = 0.5 - 0.5 * np.cos(lr_ramp * np.pi)
         lr_ramp = lr_ramp * min(1.0, t / lr_rampup_length)
         lr = initial_learning_rate * lr_ramp
+        lr = 
         for param_group in optimizer.param_groups:
             param_group['lr'] = lr
 
@@ -172,18 +175,20 @@ class CIPS_3D_Demo(object):
             synth_images = F.interpolate(synth_images, size=(256, 256), mode='area')
         # Features for synth images.
         synth_features = vgg16(synth_images, resize_images=False, return_lpips=True)
-        dist = (target_features - synth_features).square().sum()      
+        dist = (target_features - synth_features).square().sum() 
+        l1 = l1loss(synth_images, target_images)     
         # l1 = (target_images - synth_images).square().sum()
         reg_loss = zs['z_nerf'].mean()**2
         reg_loss += zs['z_inr'].mean()**2
-        loss = reg_loss * regularize_noise_weight + dist # + l1 * 1e-4
-        print ('reg_loss:', reg_loss.data, 'dist:', dist.data )#,  'l1:', l1.data)
+        loss = reg_loss * regularize_noise_weight + dist + l1 * 1e-4
+        print ('reg_loss:', reg_loss.data, 'dist:', dist.data ),  'l1:', l1.data)
     
         # Step
         optimizer.zero_grad(set_to_none=True)
         loss.backward()
         optimizer.step()
         if step % 100 == 0:
+            print (synth_images.max(), synth_images.min(),'++++')
             synth_images = (synth_images + 1) * (255/2)
             tmp_frm = (synth_images.squeeze().permute(1,2,0) )
             tmp_frm = tmp_frm.detach().cpu().numpy()

@@ -1391,7 +1391,6 @@ class GeneratorNerfINR(GeneratorNerfINR_base):
 
     if forward_points is not None:
       # stage forward
-      print ('0--11111')
       with torch.no_grad():
         num_points = img_size ** 2
         inr_img_output = torch.zeros((batch_size, num_points, 3), device=device)
