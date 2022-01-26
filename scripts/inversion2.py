@@ -32,6 +32,20 @@ from torchvision import transforms
 
 from tl2.modelarts import modelarts_utils, moxing_utils
 from torch.nn.parallel import DistributedDataParallel as DDP
+import torch.distributed as dist
+
+
+
+def setup_ddp(rank, world_size, port):
+  os.environ['MASTER_ADDR'] = 'localhost'
+  os.environ['MASTER_PORT'] = port
+
+  # initialize the process group
+  # dist.init_process_group("gloo", rank=rank, world_size=world_size)
+  dist.init_process_group("nccl", rank=rank, world_size=world_size)
+  torch.cuda.set_device(rank)
+  pass
+
 
 class CIPS_3D_Demo(object):
   def __init__(self):
@@ -43,6 +57,10 @@ class CIPS_3D_Demo(object):
             outdir,
             debug=False,
             **kwargs):
+    rank = 0
+
+    setup_ddp(rank, 8, '12355')
+
 
     network_pkl = st_utils.selectbox('network_pkl', cfg.network_pkl)
     model_pkl_input = st_utils.text_input('model_pkl', "", sidebar=False)
@@ -62,15 +80,12 @@ class CIPS_3D_Demo(object):
     alpha_pi_div = st_utils.number_input('alpha_pi_div', cfg.alpha_pi_div, sidebar=True)
 
     forward_points = st_utils.number_input('forward_points', cfg.forward_points, sidebar=True)
-    rank = 0
+
     device = torch.device(rank)
-    print (cfg)
     generator = build_model(cfg=cfg.G_cfg).to(device)
-   
     
     moxing_utils.setup_tl_outdir_obs(global_cfg)
     moxing_utils.modelarts_sync_results_dir(global_cfg, join=True)
-    device = torch.device(rank)
     generator_ddp = DDP(generator, device_ids=[rank], find_unused_parameters=True, broadcast_buffers=False)
     generator = generator_ddp.module
     generator.set_device(device)
