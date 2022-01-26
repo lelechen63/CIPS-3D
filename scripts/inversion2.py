@@ -70,7 +70,7 @@ class CIPS_3D_Demo(object):
         mapping_inr_cfg =cfg.G_cfg.mapping_inr_cfg
     )
     # ddp
-    rank == 0
+    rank = 0
     moxing_utils.setup_tl_outdir_obs(global_cfg)
     moxing_utils.modelarts_sync_results_dir(global_cfg, join=True)
     device = torch.device(rank)
