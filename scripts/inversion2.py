@@ -69,6 +69,8 @@ class CIPS_3D_Demo(object):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     generator = build_model(cfg=cfg.G_cfg)
+    generator.load_state_dict(torch.load('datasets/pretrained/train_ffhq_high-20220105_143314_190/resume_iter_645500/generator.pth'))
+
     generator = nn.DataParallel(generator, device_ids=[0,1,2,3,4,5,6]).cuda()
     
     moxing_utils.setup_tl_outdir_obs(global_cfg)
@@ -76,7 +78,7 @@ class CIPS_3D_Demo(object):
     # generator = nn.DataParallel(generator)
     # generator_ddp = DDP(generator, device_ids=[rank], find_unused_parameters=True, broadcast_buffers=False)
     # generator.set_device(device)
-    Checkpointer(generator).load_state_dict_from_file(model_pkl)
+    # Checkpointer(generator).load_state_dict_from_file(model_pkl)
 
     # mode, model_pkl = network_pkl.split(':')
     # model_pkl = model_pkl.strip(' ')
