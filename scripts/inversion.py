@@ -76,19 +76,19 @@ class CIPS_3D_Demo(object):
     l1loss =  nn.L1Loss()
     l1loss   = l1loss.to(device)
     # cv2
-    target_img = cv2.imread('results/model_interpolation/0.png')
-    convert_tensor = transforms.ToTensor()
-    target_img = convert_tensor(target_img)
+    # target_img = cv2.imread('results/model_interpolation/0.png')
+    # convert_tensor = transforms.ToTensor()
+    # target_img = convert_tensor(target_img)
+    # target_images = target_img.unsqueeze(0).to(device).to(torch.float32)
     #pil
-    # target_pil = PIL.Image.open('results/model_interpolation/0.png')
-    # image = np.array(target_pil)
-    # target_uint8 = image.astype(np.uint8)
-    # target=torch.tensor(target_uint8.transpose([2, 0, 1]), device=device)
-
-    target_images = target_img.unsqueeze(0).to(device).to(torch.float32)
-    # if target_images.shape[2] > 256:
-    #     target_images = F.interpolate(target_images, size=(256, 256), mode='area')
-    # target_features = vgg16(target_images, resize_images=False, return_lpips=True)
+    target_pil = PIL.Image.open('results/model_interpolation/0.png')
+    image = np.array(target_pil)
+    target_uint8 = image.astype(np.uint8)
+    target=torch.tensor(target_uint8.transpose([2, 0, 1]), device=device)
+    target_images = target.unsqueeze(0).to(device).to(torch.float32)
+    if target_images.shape[2] > 256:
+        target_images = F.interpolate(target_images, size=(256, 256), mode='area')
+    target_features = vgg16(target_images, resize_images=False, return_lpips=True)
 
     curriculum = comm_utils.get_metadata_from_json(metafile=cfg.metadata,
                                                    num_steps=num_steps,
@@ -137,7 +137,7 @@ class CIPS_3D_Demo(object):
     fov = fov_list[idx]
     curriculum['fov'] = fov
     
-    generator.eval
+    generator.eval()
     for step in tqdm(range(num_steps)):
 
         synth_images, depth_map = generator.forward_camera_pos_and_lookup(
@@ -160,21 +160,21 @@ class CIPS_3D_Demo(object):
         
         l1 = l1loss(synth_images, target_images)
         # Downsample image to 256x256 if it's larger than that. VGG was built for 224x224 images.
-        # synth_images = (synth_images + 1) * (255/2)
-        # if synth_images.shape[2] > 256:
-        #     synth_images = F.interpolate(synth_images, size=(256, 256), mode='area')
-        # # Features for synth images.
-        # synth_features = vgg16(synth_images, resize_images=False, return_lpips=True)
-        # dist = (target_features - synth_features).square().sum()      
-        # l1 = (target_images - synth_images).square().sum()  
-        # print (target_images.max(), target_images.min(),synth_images.max(), synth_images.min(),'+++++++' )
+        synth_images = (synth_images + 1) * (255/2)
+        if synth_images.shape[2] > 256:
+            synth_images = F.interpolate(synth_images, size=(256, 256), mode='area')
+        # Features for synth images.
+        synth_features = vgg16(synth_images, resize_images=False, return_lpips=True)
+        dist = (target_features - synth_features).square().sum()      
+        l1 = (target_images - synth_images).square().sum()  
+        print (target_images.max(), target_images.min(),synth_images.max(), synth_images.min(),'+++++++' )
         
         # reg_loss = zs['z_nerf'].mean()**2
         # reg_loss += zs['z_inr'].mean()**2
-        # loss = reg_loss * regularize_noise_weight + dist + l1
-        # print ('reg_loss:', reg_loss, 'dist:', dist,  'l1:', l1)
-        loss = l1
-        print (l1)
+        reg_loss = 0
+        loss = reg_loss * regularize_noise_weight + dist + l1
+        print ('reg_loss:', reg_loss, 'dist:', dist,  'l1:', l1)
+        
         # Step
         optimizer.zero_grad(set_to_none=True)
         loss.backward()
