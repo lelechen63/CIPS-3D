@@ -86,6 +86,7 @@ class CIPS_3D_Demo(object):
     target_uint8 = image.astype(np.uint8)
     target=torch.tensor(target_uint8.transpose([2, 0, 1]), device=device)
     target_images = target.unsqueeze(0).to(device).to(torch.float32)
+    print (target_images.shape)
     if target_images.shape[2] > 256:
         target_images = F.interpolate(target_images, size=(256, 256), mode='area')
     target_features = vgg16(target_images, resize_images=False, return_lpips=True)
@@ -157,8 +158,6 @@ class CIPS_3D_Demo(object):
 
         cv2.imwrite(img_name, tmp_frm)
         
-        
-        l1 = l1loss(synth_images, target_images)
         # Downsample image to 256x256 if it's larger than that. VGG was built for 224x224 images.
         synth_images = (synth_images + 1) * (255/2)
         if synth_images.shape[2] > 256:
