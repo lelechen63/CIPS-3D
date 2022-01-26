@@ -107,10 +107,10 @@ class CIPS_3D_Demo(object):
     pitch = info['pitch']
     fov_list = [fov] * len(xyz)
     
-    zs = {
-      'z_nerf': torch.from_numpy(info['z_nerf']).to(device),
-      'z_inr': torch.from_numpy(info['z_inr']).to(device),
-    }
+    # zs = {
+    #   'z_nerf': torch.from_numpy(info['z_nerf']).to(device),
+    #   'z_inr': torch.from_numpy(info['z_inr']).to(device),
+    # }
     num_steps                  = 8000
     w_avg_samples              = 10000
     initial_learning_rate      = 0.1
@@ -120,11 +120,11 @@ class CIPS_3D_Demo(object):
     noise_ramp_length          = 0.75    
     regularize_noise_weight    = 1
 
-    # zs = {
-    #   'z_nerf': torch.randn((1, 256), device=device, requires_grad=True),
-    #   'z_inr': torch.randn((1, 512), device=device, requires_grad=True),
-    # }
-    # optimizer = torch.optim.Adam([zs['z_nerf']] + [zs['z_inr']] , betas=(0.9, 0.999), lr=initial_learning_rate)
+    zs = {
+      'z_nerf': torch.randn((1, 256), device=device, requires_grad=True),
+      'z_inr': torch.randn((1, 512), device=device, requires_grad=True),
+    }
+    optimizer = torch.optim.Adam([zs['z_nerf']] + [zs['z_inr']] , betas=(0.9, 0.999), lr=initial_learning_rate)
     
     idx = 0
     curriculum['h_mean'] = 0
@@ -137,7 +137,6 @@ class CIPS_3D_Demo(object):
     fov = fov_list[idx]
     curriculum['fov'] = fov
     
-    # generator = copy.deepcopy(generator).requires_grad_(True).to(device)
     generator.eval
     for step in tqdm(range(num_steps)):
 
@@ -149,7 +148,6 @@ class CIPS_3D_Demo(object):
             grad_points = forward_points ** 2,
             camera_lookup=cur_camera_lookup,
             **curriculum)
-        print (synth_images.requires_grad,'!!!!')
         synth_images = (synth_images + 1) * (255/2)
         tmp_frm = (synth_images.squeeze().permute(1,2,0) )
         tmp_frm = tmp_frm.detach().cpu().numpy()
