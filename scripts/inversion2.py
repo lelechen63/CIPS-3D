@@ -176,7 +176,7 @@ class CIPS_3D_Demo(object):
         with torch.cuda.amp.autocast(False):
             synth_images, depth_map = generator(zs = zs,
                                 return_aux_img=False,
-                                grad_points=grad_points,
+                                # grad_points=grad_points,
                                 forward_points=forward_points ** 2,
                                 camera_pos=cur_camera_pos,
                                 camera_lookup=cur_camera_lookup,
