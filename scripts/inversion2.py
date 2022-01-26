@@ -174,13 +174,22 @@ class CIPS_3D_Demo(object):
         #     **curriculum)
 
         with torch.cuda.amp.autocast(False):
-            synth_images, depth_map = generator(zs = zs,
-                                return_aux_img=False,
-                                # grad_points=grad_points,
-                                forward_points=forward_points ** 2,
-                                camera_pos=cur_camera_pos,
-                                camera_lookup=cur_camera_lookup,
-                                **curriculum)
+
+            synth_images, depth_map = generator.forward_camera_pos_and_lookup(
+            zs=zs,
+            return_aux_img=False,
+            forward_points=None,# forward_points ** 2,
+            camera_pos=cur_camera_pos,
+            camera_lookup=cur_camera_lookup,
+            **curriculum)
+
+            # synth_images, depth_map = generator(zs = zs,
+            #                     return_aux_img=False,
+            #                     grad_points=grad_points,
+            #                     forward_points=forward_points ** 2,
+            #                     camera_pos=cur_camera_pos,
+            #                     camera_lookup=cur_camera_lookup,
+            #                     **curriculum)
         if step == 0:
             synth_images = (synth_images + 1) * (255/2)
             tmp_frm = (synth_images.squeeze().permute(1,2,0) )
