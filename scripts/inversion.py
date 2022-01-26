@@ -149,14 +149,14 @@ class CIPS_3D_Demo(object):
             grad_points = forward_points ** 2,
             camera_lookup=cur_camera_lookup,
             **curriculum)
-        synth_images = (synth_images + 1) * (255/2)
-        tmp_frm = (synth_images.squeeze().permute(1,2,0) )
-        tmp_frm = tmp_frm.detach().cpu().numpy()
-        img_name = Path(f'generated3.png')
-        img_name = f"{outdir}/{img_name}"
-        tmp_frm = cv2.cvtColor(tmp_frm, cv2.COLOR_RGB2BGR)
+        # synth_images = (synth_images + 1) * (255/2)
+        # tmp_frm = (synth_images.squeeze().permute(1,2,0) )
+        # tmp_frm = tmp_frm.detach().cpu().numpy()
+        # img_name = Path(f'generated3.png')
+        # img_name = f"{outdir}/{img_name}"
+        # tmp_frm = cv2.cvtColor(tmp_frm, cv2.COLOR_RGB2BGR)
 
-        cv2.imwrite(img_name, tmp_frm)
+        # cv2.imwrite(img_name, tmp_frm)
         
         # Downsample image to 256x256 if it's larger than that. VGG was built for 224x224 images.
         synth_images = (synth_images + 1) * (255/2)
