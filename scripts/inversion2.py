@@ -180,6 +180,7 @@ class CIPS_3D_Demo(object):
             zs=zs,
             return_aux_img=False,
             forward_points= forward_points ** 2,
+            grad_points=grad_points,
             camera_pos=cur_camera_pos,
             camera_lookup=cur_camera_lookup,
             **curriculum)
