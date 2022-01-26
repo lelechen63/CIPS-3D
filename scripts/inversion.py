@@ -144,10 +144,10 @@ class CIPS_3D_Demo(object):
 
         synth_images, depth_map = generator.forward_camera_pos_and_lookup(
             zs=zs,
-            return_aux_img=False,
+            return_aux_img= False,
             forward_points= forward_points ** 2,
-            camera_pos=cur_camera_pos,
-            grad_points = forward_points ** 2
+            camera_pos= cur_camera_pos,
+            grad_points = forward_points ** 2,
             camera_lookup=cur_camera_lookup,
             **curriculum)
         print (synth_images.requires_grad,'=---------')
