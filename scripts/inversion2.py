@@ -38,7 +38,7 @@ import torch.distributed as dist
 
 def setup_ddp(rank, world_size, port):
   os.environ['MASTER_ADDR'] = 'localhost'
-#   os.environ['MASTER_PORT'] = port
+  os.environ['MASTER_PORT'] = port
 
   # initialize the process group
   # dist.init_process_group("gloo", rank=rank, world_size=world_size)
@@ -58,7 +58,7 @@ class CIPS_3D_Demo(object):
             **kwargs):
     rank = 0
 
-    setup_ddp(rank, 8, '12355')
+    setup_ddp(rank, 8, '12345')
 
 
     network_pkl = st_utils.selectbox('network_pkl', cfg.network_pkl)
