@@ -74,15 +74,14 @@ class CIPS_3D_Demo(object):
     target_pil = PIL.Image.open('results/model_interpolation/0.png')
     image = np.array(target_pil)
     target_uint8 = image.astype(np.uint8)
+    print (target_uint8.max(), target_uint8.min(),'====')
     target=torch.tensor(target_uint8.transpose([2, 0, 1]), device=device)
     target_images = target.unsqueeze(0).to(device).to(torch.float32)
-    
-    img = cv2.imread()
-
+    print (target_images.max(), target_images.min(),'====')
     if target_images.shape[2] > 256:
         target_images = F.interpolate(target_images, size=(256, 256), mode='area')
     target_features = vgg16(target_images, resize_images=False, return_lpips=True)
-
+    print (target_images.max(), target_images.min(),'====')
     curriculum = comm_utils.get_metadata_from_json(metafile=cfg.metadata,
                                                    num_steps=num_steps,
                                                    image_size=image_size,
@@ -126,6 +125,7 @@ class CIPS_3D_Demo(object):
         # grad_points = forward_points ** 2,
         camera_lookup=cur_camera_lookup,
         **curriculum)
+    print (synth_images.max(), synth_images.min(),'===++++=')
     synth_images = (synth_images + 1) * (255/2)
     tmp_frm = (synth_images.squeeze().permute(1,2,0) )
     tmp_frm = tmp_frm.detach().cpu().numpy()
