@@ -161,20 +161,8 @@ class CIPS_3D_Demo(object):
     curriculum['fov'] = fov
     
     grad_points = 256 ** 2
-    with torch.cuda.amp.autocast(False):
-        synth_images, depth_map = generator(zs = zs,
-                                return_aux_img=False,
-                                grad_points=grad_points,
-                                forward_points=forward_points ** 2,
-                                camera_pos=cur_camera_pos,
-                                camera_lookup=cur_camera_lookup,
-                                **curriculum)
-    synth_images = (synth_images + 1) * (255/2)
-    tmp_frm = (synth_images.squeeze().permute(1,2,0) )
-    tmp_frm = tmp_frm.detach().cpu().numpy()
-    img_name = Path(f'generated3.png')
-    img_name = f"{outdir}/{img_name}"
-    tmp_frm = cv2.cvtColor(tmp_frm, cv2.COLOR_RGB2BGR)
+    
+    
 
     cv2.imwrite(img_name, tmp_frm)
 
@@ -196,7 +184,13 @@ class CIPS_3D_Demo(object):
                                 camera_pos=cur_camera_pos,
                                 camera_lookup=cur_camera_lookup,
                                 **curriculum)
-
+        if step == 0:
+            synth_images = (synth_images + 1) * (255/2)
+            tmp_frm = (synth_images.squeeze().permute(1,2,0) )
+            tmp_frm = tmp_frm.detach().cpu().numpy()
+            img_name = Path(f'generated3.png')
+            img_name = f"{outdir}/{img_name}"
+            tmp_frm = cv2.cvtColor(tmp_frm, cv2.COLOR_RGB2BGR)
         
         l1 = l1loss(synth_images, target_images)
         # Downsample image to 256x256 if it's larger than that. VGG was built for 224x224 images.
