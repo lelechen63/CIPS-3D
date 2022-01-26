@@ -69,7 +69,7 @@ class CIPS_3D_Demo(object):
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 
     generator = build_model(cfg=cfg.G_cfg)
-    generator = nn.DataParallel(generator, device_ids=[0,1,2,3,4,5,6]).cuda()
+    generator = nn.DataParallel(generator).cuda()
     
     moxing_utils.setup_tl_outdir_obs(global_cfg)
     moxing_utils.modelarts_sync_results_dir(global_cfg, join=True)
