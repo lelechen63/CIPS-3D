@@ -144,11 +144,11 @@ class CIPS_3D_Demo(object):
     regularize_noise_weight    = 1
 
     zs = {
-      'z_nerf': torch.randn((1, 256), device=device, requires_grad=True),
-      'z_inr': torch.randn((1, 512), device=device, requires_grad=True),
+      'z_nerf': torch.randn((1, 256), device=device, requires_grad=False),
+      'z_inr': torch.randn((1, 512), device=device, requires_grad=False),
     }
     
-    optimizer = torch.optim.Adam([zs['z_nerf']] + [zs['z_inr']] , betas=(0.9, 0.999), lr=initial_learning_rate)
+    # optimizer = torch.optim.Adam([zs['z_nerf']] + [zs['z_inr']] , betas=(0.9, 0.999), lr=initial_learning_rate)
     
     idx = 0
     curriculum['h_mean'] = 0
@@ -166,21 +166,12 @@ class CIPS_3D_Demo(object):
     
     for step in tqdm(range(num_steps)):
 
-        # synth_images, depth_map = generator.forward_camera_pos_and_lookup(
-        #     zs=zs,
-        #     return_aux_img=False,
-        #     forward_points=None,# forward_points ** 2,
-        #     camera_pos=cur_camera_pos,
-        #     camera_lookup=cur_camera_lookup,
-        #     **curriculum)
-
         with torch.cuda.amp.autocast(False):
-
             synth_images, depth_map = generator.forward_camera_pos_and_lookup(
             zs=zs,
             return_aux_img=False,
             forward_points= forward_points ** 2,
-            grad_points=grad_points,
+            # grad_points=grad_points,
             camera_pos=cur_camera_pos,
             camera_lookup=cur_camera_lookup,
             **curriculum)
