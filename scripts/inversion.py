@@ -159,6 +159,7 @@ class CIPS_3D_Demo(object):
         # cv2.imwrite(img_name, tmp_frm)
         
         # Downsample image to 256x256 if it's larger than that. VGG was built for 224x224 images.
+        print (synth_images.requires_grad,'============')
         synth_images = (synth_images + 1) * (255/2)
         if synth_images.shape[2] > 256:
             synth_images = F.interpolate(synth_images, size=(256, 256), mode='area')
@@ -166,7 +167,7 @@ class CIPS_3D_Demo(object):
         synth_features = vgg16(synth_images, resize_images=False, return_lpips=True)
         dist = (target_features - synth_features).square().sum()      
         # l1 = (target_images - synth_images).square().sum()  
-        print (target_images.max(), target_images.min(),synth_images.max(), synth_images.min(),'+++++++' )
+        # print (target_images.max(), target_images.min(),synth_images.max(), synth_images.min(),'+++++++' )
         l1 = 0
         # reg_loss = zs['z_nerf'].mean()**2
         # reg_loss += zs['z_inr'].mean()**2
