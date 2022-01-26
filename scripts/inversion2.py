@@ -69,21 +69,22 @@ class CIPS_3D_Demo(object):
         mapping_inr_cfg =cfg.mapping_inr_cfg
     )
     # ddp
-    # rank == 0:
-    # moxing_utils.setup_tl_outdir_obs(global_cfg)
-    # moxing_utils.modelarts_sync_results_dir(global_cfg, join=True)
-    # device = torch.device(rank)
-    # generator_ddp = DDP(generator, device_ids=[rank], find_unused_parameters=True, broadcast_buffers=False)
-    # generator = generator_ddp.module
-    # generator.set_device(device)
-
-
-    mode, model_pkl = network_pkl.split(':')
-    model_pkl = model_pkl.strip(' ')
-    generator = build_model(cfg=cfg.G_cfg).to(device)
+    rank == 0
+    moxing_utils.setup_tl_outdir_obs(global_cfg)
+    moxing_utils.modelarts_sync_results_dir(global_cfg, join=True)
+    device = torch.device(rank)
+    generator_ddp = DDP(generator, device_ids=[rank], find_unused_parameters=True, broadcast_buffers=False)
+    generator = generator_ddp.module
+    generator.set_device(device)
     generator.load_state_dict(torch.load('datasets/pretrained/train_ffhq_high-20220105_143314_190/resume_iter_645500'))
-    Checkpointer(generator).load_state_dict_from_file(model_pkl)
-    # torch_utils.requires_grad(generator_ddp, True)
+
+
+    # mode, model_pkl = network_pkl.split(':')
+    # model_pkl = model_pkl.strip(' ')
+    # generator = build_model(cfg=cfg.G_cfg).to(device)
+    # generator.load_state_dict(torch.load('datasets/pretrained/train_ffhq_high-20220105_143314_190/resume_iter_645500'))
+    # Checkpointer(generator).load_state_dict_from_file(model_pkl)
+    torch_utils.requires_grad(generator_ddp, True)
 
     # Load VGG16 feature detector.
     url = 'https://nvlabs-fi-cdn.nvidia.com/stylegan2-ada-pytorch/pretrained/metrics/vgg16.pt'
@@ -158,16 +159,28 @@ class CIPS_3D_Demo(object):
     curriculum['fov'] = fov
     
     # generator = copy.deepcopy(generator).requires_grad_(True).to(device)
+    grad_points = 256 ** 2
 
     for step in tqdm(range(num_steps)):
 
-        synth_images, depth_map = generator.forward_camera_pos_and_lookup(
-            zs=zs,
-            return_aux_img=False,
-            forward_points=None,# forward_points ** 2,
-            camera_pos=cur_camera_pos,
-            camera_lookup=cur_camera_lookup,
-            **curriculum)
+        # synth_images, depth_map = generator.forward_camera_pos_and_lookup(
+        #     zs=zs,
+        #     return_aux_img=False,
+        #     forward_points=None,# forward_points ** 2,
+        #     camera_pos=cur_camera_pos,
+        #     camera_lookup=cur_camera_lookup,
+        #     **curriculum)
+
+        with torch.cuda.amp.autocast(False):
+            synth_images, depth_map = generator_ddp(zs = zs,
+                                    return_aux_img=False,
+                                    grad_points=grad_points,
+                                    forward_points=forward_points ** 2,
+                                    camera_pos=cur_camera_pos,
+                                    camera_lookup=cur_camera_lookup,
+                                    **curriculum)
+
+        
         print (synth_images.requires_grad,'=---------')
         print (gg)
         l1 = l1loss(synth_images, target_images)
