@@ -135,7 +135,7 @@ class CIPS_3D_Demo(object):
                                
     # optimize the zs.
     num_steps                  = 8000
-    initial_learning_rate      = 0.1
+    initial_learning_rate      = 0.01
     lr_rampdown_length         = 0.25
     lr_rampup_length           = 0.05
     noise_ramp_length          = 0.75    
@@ -151,11 +151,12 @@ class CIPS_3D_Demo(object):
 
 
     for step in tqdm(range(num_steps)):
-        t = step / num_steps
-        lr_ramp = min(1.0, (1.0 - t) / lr_rampdown_length)
-        lr_ramp = 0.5 - 0.5 * np.cos(lr_ramp * np.pi)
-        lr_ramp = lr_ramp * min(1.0, t / lr_rampup_length)
-        lr = initial_learning_rate * lr_ramp
+        # t = step / num_steps
+        # lr_ramp = min(1.0, (1.0 - t) / lr_rampdown_length)
+        # lr_ramp = 0.5 - 0.5 * np.cos(lr_ramp * np.pi)
+        # lr_ramp = lr_ramp * min(1.0, t / lr_rampup_length)
+        lr_ramp = -int(step/1000)
+        lr = min(0.00001, initial_learning_rate * 10**lr_ramp)
         for param_group in optimizer.param_groups:
             param_group['lr'] = lr
 
