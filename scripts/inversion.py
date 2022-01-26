@@ -165,9 +165,9 @@ class CIPS_3D_Demo(object):
         # Features for synth images.
         synth_features = vgg16(synth_images, resize_images=False, return_lpips=True)
         dist = (target_features - synth_features).square().sum()      
-        l1 = (target_images - synth_images).square().sum()  
+        # l1 = (target_images - synth_images).square().sum()  
         print (target_images.max(), target_images.min(),synth_images.max(), synth_images.min(),'+++++++' )
-        
+        l1 = 0
         # reg_loss = zs['z_nerf'].mean()**2
         # reg_loss += zs['z_inr'].mean()**2
         reg_loss = 0
