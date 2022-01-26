@@ -87,6 +87,7 @@ class CIPS_3D_Demo(object):
     # generator.load_state_dict(torch.load('datasets/pretrained/train_ffhq_high-20220105_143314_190/resume_iter_645500'))
     # Checkpointer(generator).load_state_dict_from_file(model_pkl)
     torch_utils.requires_grad(generator, True)
+    generator.eval
 
     # Load VGG16 feature detector.
     url = 'https://nvlabs-fi-cdn.nvidia.com/stylegan2-ada-pytorch/pretrained/metrics/vgg16.pt'
