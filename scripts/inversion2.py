@@ -31,20 +31,9 @@ from torch import nn
 from torchvision import transforms
 
 from tl2.modelarts import modelarts_utils, moxing_utils
-from torch.nn.parallel import DistributedDataParallel as DDP
-import torch.distributed as dist
 
 
 
-def setup_ddp(rank):
-  
-
-  # initialize the process group
-  # dist.init_process_group("gloo", rank=rank, world_size=world_size)
-  dist.init_process_group(backend='nccl', init_method='env://')
-#   dist.init_process_group("nccl", rank=rank, world_size=world_size)
-  torch.cuda.set_device(rank)
-  print ('--------')
 
 class CIPS_3D_Demo(object):
   def __init__(self):
@@ -80,14 +69,16 @@ class CIPS_3D_Demo(object):
 
     forward_points = st_utils.number_input('forward_points', cfg.forward_points, sidebar=True)
 
-    device = torch.device(rank)
-    generator = build_model(cfg=cfg.G_cfg).to(device)
+    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+    generator = build_model(cfg=cfg.G_cfg)
+    generator = nn.DataParallel(generator, device_ids=[0,1,2,3,4,5,6,7]).cuda()
     
     moxing_utils.setup_tl_outdir_obs(global_cfg)
     moxing_utils.modelarts_sync_results_dir(global_cfg, join=True)
-    generator_ddp = DDP(generator, device_ids=[rank], find_unused_parameters=True, broadcast_buffers=False)
-    generator = generator_ddp.module
-    generator.set_device(device)
+    # generator = nn.DataParallel(generator)
+    # generator_ddp = DDP(generator, device_ids=[rank], find_unused_parameters=True, broadcast_buffers=False)
+    # generator.set_device(device)
     generator.load_state_dict(torch.load('datasets/pretrained/train_ffhq_high-20220105_143314_190/resume_iter_645500'))
 
 
@@ -96,7 +87,7 @@ class CIPS_3D_Demo(object):
     # generator = build_model(cfg=cfg.G_cfg).to(device)
     # generator.load_state_dict(torch.load('datasets/pretrained/train_ffhq_high-20220105_143314_190/resume_iter_645500'))
     # Checkpointer(generator).load_state_dict_from_file(model_pkl)
-    torch_utils.requires_grad(generator_ddp, True)
+    torch_utils.requires_grad(generator, True)
 
     # Load VGG16 feature detector.
     url = 'https://nvlabs-fi-cdn.nvidia.com/stylegan2-ada-pytorch/pretrained/metrics/vgg16.pt'
@@ -184,7 +175,7 @@ class CIPS_3D_Demo(object):
         #     **curriculum)
 
         with torch.cuda.amp.autocast(False):
-            synth_images, depth_map = generator_ddp(zs = zs,
+            synth_images, depth_map = generator(zs = zs,
                                     return_aux_img=False,
                                     grad_points=grad_points,
                                     forward_points=forward_points ** 2,
