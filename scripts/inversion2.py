@@ -67,12 +67,13 @@ class CIPS_3D_Demo(object):
 
     forward_points = st_utils.number_input('forward_points', cfg.forward_points, sidebar=True)
 
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
+    # device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+    device = torch.device('cuda')
     generator = build_model(cfg=cfg.G_cfg)
     generator.load_state_dict(torch.load('datasets/pretrained/train_ffhq_high-20220105_143314_190/resume_iter_645500/generator.pth'))
 
-    generator = nn.DataParallel(generator, device_ids=[0,1,2,3,4,5,6]).cuda()
+    # generator = nn.DataParallel(generator, device_ids=[0,1,2,3,4,5,6])
+    generator = generator.cuda()
     
     moxing_utils.setup_tl_outdir_obs(global_cfg)
     moxing_utils.modelarts_sync_results_dir(global_cfg, join=True)
@@ -178,7 +179,7 @@ class CIPS_3D_Demo(object):
             synth_images, depth_map = generator.forward_camera_pos_and_lookup(
             zs=zs,
             return_aux_img=False,
-            forward_points=None,# forward_points ** 2,
+            forward_points= forward_points ** 2,
             camera_pos=cur_camera_pos,
             camera_lookup=cur_camera_lookup,
             **curriculum)
