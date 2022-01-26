@@ -107,10 +107,10 @@ class CIPS_3D_Demo(object):
     pitch = info['pitch']
     fov_list = [fov] * len(xyz)
     
-    # zs = {
-    #   'z_nerf': torch.from_numpy(info['z_nerf']).to(device),
-    #   'z_inr': torch.from_numpy(info['z_inr']).to(device),
-    # }
+    zs = {
+      'z_nerf': torch.from_numpy(info['z_nerf']).to(device),
+      'z_inr': torch.from_numpy(info['z_inr']).to(device),
+    }
     num_steps                  = 8000
     w_avg_samples              = 10000
     initial_learning_rate      = 0.1
@@ -120,12 +120,11 @@ class CIPS_3D_Demo(object):
     noise_ramp_length          = 0.75    
     regularize_noise_weight    = 1
 
-    zs = {
-      'z_nerf': torch.randn((1, 256), device=device, requires_grad=True),
-      'z_inr': torch.randn((1, 512), device=device, requires_grad=True),
-    }
-    optimizer = torch.optim.Adam([zs['z_nerf']] + [zs['z_inr']] , betas=(0.9, 0.999), lr=initial_learning_rate)
-    print (zs['z_nerf'].requires_grad, '+++++++++++++++')
+    # zs = {
+    #   'z_nerf': torch.randn((1, 256), device=device, requires_grad=True),
+    #   'z_inr': torch.randn((1, 512), device=device, requires_grad=True),
+    # }
+    # optimizer = torch.optim.Adam([zs['z_nerf']] + [zs['z_inr']] , betas=(0.9, 0.999), lr=initial_learning_rate)
     
     idx = 0
     curriculum['h_mean'] = 0
@@ -147,9 +146,18 @@ class CIPS_3D_Demo(object):
             return_aux_img= False,
             forward_points= forward_points ** 2,
             camera_pos= cur_camera_pos,
-            grad_points = forward_points ** 2,
+            # grad_points = forward_points ** 2,
             camera_lookup=cur_camera_lookup,
             **curriculum)
+        synth_images = (synth_images + 1) * (255/2)
+        tmp_frm = (synth_images.squeeze().permute(1,2,0) )
+        tmp_frm = tmp_frm.detach().cpu().numpy()
+        img_name = Path(f'generated3.png')
+        img_name = f"{outdir}/{img_name}"
+        tmp_frm = cv2.cvtColor(tmp_frm, cv2.COLOR_RGB2BGR)
+
+        cv2.imwrite(img_name, tmp_frm)
+        
         
         l1 = l1loss(synth_images, target_images)
         # Downsample image to 256x256 if it's larger than that. VGG was built for 224x224 images.
