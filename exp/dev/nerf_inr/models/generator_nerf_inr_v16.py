@@ -1869,6 +1869,7 @@ class GeneratorNerfINR(GeneratorNerfINR_base):
         raw_style_dict=style_dict, avg_style_dict=avg_styles, raw_lambda=psi)
 
     if grad_points is not None and grad_points < img_size ** 2:
+      print ('++++++-')
       imgs, pitch_yaw = self.part_grad_forward(
         style_dict=style_dict,
         img_size=img_size,
@@ -1894,6 +1895,7 @@ class GeneratorNerfINR(GeneratorNerfINR_base):
       )
       return imgs, pitch_yaw
     else:
+      print ('-------')
       imgs, pitch_yaw = self.whole_grad_forward(
         style_dict=style_dict,
         img_size=img_size,
