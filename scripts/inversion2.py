@@ -65,13 +65,14 @@ class CIPS_3D_Demo(object):
 
     device = torch.device('cuda')
     print (cfg)
-    generator = GeneratorNerfINR(
-        z_dim = 256,
-        nerf_cfg = cfg.G_cfg.nerf_cfg,
-        inr_cfg = cfg.G_cfg.inr_cfg,
-        mapping_nerf_cfg =cfg.G_cfg.mapping_nerf_cfg,
-        mapping_inr_cfg =cfg.G_cfg.mapping_inr_cfg
-    )
+    generator = build_model(cfg=global_cfg.G_cfg).to(device)
+    # generator = GeneratorNerfINR(
+    #     z_dim = 256,
+    #     nerf_cfg = cfg.G_cfg.nerf_cfg,
+    #     inr_cfg = cfg.G_cfg.inr_cfg,
+    #     mapping_nerf_cfg =cfg.G_cfg.mapping_nerf_cfg,
+    #     mapping_inr_cfg =cfg.G_cfg.mapping_inr_cfg
+    # )
     # ddp
     rank = 0
     moxing_utils.setup_tl_outdir_obs(global_cfg)
