@@ -44,8 +44,7 @@ def setup_ddp(rank, world_size, port):
   # dist.init_process_group("gloo", rank=rank, world_size=world_size)
   dist.init_process_group("nccl", rank=rank, world_size=world_size)
   torch.cuda.set_device(rank)
-  pass
-
+  print ('--------')
 
 class CIPS_3D_Demo(object):
   def __init__(self):
