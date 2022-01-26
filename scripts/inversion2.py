@@ -62,19 +62,12 @@ class CIPS_3D_Demo(object):
     alpha_pi_div = st_utils.number_input('alpha_pi_div', cfg.alpha_pi_div, sidebar=True)
 
     forward_points = st_utils.number_input('forward_points', cfg.forward_points, sidebar=True)
-
-    device = torch.device('cuda')
+    rank = 0
+    device = torch.device(rank)
     print (cfg)
     generator = build_model(cfg=cfg.G_cfg).to(device)
-    # generator = GeneratorNerfINR(
-    #     z_dim = 256,
-    #     nerf_cfg = cfg.G_cfg.nerf_cfg,
-    #     inr_cfg = cfg.G_cfg.inr_cfg,
-    #     mapping_nerf_cfg =cfg.G_cfg.mapping_nerf_cfg,
-    #     mapping_inr_cfg =cfg.G_cfg.mapping_inr_cfg
-    # )
-    # ddp
-    rank = 0
+   
+    
     moxing_utils.setup_tl_outdir_obs(global_cfg)
     moxing_utils.modelarts_sync_results_dir(global_cfg, join=True)
     device = torch.device(rank)
