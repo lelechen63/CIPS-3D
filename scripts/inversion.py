@@ -97,10 +97,6 @@ class CIPS_3D_Demo(object):
     pitch = info['pitch']
     fov_list = [fov] * len(xyz)
     
-    # zs = {
-    #   'z_nerf': torch.from_numpy(info['z_nerf']).to(device),
-    #   'z_inr': torch.from_numpy(info['z_inr']).to(device),
-    # }
     num_steps                  = 8000
     w_avg_samples              = 10000
     initial_learning_rate      = 0.1
@@ -123,6 +119,11 @@ class CIPS_3D_Demo(object):
     
     generator.eval()
     # check the correctness of the params
+    zs = {
+      'z_nerf': torch.from_numpy(info['z_nerf']).to(device),
+      'z_inr': torch.from_numpy(info['z_inr']).to(device),
+    }
+    
     synth_images, depth_map = generator.forward_camera_pos_and_lookup(
         zs=zs,
         return_aux_img= False,
