@@ -138,7 +138,7 @@ class CIPS_3D_Demo(object):
     curriculum['fov'] = fov
     
     # generator = copy.deepcopy(generator).requires_grad_(True).to(device)
-
+    generator.eval
     for step in tqdm(range(num_steps)):
 
         synth_images, depth_map = generator.forward_camera_pos_and_lookup(
@@ -149,6 +149,7 @@ class CIPS_3D_Demo(object):
             grad_points = forward_points ** 2,
             camera_lookup=cur_camera_lookup,
             **curriculum)
+        print (synth_images.requires_grad,'!!!!')
         synth_images = (synth_images + 1) * (255/2)
         tmp_frm = (synth_images.squeeze().permute(1,2,0) )
         tmp_frm = tmp_frm.detach().cpu().numpy()
