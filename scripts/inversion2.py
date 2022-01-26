@@ -65,7 +65,7 @@ class CIPS_3D_Demo(object):
 
     device = torch.device('cuda')
     print (cfg)
-    generator = build_model(cfg=global_cfg.G_cfg).to(device)
+    generator = build_model(cfg=cfg.G_cfg).to(device)
     # generator = GeneratorNerfINR(
     #     z_dim = 256,
     #     nerf_cfg = cfg.G_cfg.nerf_cfg,
