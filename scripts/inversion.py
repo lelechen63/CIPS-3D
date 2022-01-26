@@ -146,7 +146,7 @@ class CIPS_3D_Demo(object):
             return_aux_img= False,
             forward_points= forward_points ** 2,
             camera_pos= cur_camera_pos,
-            # grad_points = forward_points ** 2,
+            grad_points = forward_points ** 2,
             camera_lookup=cur_camera_lookup,
             **curriculum)
         synth_images = (synth_images + 1) * (255/2)
