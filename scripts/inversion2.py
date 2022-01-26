@@ -76,7 +76,7 @@ class CIPS_3D_Demo(object):
     # generator = nn.DataParallel(generator)
     # generator_ddp = DDP(generator, device_ids=[rank], find_unused_parameters=True, broadcast_buffers=False)
     # generator.set_device(device)
-    generator.load_state_dict(torch.load('datasets/pretrained/train_ffhq_high-20220105_143314_190/resume_iter_645500'))
+    generator.load_state_dict(torch.load('datasets/pretrained/train_ffhq_high-20220105_143314_190/resume_iter_645500/generator.pth'))
 
 
     # mode, model_pkl = network_pkl.split(':')
