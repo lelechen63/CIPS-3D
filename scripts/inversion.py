@@ -180,7 +180,7 @@ class CIPS_3D_Demo(object):
         reg_loss = zs['z_nerf'].mean()**2
         reg_loss += zs['z_inr'].mean()**2
         loss = reg_loss * regularize_noise_weight + dist + l1 * 1e-4
-        print ('reg_loss:', reg_loss.data, 'dist:', dist.data ),  'l1:', l1.data, 'lr:', lr)
+        print ('reg_loss:', reg_loss.data, 'dist:', dist.data ,  'l1:', l1.data, 'lr:', lr)
     
         # Step
         optimizer.zero_grad(set_to_none=True)
