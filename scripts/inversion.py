@@ -140,6 +140,7 @@ class CIPS_3D_Demo(object):
     
     generator.eval()
     for step in tqdm(range(num_steps)):
+        t = step / num_steps
         lr_ramp = min(1.0, (1.0 - t) / lr_rampdown_length)
         lr_ramp = 0.5 - 0.5 * np.cos(lr_ramp * np.pi)
         lr_ramp = lr_ramp * min(1.0, t / lr_rampup_length)
