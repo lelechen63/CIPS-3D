@@ -37,7 +37,7 @@ import torch.distributed as dist
 
 
 def setup_ddp(rank, world_size, port):
-#   os.environ['MASTER_ADDR'] = 'localhost'
+  os.environ['MASTER_ADDR'] = 'localhost'
 #   os.environ['MASTER_PORT'] = port
 
   # initialize the process group
