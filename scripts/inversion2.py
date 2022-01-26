@@ -61,6 +61,7 @@ class CIPS_3D_Demo(object):
     forward_points = st_utils.number_input('forward_points', cfg.forward_points, sidebar=True)
 
     device = torch.device('cuda')
+    print (cfg)
     generator = GeneratorNerfINR(
         z_dim = 256,
         nerf_cfg = cfg.nerf_cfg,
