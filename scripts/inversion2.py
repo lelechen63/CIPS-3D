@@ -161,7 +161,8 @@ class CIPS_3D_Demo(object):
     curriculum['fov'] = fov
     
     grad_points = 256 ** 2
-    synth_images, depth_map = generator(zs = zs,
+    with torch.cuda.amp.autocast(False):
+        synth_images, depth_map = generator(zs = zs,
                                 return_aux_img=False,
                                 grad_points=grad_points,
                                 forward_points=forward_points ** 2,
@@ -187,8 +188,8 @@ class CIPS_3D_Demo(object):
         #     camera_lookup=cur_camera_lookup,
         #     **curriculum)
 
-        # with torch.cuda.amp.autocast(False):
-        synth_images, depth_map = generator(zs = zs,
+        with torch.cuda.amp.autocast(False):
+            synth_images, depth_map = generator(zs = zs,
                                 return_aux_img=False,
                                 grad_points=grad_points,
                                 forward_points=forward_points ** 2,
