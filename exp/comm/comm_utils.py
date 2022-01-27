@@ -186,6 +186,25 @@ def get_yaw_camera_pos_and_lookup(r=1,
 
   return xyz, lookup, yaws, pitchs
 
+def get_roll_camera_pos_and_lookup(r=1,
+                                  num_samples=36,
+                                  ):
+  xyz = np.zeros((num_samples, 3), dtype=np.float32)
+
+  for idx, theta in enumerate(np.linspace(1, math.pi-1, num_samples)):
+    xyz[idx, 0] = 0
+    xyz[idx, 1] =  r * math.cos(theta)
+    xyz[idx, 2] = r * math.sin(theta)
+  lookup = - xyz
+
+  yaws = np.zeros(num_samples)
+  pitchs = np.zeros(num_samples)
+  for idx, (x, y, z) in enumerate(xyz):
+    yaw, pitch = get_yaw_pitch_by_xyz(x, y, z)
+    yaws[idx] = yaw
+    pitchs[idx] = pitch
+
+  return xyz, lookup, yaws, pitchs
 
 def scatter_points(idx_grad,
                    points_grad,

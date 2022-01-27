@@ -50,7 +50,7 @@ class CIPS_3D_Demo(object):
     alpha_pi_div = st_utils.number_input('alpha_pi_div', cfg.alpha_pi_div, sidebar=True)
 
     # seed
-    # seed = st_utils.get_seed(cfg.seeds_gallery)
+    seed = st_utils.get_seed(cfg.seeds_gallery)
     seed = 1
     # trajectory
     trajectory_mode = st_utils.selectbox('trajectory_mode', cfg.trajectory_mode, sidebar=True)
@@ -108,6 +108,12 @@ class CIPS_3D_Demo(object):
 
     elif trajectory_mode == 'yaw':
       xyz, lookup, yaws, pitchs = comm_utils.get_yaw_camera_pos_and_lookup(num_samples=num_frames, )
+      xyz = torch.from_numpy(xyz).to(device)
+      lookup = torch.from_numpy(lookup).to(device)
+      fov_list = [fov] * len(xyz)
+
+    elif trajectory_mode == 'roll':
+      xyz, lookup, yaws, pitchs = comm_utils.get_roll_camera_pos_and_lookup(num_samples=num_frames, )
       xyz = torch.from_numpy(xyz).to(device)
       lookup = torch.from_numpy(lookup).to(device)
       fov_list = [fov] * len(xyz)
