@@ -186,8 +186,7 @@ class CIPS_3D_Demo(object):
         st_utils.st_image(merged_frame, caption=f"{frame_pil.size}, seed={seed}",
                           debug=debug, st_empty=st_image)
         video_f.write(merged_frame)
-        if debug:
-          break
+
 
       video_f.release(st_video=True)
 
