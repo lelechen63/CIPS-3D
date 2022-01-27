@@ -176,12 +176,12 @@ class CIPS_3D_Demo(object):
         # Features for synth images.
         synth_features = vgg16(synth_images, resize_images=False, return_lpips=True)
         dist = (target_features - synth_features).square().sum() 
-        # l1 = l1loss(synth_images, target_images)     
+        l1 = l1loss(synth_images, target_images)     
         # l1 = (target_images - synth_images).square().sum()
         reg_loss = zs['z_nerf'].mean()**2
         reg_loss += zs['z_inr'].mean()**2
-        loss = reg_loss * regularize_noise_weight + dist# + l1 * 1e-4
-        print ('lr:', lr, 'reg_loss:', reg_loss.data, 'dist:', dist.data )#,  'l1:', l1.data)
+        loss = reg_loss * regularize_noise_weight + dist+ l1 # * 1e-4
+        print ('lr:', lr, 'reg_loss:', reg_loss.data, 'dist:', dist.data ,  'l1:', l1.data)
     
         # Step
         optimizer.zero_grad(set_to_none=True)
