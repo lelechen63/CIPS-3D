@@ -56,7 +56,7 @@ class CIPS_3D_Demo(object):
     trajectory_mode = st_utils.selectbox('trajectory_mode', cfg.trajectory_mode, sidebar=True)
     # print (type(trajectory_mode))
     # print (trajectory_mode)
-    trajectory_mode = 'yaw'
+    trajectory_mode = 'roll'
     forward_points = st_utils.number_input('forward_points', cfg.forward_points, sidebar=True)
 
     # ****************************************************************************
