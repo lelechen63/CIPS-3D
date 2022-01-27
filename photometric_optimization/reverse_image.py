@@ -190,8 +190,8 @@ class PhotometricFitting(object):
             for key in losses.keys():
                 loss_info = loss_info + '{}: {}, '.format(key, float(losses[key]))
 
-            # if k % 10 == 0:
-            #     print(loss_info)
+            if k % 10 == 0:
+                print(loss_info)
 
             # visualize
             if k % 999 == 0:
@@ -255,7 +255,8 @@ class PhotometricFitting(object):
         image_masks = torch.cat(image_masks, dim=0)
         landmarks = torch.cat(landmarks, dim=0)
         # optimize
-        single_params = self.optimize(images, landmarks, image_masks, savefolder= vis_folder)
+        single_params = self.optimize(images, 
+        , image_masks, savefolder= vis_folder)
         # self.render.save_obj(filename=savefile[:-4]+'.obj',
         #                      vertices=torch.from_numpy(single_params['verts'][0]).to(self.device),
         #                      textures=torch.from_numpy(single_params['albedos'][0]).to(self.device)
@@ -270,6 +271,7 @@ class PhotometricFitting(object):
 def demo():
     image_path = "/home/uss00022/lelechen/github/CIPS-3D/results/model_interpolation/0.png"
     img = cv2.imread(image_path)
+    img = cv2.resize(img, (256,256), interpolation = cv2.INTER_AREA)
 
     config = {
         # FLAME
