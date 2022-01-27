@@ -155,10 +155,10 @@ class CIPS_3D_Demo(object):
         # lr_ramp = min(1.0, (1.0 - t) / lr_rampdown_length)
         # lr_ramp = 0.5 - 0.5 * np.cos(lr_ramp * np.pi)
         # lr_ramp = lr_ramp * min(1.0, t / lr_rampup_length)
-        lr_ramp = -int(step/1000)
-        lr = max(0.00001, initial_learning_rate * 10**lr_ramp)
-        for param_group in optimizer.param_groups:
-            param_group['lr'] = lr
+        # lr_ramp = -int(step/1000)
+        # lr = max(0.00001, initial_learning_rate * 10**lr_ramp)
+        # for param_group in optimizer.param_groups:
+        #     param_group['lr'] = lr
 
         synth_images, depth_map = generator.forward_camera_pos_and_lookup(
             zs=zs,
