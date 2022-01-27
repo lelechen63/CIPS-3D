@@ -56,7 +56,7 @@ class CIPS_3D_Demo(object):
     trajectory_mode = st_utils.selectbox('trajectory_mode', cfg.trajectory_mode, sidebar=True)
     # print (type(trajectory_mode))
     # print (trajectory_mode)
-    trajectory_mode = 'roll'
+    trajectory_mode = 'pitch'
     forward_points = st_utils.number_input('forward_points', cfg.forward_points, sidebar=True)
 
     # ****************************************************************************
@@ -114,6 +114,12 @@ class CIPS_3D_Demo(object):
 
     elif trajectory_mode == 'roll':
       xyz, lookup, yaws, pitchs = comm_utils.get_roll_camera_pos_and_lookup(num_samples=num_frames, )
+      xyz = torch.from_numpy(xyz).to(device)
+      lookup = torch.from_numpy(lookup).to(device)
+      fov_list = [fov] * len(xyz)
+
+    elif trajectory_mode == 'pitch':
+      xyz, lookup, yaws, pitchs = comm_utils.get_pitch_camera_pos_and_lookup(num_samples=num_frames, )
       xyz = torch.from_numpy(xyz).to(device)
       lookup = torch.from_numpy(lookup).to(device)
       fov_list = [fov] * len(xyz)
