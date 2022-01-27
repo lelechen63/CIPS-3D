@@ -270,7 +270,7 @@ class PhotometricFitting(object):
 def demo():
     image_path = "/home/uss00022/lelechen/github/CIPS-3D/results/model_interpolation/0.png"
     img = cv2.imread(image_path)
-    img = cv2.resize(img, (256，256), interpolation = cv2.INTER_AREA)
+    img = cv2.resize(img, (256,256), interpolation = cv2.INTER_AREA)
 
     config = {
         # FLAME
