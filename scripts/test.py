@@ -60,9 +60,7 @@ class CIPS_3D_Demo(object):
     forward_points = st_utils.number_input('forward_points', cfg.forward_points, sidebar=True)
 
     # ****************************************************************************
-    # if not debug:
-    #   if not st.sidebar.button("run_web"):
-    #     return
+ 
 
     device = torch.device('cuda')
 
@@ -70,9 +68,6 @@ class CIPS_3D_Demo(object):
     model_pkl = model_pkl.strip(' ')
     generator = build_model(cfg=cfg.G_cfg).to(device)
     Checkpointer(generator).load_state_dict_from_file(model_pkl)
-
-
-   
     curriculum = comm_utils.get_metadata_from_json(metafile=cfg.metadata,
                                                    num_steps=num_steps,
                                                    image_size=image_size,
@@ -121,16 +116,9 @@ class CIPS_3D_Demo(object):
     output_name = Path(f'seed_{seed}.mp4')
     video_f = cv2_utils.ImageioVideoWriter(f"{outdir}/{output_name}", fps=fps)
 
-    # torch.manual_seed(seed)
-    # zs = generator.get_zs(1)
-    # shape=(1, 256)
-    # z = torch.randn((1, 256), device=device)
-
-    zs = {
-      'z_nerf': torch.randn((1, 256), device=device),
-      'z_inr': torch.randn((1, 512), device=device),
-    }
-
+    torch.manual_seed(seed)
+    zs = generator.get_zs(1)
+    
     info = {}
     with torch.no_grad():
       for idx in tqdm.tqdm(range(len(xyz))):
