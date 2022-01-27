@@ -159,7 +159,7 @@ class CIPS_3D_Demo(object):
         # lr = max(0.00001, initial_learning_rate * 10**lr_ramp)
         # for param_group in optimizer.param_groups:
         #     param_group['lr'] = lr
-
+        lr = initial_learning_rate
         synth_images, depth_map = generator.forward_camera_pos_and_lookup(
             zs=zs,
             return_aux_img= False,
