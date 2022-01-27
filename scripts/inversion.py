@@ -168,6 +168,20 @@ class CIPS_3D_Demo(object):
             grad_points = forward_points ** 2,
             camera_lookup=cur_camera_lookup,
             **curriculum)
+        if step % 100 == 0:
+            print (synth_images.max(), synth_images.min(),'++++')
+            save_img = (synth_images.detach().cpu() + 1) * (255/2)
+            tmp_frm = (save_img.squeeze().permute(1,2,0) )
+            tmp_frm = tmp_frm.numpy()
+            img_name = Path(f'generated_{step}.png')
+            img_name = f"{outdir}/{img_name}"
+            tmp_frm = cv2.cvtColor(tmp_frm, cv2.COLOR_RGB2BGR)
+            cv2.imwrite(img_name, tmp_frm)
+            info ={}
+            info[img_name] = {"xyz": xyz.detach().cpu().numpy(), 'cur_camera_pos':cur_camera_pos.detach().cpu().numpy(), 'yaw': yaw,"pitch": pitch, 
+                            'z_nerf': zs['z_nerf'].detach().cpu().numpy(),'z_inr':  zs['z_inr'].detach().cpu().numpy()  }
+            with open(f"{outdir}/output.pkl", 'wb') as handle:
+                pickle.dump(info, handle, protocol=pickle.HIGHEST_PROTOCOL)  
 
         # Downsample image to 256x256 if it's larger than that. VGG was built for 224x224 images.
         synth_images = (synth_images + 1) * (255/2)
@@ -180,27 +194,14 @@ class CIPS_3D_Demo(object):
         # l1 = (target_images - synth_images).square().sum()
         reg_loss = zs['z_nerf'].mean()**2
         reg_loss += zs['z_inr'].mean()**2
-        loss = reg_loss * regularize_noise_weight + dist+ l1 # * 1e-4
+        loss = reg_loss * regularize_noise_weight + dist+ l1  * 1e-2
         print ('lr:', lr, 'reg_loss:', reg_loss.data, 'dist:', dist.data ,  'l1:', l1.data)
     
         # Step
         optimizer.zero_grad(set_to_none=True)
         loss.backward()
         optimizer.step()
-        if step % 100 == 0:
-            print (synth_images.max(), synth_images.min(),'++++')
-            synth_images = (synth_images + 2) * (255/4)
-            tmp_frm = (synth_images.squeeze().permute(1,2,0) )
-            tmp_frm = tmp_frm.detach().cpu().numpy()
-            img_name = Path(f'generated_{step}.png')
-            img_name = f"{outdir}/{img_name}"
-            tmp_frm = cv2.cvtColor(tmp_frm, cv2.COLOR_RGB2BGR)
-            cv2.imwrite(img_name, tmp_frm)
-            info ={}
-            info[img_name] = {"xyz": xyz.detach().cpu().numpy(), 'cur_camera_pos':cur_camera_pos.detach().cpu().numpy(), 'yaw': yaw,"pitch": pitch, 
-                            'z_nerf': zs['z_nerf'].detach().cpu().numpy(),'z_inr':  zs['z_inr'].detach().cpu().numpy()  }
-            with open(f"{outdir}/output.pkl", 'wb') as handle:
-                pickle.dump(info, handle, protocol=pickle.HIGHEST_PROTOCOL)  
+        
 
 def main(outdir,
          cfg_file,
