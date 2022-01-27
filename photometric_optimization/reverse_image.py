@@ -267,6 +267,50 @@ class PhotometricFitting(object):
         return single_params
 
 
+def demo():
+    image_path = "/home/uss00022/lelechen/github/CIPS-3D/results/model_interpolation/0.png"
+    img = cv2.imread(image_path)
+
+    config = {
+        # FLAME
+        'flame_model_path': '/home/uss00022/lelechen/basic/flame_data/data/generic_model.pkl',  # acquire it from FLAME project page
+        'flame_lmk_embedding_path': '/home/uss00022/lelechen/basic/flame_data/data/landmark_embedding.npy',
+        'tex_space_path': '/home/uss00022/lelechen/basic/flame_data/data/FLAME_texture.npz',  # acquire it from FLAME project page
+        'camera_params': 3,
+        'shape_params': 100,
+        'expression_params': 50,
+        'pose_params': 6,
+        'tex_params': 50,
+        'use_face_contour': True,
+
+        'batch_size': 1,
+        'image_size': 256,
+        'e_lr': 0.005,
+        'e_wd': 0.0001,
+        'savefolder': '/home/uss00022/lelechen/github/CIPS-3D/photometric_optimization/gg',
+        # weights of losses and reg terms
+        'w_pho': 8,
+        'w_lmks': 1,
+        'w_shape_reg': 1e-4,
+        'w_expr_reg': 1e-4,
+        'w_pose_reg': 0,
+    }
+
+    config = util.dict2obj(config)
+    
+    k =  parse_args().k
+    gpuid = k % 7
+    # gpuid = 6
+    config.batch_size = 1
+    fitting = PhotometricFitting(config, device="cuda:%d"%gpuid)
+
+ 
+    params = fitting.run(img, vis_folder = config.savefolder )
+              
+
+
+
+
 def parse_args():
     parser = argparse.ArgumentParser()
 
@@ -276,7 +320,7 @@ def parse_args():
     return parser.parse_args()
 
 
-if __name__ == "__main__":
+def main():
     # image_path = "./test_images/69956.png"
     # img = imageio.imread(image_path)
 
@@ -333,10 +377,4 @@ if __name__ == "__main__":
                 print (idx, image['label'])
                 continue 
 
-    # print (paramsets)
-    # # with open('/nfs/STG   /CodecAvatar/lelechen/FFHQ/ffhq-dataset/flame_p.pickle', 'wb') as handle:
-    # #     pickle.dump(paramsets, handle, protocol=pickle.HIGHEST_PROTOCOL)
     
-    # with open('/nfs/STG/CodecAvatar/lelechen/FFHQ/ffhq-dataset/fldame_p.pickle', 'rb') as handle:
-    #     b = pickle.load(handle)
-    # # print (b)
