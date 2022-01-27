@@ -60,6 +60,7 @@ class CIPS_3D_Demo(object):
 
     # trajectory
     trajectory_mode = st_utils.selectbox('trajectory_mode', cfg.trajectory_mode, sidebar=True)
+    trajectory_mode = 'translate_circle_near_far'
     forward_points = st_utils.number_input('forward_points', cfg.forward_points, sidebar=True)
 
     # ****************************************************************************
