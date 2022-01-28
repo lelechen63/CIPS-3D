@@ -99,7 +99,7 @@ class CIPS_3D_Demo(object):
     st_image = st.empty()
     
     # seed
-    seed = 2
+    seed = 3
     # for seed in range(0, 70000):
     print (xyz_list[0], yaws_list[0], pitchs_list[0] )
     torch.manual_seed(seed)
