@@ -72,25 +72,29 @@ class CIPS_3D_Demo(object):
                                                    num_steps=num_steps,
                                                    image_size=image_size,
                                                    psi=psi)
+    xyz_list = []
+    lookup_list = []
+    yaws_list = []
+    pitchs_list = []
+    fov_list = []
 
-    if trajectory_mode == 'circle_near_far':
-      xyz, lookup, yaws, pitchs = comm_utils.get_circle_camera_pos_and_lookup(
-        alpha=math.pi / alpha_pi_div, num_samples=num_frames, periods=2)
-      xyz = torch.from_numpy(xyz).to(device)
-      lookup = torch.from_numpy(lookup).to(device)
-      fov_list = []
-      for idx, t in enumerate(np.linspace(0, 1, num_frames)):
-        fov_list.append(fov + t * (max_fov - fov))
-      fov_list.extend(fov_list[::-1])
-
-
-    elif trajectory_mode == 'circle':
-      xyz, lookup, yaws, pitchs = comm_utils.get_circle_camera_pos_and_lookup(alpha=math.pi / alpha_pi_div,
+    # circle
+    xyz, lookup, yaws, pitchs = comm_utils.get_circle_camera_pos_and_lookup(alpha=math.pi / alpha_pi_div,
                                                                               num_samples=num_frames,
                                                                               periods=2)
-      xyz = torch.from_numpy(xyz).to(device)
-      lookup = torch.from_numpy(lookup).to(device)
-      fov_list = [fov] * len(xyz)
+    print (type(xyz))
+    print (type(lookup))
+    print (type(yaws))
+    print (type(pitchs))
+    xyz_list.append(xyz)
+    lookup_list.append(lookup)
+    yaws_list.append(yaws)
+    pitchs_list.append(pitchs)
+      
+      
+      # xyz = torch.from_numpy(xyz).to(device)
+      # lookup = torch.from_numpy(lookup).to(device)
+      
 
     elif trajectory_mode == 'yaw':
       xyz, lookup, yaws, pitchs = comm_utils.get_yaw_camera_pos_and_lookup(num_samples=num_frames, )
@@ -136,8 +140,7 @@ class CIPS_3D_Demo(object):
         print ('cur_camera_lookup', cur_camera_lookup)
         print ('yaw', yaw)
         print ('pitch', pitch)
-        
-
+      
 
         frame, depth_map = generator.forward_camera_pos_and_lookup(
           zs=zs,
