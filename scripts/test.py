@@ -96,7 +96,7 @@ class CIPS_3D_Demo(object):
       # lookup = torch.from_numpy(lookup).to(device)
       
 
-    elif trajectory_mode == 'yaw':
+    if trajectory_mode == 'yaw':
       xyz, lookup, yaws, pitchs = comm_utils.get_yaw_camera_pos_and_lookup(num_samples=num_frames, )
       xyz = torch.from_numpy(xyz).to(device)
       lookup = torch.from_numpy(lookup).to(device)
