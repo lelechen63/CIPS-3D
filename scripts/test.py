@@ -40,28 +40,18 @@ class CIPS_3D_Demo(object):
     psi = st_utils.number_input('psi', cfg.psi, sidebar=True)
 
     fps = st_utils.number_input('fps', cfg.fps, sidebar=True)
-    num_frames = st_utils.number_input('num_frames', cfg.num_frames, sidebar=True)
+    # num_frames = st_utils.number_input('num_frames', cfg.num_frames, sidebar=True)
 
     num_samples_translate = st_utils.number_input('num_samples_translate', cfg.num_samples_translate, sidebar=True)
     translate_dist = st_utils.number_input('translate_dist', 0.04, sidebar=True)
 
     fov = st_utils.number_input('fov', cfg.fov, sidebar=True)
     max_fov = st_utils.number_input('max_fov', cfg.max_fov, sidebar=True)
-    alpha_pi_div = st_utils.number_input('alpha_pi_div', cfg.alpha_pi_div, sidebar=True)
-
-    # seed
-    seed = st_utils.get_seed(cfg.seeds_gallery)
-    seed = 1
-    # trajectory
-    trajectory_mode = st_utils.selectbox('trajectory_mode', cfg.trajectory_mode, sidebar=True)
-    # print (type(trajectory_mode))
-    # print (trajectory_mode)
-    trajectory_mode = 'circle'
+    # alpha_pi_div = st_utils.number_input('alpha_pi_div', cfg.alpha_pi_div, sidebar=True)
+  
     forward_points = st_utils.number_input('forward_points', cfg.forward_points, sidebar=True)
 
     # ****************************************************************************
- 
-
     device = torch.device('cuda')
 
     mode, model_pkl = network_pkl.split(':')
@@ -79,28 +69,23 @@ class CIPS_3D_Demo(object):
     fov_list = []
 
     # circle
-    xyz, lookup, yaws, pitchs = comm_utils.get_circle_camera_pos_and_lookup(alpha=math.pi / alpha_pi_div,
-                                                                              num_samples=num_frames,
-                                                                              periods=2)
-    print (type(xyz))
-    print (type(lookup))
-    print (type(yaws))
-    print (type(pitchs))
+    xyz, lookup, yaws, pitchs = comm_utils.get_circle_camera_pos_and_lookup(alpha=math.pi / 2,
+                                                                              num_samples=10,
+                                                                              periods=1)
     xyz_list = xyz
     lookup_list = lookup
     yaws_list = yaws
     pitchs_list = pitchs
       
     # yaw
-    xyz, lookup, yaws, pitchs = comm_utils.get_yaw_camera_pos_and_lookup(num_samples=num_frames, )
+    xyz, lookup, yaws, pitchs = comm_utils.get_yaw_camera_pos_and_lookup(num_samples=10, )
     xyz_list = np.concatenate((xyz_list, xyz), axis = 0)  
     lookup_list = np.concatenate((lookup_list, lookup), axis = 0)   
     yaws_list = np.concatenate((yaws_list, yaws), axis = 0)    
     pitchs_list = np.concatenate((pitchs_list, pitchs), axis = 0)    
     
-  
     #'roll'
-    xyz, lookup, yaws, pitchs = comm_utils.get_roll_camera_pos_and_lookup(num_samples=num_frames, )
+    xyz, lookup, yaws, pitchs = comm_utils.get_roll_camera_pos_and_lookup(num_samples=10, )
     xyz_list = np.concatenate((xyz_list, xyz), axis = 0)
     lookup_list = np.concatenate((lookup_list, lookup), axis = 0)   
     yaws_list = np.concatenate((yaws_list, yaws), axis = 0)    
@@ -111,13 +96,16 @@ class CIPS_3D_Demo(object):
     lookup_list = torch.from_numpy(lookup_list).to(device)
     fov_list = [fov] * len(xyz_list)
 
-
     st_image = st.empty()
     output_name = Path(f'seed_{seed}.mp4')
     video_f = cv2_utils.ImageioVideoWriter(f"{outdir}/{output_name}", fps=fps)
 
-    torch.manual_seed(seed)
-    zs = generator.get_zs(1)
+    # seed
+
+    for seed in range(0, 70000):
+
+      torch.manual_seed(seed)
+      zs = generator.get_zs(1)
     
     info = {}
     with torch.no_grad():
