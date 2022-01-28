@@ -101,11 +101,11 @@ class CIPS_3D_Demo(object):
     video_f = cv2_utils.ImageioVideoWriter(f"{outdir}/{output_name}", fps=fps)
 
     # seed
+    see = 1
+    # for seed in range(0, 70000):
 
-    for seed in range(0, 70000):
-
-      torch.manual_seed(seed)
-      zs = generator.get_zs(1)
+    torch.manual_seed(seed)
+    zs = generator.get_zs(1)
     
     info = {}
     with torch.no_grad():
