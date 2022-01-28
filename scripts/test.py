@@ -69,7 +69,7 @@ class CIPS_3D_Demo(object):
     fov_list = []
 
     # circle
-    xyz, lookup, yaws, pitchs = comm_utils.get_circle_camera_pos_and_lookup(alpha=math.pi / 2,
+    xyz, lookup, yaws, pitchs = comm_utils.get_circle_camera_pos_and_lookup(alpha=math.pi / 5,
                                                                               num_samples=10,
                                                                               periods=1)
     xyz_list = xyz
