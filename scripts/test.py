@@ -86,33 +86,32 @@ class CIPS_3D_Demo(object):
     print (type(lookup))
     print (type(yaws))
     print (type(pitchs))
-    xyz_list.append(xyz)
-    lookup_list.append(lookup)
-    yaws_list.append(yaws)
-    pitchs_list.append(pitchs)
+    xyz_list = xyz
+    lookup_list = lookup
+    yaws_list = yaws
+    pitchs_list = pitchs
       
-      
-      # xyz = torch.from_numpy(xyz).to(device)
-      # lookup = torch.from_numpy(lookup).to(device)
-      
+    # yaw
+    xyz, lookup, yaws, pitchs = comm_utils.get_yaw_camera_pos_and_lookup(num_samples=num_frames, )
 
-    if trajectory_mode == 'yaw':
-      xyz, lookup, yaws, pitchs = comm_utils.get_yaw_camera_pos_and_lookup(num_samples=num_frames, )
-      xyz = torch.from_numpy(xyz).to(device)
-      lookup = torch.from_numpy(lookup).to(device)
-      fov_list = [fov] * len(xyz)
+    xyz_list = np.concatenate(xyz_list, xyz)  
+    lookup_list = np.concatenate(lookup_list, lookup)   
+    yaws_list = np.concatenate(yaws_list, yaws)  
+    pitchs_list = np.concatenate(pitchs_list, pitchs)  
+    
+  
+    #'roll'
+    xyz, lookup, yaws, pitchs = comm_utils.get_roll_camera_pos_and_lookup(num_samples=num_frames, )
+    xyz_list = np.concatenate(xyz_list, xyz)  
+    lookup_list = np.concatenate(lookup_list, lookup)   
+    yaws_list = np.concatenate(yaws_list, yaws)  
+    pitchs_list = np.concatenate(pitchs_list, pitchs)  
+    
+    
+    xyz_list = torch.from_numpy(xyz_list).to(device)
+    lookup_list = torch.from_numpy(lookup_list).to(device)
+    fov_list = [fov] * len(xyz_list)
 
-    elif trajectory_mode == 'roll':
-      xyz, lookup, yaws, pitchs = comm_utils.get_roll_camera_pos_and_lookup(num_samples=num_frames, )
-      xyz = torch.from_numpy(xyz).to(device)
-      lookup = torch.from_numpy(lookup).to(device)
-      fov_list = [fov] * len(xyz)
-
-    elif trajectory_mode == 'pitch':
-      xyz, lookup, yaws, pitchs = comm_utils.get_pitch_camera_pos_and_lookup(num_samples=num_frames, )
-      xyz = torch.from_numpy(xyz).to(device)
-      lookup = torch.from_numpy(lookup).to(device)
-      fov_list = [fov] * len(xyz)
 
     st_image = st.empty()
     output_name = Path(f'seed_{seed}.mp4')
@@ -123,16 +122,16 @@ class CIPS_3D_Demo(object):
     
     info = {}
     with torch.no_grad():
-      for idx in tqdm.tqdm(range(len(xyz))):
+      for idx in tqdm.tqdm(range(len(xyz_list))):
         curriculum['h_mean'] = 0
         curriculum['v_mean'] = 0
         curriculum['h_stddev'] = 0
         curriculum['v_stddev'] = 0
 
-        cur_camera_pos = xyz[[idx]]
-        cur_camera_lookup = lookup[[idx]]
-        yaw = yaws[idx]
-        pitch = pitchs[idx]
+        cur_camera_pos = xyz_list[[idx]]
+        cur_camera_lookup = lookup_list[[idx]]
+        yaw = yaws_list[idx]
+        pitch = pitchs_list[idx]
         fov = fov_list[idx]
         curriculum['fov'] = fov
 
