@@ -93,19 +93,18 @@ class CIPS_3D_Demo(object):
       
     # yaw
     xyz, lookup, yaws, pitchs = comm_utils.get_yaw_camera_pos_and_lookup(num_samples=num_frames, )
-
     xyz_list = np.concatenate(xyz_list, xyz)  
-    lookup_list = np.concatenate(lookup_list, lookup)   
-    yaws_list = np.concatenate(yaws_list, yaws)  
-    pitchs_list = np.concatenate(pitchs_list, pitchs)  
+    lookup_list = np.concatenate((lookup_list, lookup), axis = 0)   
+    yaws_list = np.concatenate((yaws_list, yaws), axis = 0)    
+    pitchs_list = np.concatenate((pitchs_list, pitchs), axis = 0)    
     
   
     #'roll'
     xyz, lookup, yaws, pitchs = comm_utils.get_roll_camera_pos_and_lookup(num_samples=num_frames, )
     xyz_list = np.concatenate(xyz_list, xyz)  
-    lookup_list = np.concatenate(lookup_list, lookup)   
-    yaws_list = np.concatenate(yaws_list, yaws)  
-    pitchs_list = np.concatenate(pitchs_list, pitchs)  
+    lookup_list = np.concatenate((lookup_list, lookup), axis = 0)   
+    yaws_list = np.concatenate((yaws_list, yaws), axis = 0)    
+    pitchs_list = np.concatenate((pitchs_list, pitchs), axis = 0)   
     
     
     xyz_list = torch.from_numpy(xyz_list).to(device)
