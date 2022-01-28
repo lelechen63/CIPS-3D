@@ -39,7 +39,7 @@ class CIPS_3D_Demo(object):
     image_size = st_utils.number_input('image_size', cfg.image_size, sidebar=True)
     psi = st_utils.number_input('psi', cfg.psi, sidebar=True)
 
-    fps = st_utils.number_input('fps', cfg.fps, sidebar=True)
+    # fps = st_utils.number_input('fps', cfg.fps, sidebar=True)
     # num_frames = st_utils.number_input('num_frames', cfg.num_frames, sidebar=True)
 
     num_samples_translate = st_utils.number_input('num_samples_translate', cfg.num_samples_translate, sidebar=True)
@@ -99,14 +99,14 @@ class CIPS_3D_Demo(object):
     st_image = st.empty()
     
     # seed
-    seed = 1
+    seed = 2
     # for seed in range(0, 70000):
-
+    print (xyz_list[0], yaws_list[0], pitchs_list[0] )
     torch.manual_seed(seed)
     zs = generator.get_zs(1)
 
     output_name = Path(f'seed_{seed}.mp4')
-    video_f = cv2_utils.ImageioVideoWriter(f"{outdir}/{output_name}", fps=fps)
+    video_f = cv2_utils.ImageioVideoWriter(f"{outdir}/{output_name}", fps=5)
 
     
     
