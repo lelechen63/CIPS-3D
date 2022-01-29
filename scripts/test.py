@@ -108,8 +108,7 @@ class CIPS_3D_Demo(object):
     output_name = Path(f'seed_{seed}.mp4')
     video_f = cv2_utils.ImageioVideoWriter(f"{outdir}/{output_name}", fps=5)
 
-    
-    
+  
     info = {}
     with torch.no_grad():
       for idx in tqdm.tqdm(range(len(xyz_list))):
