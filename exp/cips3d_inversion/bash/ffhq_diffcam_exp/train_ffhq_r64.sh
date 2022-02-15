@@ -2,7 +2,6 @@ set -x
 
 # v2
 
-
 # Env vars e.g.
 PROJ_NAME=CIPS-3D
 
@@ -62,19 +61,17 @@ export PORT=12345
 #
 export PYTHONPATH=.:./tl2_lib
 
-# bash = bash CIPS-3D/exp/cips3d/bash/afhq_exp/train_afhq_r128.sh 0 bucket-3690
+# bash = bash CIPS-3D/exp/cips3d_inversion/bash/ffhq_diffcam_exp/train_ffhq_r64.sh 0 bucket-3690
 
-python -c "from exp.tests.test_cips3d import Testing_afhq_exp;\
-  Testing_afhq_exp().test_train_afhq(debug=False)" \
+python -c "from exp.tests.test_cips3d_inversion import Testing_ffhq_diffcam_exp;\
+  Testing_ffhq_diffcam_exp().test_train_ffhq(debug=False)" \
   --tl_opts \
-    batch_size 4 img_size 128 total_iters 800000 \
-    gen_lr 0.0001 disc_lr 0.001 r1_lambda 10. nerf_noise_disable True \
+    batch_size 4 img_size 64 total_iters 200000 \
     warmup_D True fade_steps 10000 \
-    train_aux_img True G_kwargs.num_steps 24 \
-    load_finetune True finetune_dir results/CIPS-3D/afhq_exp/train_afhq-20220120_122125_662/ckptdir/resume
-
-
-
+    train_aux_img True G_kwargs.nerf_kwargs.N_samples 12 G_kwargs.nerf_kwargs.N_importance 24 \
+    load_finetune False
+#    load_finetune True finetune_dir results/CIPS-3D/ffhq_exp/train_ffhq-20211231_221845_770/ckptdir/best_fid
+#  --tl_outdir results/ffhq_exp/train_ffhq
 
 
 

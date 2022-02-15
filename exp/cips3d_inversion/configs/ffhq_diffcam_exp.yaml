@@ -37,8 +37,8 @@ obs_inception_v3: &obs_inception_v3
 
 G_cfg_3D2D: &G_cfg_3D2D
   register_modules:
-  - exp.cips3d.models.generator_v1
-  name: exp.cips3d.models.generator_v1.GeneratorNerfINR
+  - exp.cips3d_inversion.models.generator
+  name: exp.cips3d_inversion.models.generator.Generator_Diffcam
   z_dim: 256
   optim:
     lr: 0.0002
@@ -76,15 +76,22 @@ G_cfg_3D2D: &G_cfg_3D2D
     norm_out: true
 
 G_kwargs: &G_kwargs
-  fov: 12
-  ray_start: 0.88
-  ray_end: 1.12
-  num_steps: 12
-  h_stddev: 0.3
-  v_stddev: 0.155
-  hierarchical_sample: true
   psi: 1.
-  sample_dist: 'gaussian'
+  nerf_kwargs:
+#    near: 0.3
+#    far: 1.7
+    near: 0.5
+    far: 1.5
+#    near: 0.88
+#    far: 1.12
+    N_samples: 12
+    N_importance: 24
+    raw_noise_std: 0. # 1.0
+    eps: 1.e-10
+    h_stddev: 0.3
+    v_stddev: 0.155
+    sample_dist: 'gaussian'
+
 
 _build_generator:
   G_cfg: *G_cfg_3D2D
@@ -127,7 +134,7 @@ _setup_evaluation:
 
 _gen_images:
   base: train_ffhq
-  network_pkl: cache_pretrained/cips3d/G_ema_ffhq.pth
+  pkl_dir: "cache_pretrained/cips3d"
 
 _save_images:
   base: train_ffhq
@@ -148,6 +155,7 @@ train_ffhq:
   use_amp_D: false
   gen_lr: 0.0002
   disc_lr: 0.002
+  cam_lr: 0.0001
   betas: [0, 0.999]
   fixed_z_bs: 25
   total_iters: 200000
@@ -178,7 +186,7 @@ train_ffhq:
   load_G_ema: true
   reset_best_fid: false
   load_finetune: false
-  finetune_dir: "results/CIPS-3D/ffhq_exp/train_ffhq-20211231_221845_770/ckptdir/best_fid"
+  finetune_dir: "results/CIPS-3D/ffhq_diffcam_exp/train_ffhq-20220124_164043_043/ckptdir/resume"
 
 
 train_ffhq_high:
