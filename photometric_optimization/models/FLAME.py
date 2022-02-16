@@ -9,6 +9,7 @@ import torch.nn as nn
 import numpy as np
 import pickle
 import torch.nn.functional as F
+sys.path.append('./photometric_optimization/models')
 
 from lbs import lbs, batch_rodrigues, vertices2landmarks
 
