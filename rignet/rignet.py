@@ -28,7 +28,6 @@ class Latent2CodeModule(pl.LightningModule):
     def __init__(self, flame_config, opt ):
         super().__init__()
         self.save_hyperparameters()
-        self.device = 'cuda'
         self.flame_config = flame_config
     
         self.image_size = self.flame_config.image_size
@@ -86,7 +85,7 @@ class Latent2CodeModule(pl.LightningModule):
         self.latent2albedo = self.latent2albedo.apply(init_weight)
         self.latent2lit = self.latent2lit.apply(init_weight)
 
-        self.flame = FLAME(self.flame_config).to(self.device)
+        self.flame = FLAME(self.flame_config).to('cuda')
         self._setup_landmark_detector()
         self._setup_face_parser()
         self._setup_renderer()
@@ -99,7 +98,7 @@ class Latent2CodeModule(pl.LightningModule):
     
     def _setup_renderer(self):
         mesh_file = '/home/uss00022/lelechen/basic/flame_data/data/head_template_mesh.obj'
-        self.render = Renderer(self.image_size, obj_filename=mesh_file).to(self.device)
+        self.render = Renderer(self.image_size, obj_filename=mesh_file).to('cuda')
     def _setup_face_parser(self):
         self.parse_net = BiSeNet(n_classes=19)
         self.parse_net.cuda()
