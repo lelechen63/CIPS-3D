@@ -55,8 +55,6 @@ def get_debug():
     z_nerf = info['z_nerf'] # [1,256]
     z_gan = info['z_inr'] #[1,512]
 
-
-
     data = {}
     data[name] ={'shape': shape, 
                  'exp': exp,
@@ -64,7 +62,7 @@ def get_debug():
                  'cam': cam,
                  'tex': tex,
                  'lit': lit,
-                 'cam_pose': cam_pose,
+                 'cam_pose': camera_pose,
                  'z_nerf': z_nerf,
                  'z_gan': z_gan
                   }
