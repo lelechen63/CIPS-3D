@@ -44,6 +44,7 @@ def get_debug():
     lit = flame_p['lit'] #[1,9,3]
     camera_pose = info['cur_camera_pos'] #[1,3]
     print (info['yaw'], info['pitch'])
+    print (type(info['yaw']))
     z_nerf = info['z_nerf'] # [1,256]
     z_gan = info['z_inr'] #[1,512]
 
