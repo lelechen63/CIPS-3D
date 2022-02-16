@@ -20,8 +20,11 @@ def debug_single():
         info = pickle.load(handle)
     for key in info.keys():
         print ('=-------------')
-        print (key, info[key].shape )
-        print (info[key])
+        try:
+            print (key, info[key].shape )
+            print (info[key])
+        except:
+            print (key, info[key] )
 
 
 debug_single()
