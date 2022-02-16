@@ -62,7 +62,7 @@ class BaseOptions():
 
         # save to the disk        
         expr_dir = os.path.join(self.opt.checkpoints_dir, self.opt.name)
-        os.makedirs(expr_dir, exist_ok = ok )
+        os.makedirs(expr_dir, exist_ok = True )
         if save and not self.opt.continue_train:
             file_name = os.path.join(expr_dir, 'opt.txt')
             with open(file_name, 'wt') as opt_file:
