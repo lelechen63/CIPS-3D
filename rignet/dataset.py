@@ -15,8 +15,6 @@ from tqdm import tqdm
 import  os, time
 import torchvision.transforms as transforms
 
-
-
 class FFHQDataset(torch.utils.data.Dataset):
     def __init__(self, opt):
         self.opt = opt
