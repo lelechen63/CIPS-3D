@@ -23,7 +23,7 @@ def debug_single():
         print ('=-------------')
         try:
             print (key, info[key].shape )
-            print (info[key])
+            # print (info[key])
         except:
             print (key, info[key] )
 
