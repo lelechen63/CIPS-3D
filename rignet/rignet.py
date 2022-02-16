@@ -28,9 +28,9 @@ class Latent2CodeModule(pl.LightningModule):
     def __init__(self, flame_config, opt ):
         super().__init__()
         self.save_hyperparameters()
-        self.flame_config = flame_config
-        
         self.device = 'cuda'
+        self.flame_config = flame_config
+    
         self.image_size = self.flame_config.image_size
         
         self.visualizer = Visualizer(opt)
