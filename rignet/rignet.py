@@ -30,8 +30,8 @@ class Latent2CodeModule(pl.LightningModule):
         self.save_hyperparameters()
         self.flame_config = flame_config
         
-        self.device = self.flame_config['device']
-        self.image_size = self.flame_config['image_size']
+        self.device = self.flame_config.device
+        self.image_size = self.flame_config.image_size
         
         self.visualizer = Visualizer(opt)
         # networks
