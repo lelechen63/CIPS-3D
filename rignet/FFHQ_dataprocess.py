@@ -26,17 +26,25 @@ def debug_single():
             print (key, info[key] )
 
 
-debug_single()
+# debug_single()
 
 def get_debug():
     with open("/home/uss00022/lelechen/github/CIPS-3D/photometric_optimization/gg/flame_p.pickle", 'rb') as f:
         flame_p = pickle.load(f, encoding='latin1')
-    
-
 
     with open("/home/uss00022/lelechen/github/CIPS-3D/results/model_interpolation/gt.pkl", 'rb') as handle:
         info = pickle.load(handle)
     info = info['results/model_interpolation/0.png']
 
+    shape = flame_p['shape'] #[1,100]
+    exp = flame_p['exp'] #[1,50]
+    pose = flame_p['pose'] #[1,6]
+    cam = flame_p['cam'] #[1,3]
+    tex = flame_p['tex'] #[1,50]
+    lit = flame_p['lit'] #[1,9,3]
+    camera_pose = info['cur_camera_pos'] #[1,3]
+    print (info['yaw'], info['pitch'])
+    z_nerf = info['z_nerf'] # [1,256]
+    z_gan = info['z_inr'] #[1,512]
 
-
+get_debug()
