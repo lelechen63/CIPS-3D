@@ -222,6 +222,7 @@ class PhotometricFitting(object):
             'pose': pose.detach().cpu().numpy(),
             'cam': cam.detach().cpu().numpy(),
             'verts': trans_vertices.detach().cpu().numpy(),
+            'landmark2d': gt_landmark.detach().cpu().numpy() 
             'albedos':albedos.detach().cpu().numpy(),
             'tex': tex.detach().cpu().numpy(),
             'lit': lights.detach().cpu().numpy()
@@ -305,7 +306,6 @@ def demo():
     config.batch_size = 1
     fitting = PhotometricFitting(config, device="cuda:%d"%gpuid)
 
- 
     params = fitting.run(img, vis_folder = config.savefolder )
               
 
