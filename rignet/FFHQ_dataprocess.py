@@ -38,18 +38,24 @@ def get_debug():
     name = '0.png'
     info = info['results/model_interpolation/0.png']
     img_p = '/home/uss00022/lelechen/github/CIPS-3D/results/model_interpolation/0.png'
-    img = cv2.imread()
+    img = cv2.imread(img_p)
     shape = flame_p['shape'] #[1,100]
     exp = flame_p['exp'] #[1,50]
     pose = flame_p['pose'] #[1,6]
     cam = flame_p['cam'] #[1,3]
     tex = flame_p['tex'] #[1,50]
     lit = flame_p['lit'] #[1,9,3]
+    
+    landmark = flame_p['landmark2d']
+    print (landmark.shape, '++++++++')
+    
     camera_pose = info['cur_camera_pos'] #[1,3]
     print (info['yaw'], info['pitch'])
     print (type(info['yaw']))
     z_nerf = info['z_nerf'] # [1,256]
     z_gan = info['z_inr'] #[1,512]
+
+
 
     data = {}
     data[name] ={'shape': shape, 
