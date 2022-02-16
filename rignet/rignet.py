@@ -10,7 +10,6 @@ import os
 from os import path as osp
 import numpy as np
 import pickle
-from torch_scatter import scatter_add
 from PIL import Image
 import cv2
 sys.path.append('./photometric_optimization/')
