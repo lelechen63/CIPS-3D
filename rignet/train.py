@@ -10,7 +10,7 @@ from data import FFHQDataModule
 from options.train_options import TrainOptions
 from pytorch_lightning.callbacks import ModelCheckpoint
 import numpy as np
-
+import sys
 sys.path.append('./photometric_optimization')
 import util
 # define flame config
