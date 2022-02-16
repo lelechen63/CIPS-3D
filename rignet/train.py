@@ -6,7 +6,7 @@ import torch.nn as nn
 import random
 import pickle
 import pytorch_lightning as pl
-from data.data import FFHQDataModule
+from data import FFHQDataModule
 from options import TrainOptions
 from pytorch_lightning.callbacks import ModelCheckpoint
 import numpy as np
