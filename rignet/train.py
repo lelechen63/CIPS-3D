@@ -7,7 +7,7 @@ import random
 import pickle
 import pytorch_lightning as pl
 from data.data import FFHQDataModule
-from options.img2code_train_options import TrainOptions
+from options import TrainOptions
 from pytorch_lightning.callbacks import ModelCheckpoint
 import numpy as np
 import  legacy
