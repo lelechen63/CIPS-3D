@@ -34,8 +34,11 @@ def get_debug():
 
     with open("/home/uss00022/lelechen/github/CIPS-3D/results/model_interpolation/gt.pkl", 'rb') as handle:
         info = pickle.load(handle)
+    
+    name = '0.png'
     info = info['results/model_interpolation/0.png']
-
+    img_p = '/home/uss00022/lelechen/github/CIPS-3D/results/model_interpolation/0.png'
+    img = cv2.imread()
     shape = flame_p['shape'] #[1,100]
     exp = flame_p['exp'] #[1,50]
     pose = flame_p['pose'] #[1,6]
@@ -47,5 +50,17 @@ def get_debug():
     print (type(info['yaw']))
     z_nerf = info['z_nerf'] # [1,256]
     z_gan = info['z_inr'] #[1,512]
+
+    data = {}
+    data[name] ={'shape': shape, 
+                 'exp': exp,
+                 'pose': pose,
+                 'cam': cam,
+                 'tex': tex,
+                 'lit': lit,
+                 'cam_pose': cam_pose,
+                 'z_nerf': z_nerf,
+                 'z_gan': z_gan
+                  }
 
 get_debug()
