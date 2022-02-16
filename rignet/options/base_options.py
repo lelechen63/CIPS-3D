@@ -1,6 +1,5 @@
 import argparse
 import os
-from util import util
 import torch
 
 class BaseOptions():
@@ -63,7 +62,7 @@ class BaseOptions():
 
         # save to the disk        
         expr_dir = os.path.join(self.opt.checkpoints_dir, self.opt.name)
-        util.mkdirs(expr_dir)
+        os.makedirs(expr_dir, exist_ok = ok )
         if save and not self.opt.continue_train:
             file_name = os.path.join(expr_dir, 'opt.txt')
             with open(file_name, 'wt') as opt_file:
