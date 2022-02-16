@@ -15,6 +15,9 @@ from tqdm import tqdm
 import  os, time
 import torchvision.transforms as transforms
 
+
+
+
 class FFHQDataset(torch.utils.data.Dataset):
     def __init__(self, opt):
         self.opt = opt
@@ -41,19 +44,34 @@ class FFHQDataset(torch.utils.data.Dataset):
         transform_list = [transforms.ToTensor()]
         self.transform = transforms.Compose(transform_list)
 
-        print ('******************', len(self.data_list), len(self.total_tex))
+        print ('******************', len(self.data_list), len(self.total_data))
         self.total_t = []
     def __getitem__(self, index):
         t = time.time()
-        tmp = self.data_list[index].split('/')
-        tex = self.total_tex[self.data_list[index]][0].astype(np.uint8)
+        name = self.data_list[index]
 
-        tex_tensor = self.transform(tex)
-        input_dict = { 'Atex':tex_tensor,  'A_path': self.data_list[index]}
-        return input_dict
+        data = self.total_data[self.data_list[index]]
+        """
+            data[name] ={'shape': shape, 
+                 'exp': exp,
+                 'pose': pose,
+                 'cam': cam,
+                 'tex': tex,
+                 'lit': lit,
+                 'cam_pose': camera_pose,
+                 'z_nerf': z_nerf,
+                 'z_gan': z_gan,
+                 'img': img
+                }
+        """
+        print (data.keys())
+
+        # tex_tensor = self.transform(tex)
+        # input_dict = { 'Atex':tex_tensor,  'A_path': self.data_list[index]}
+        # return input_dict
 
     def __len__(self):
-        return len(self.total_tex) // self.opt.batchSize * self.opt.batchSize
+        return len(self.total_data) // self.opt.batchSize * self.opt.batchSize
 
     def name(self):
-        return 'FacescapeTexDataset'
+        return 'FFHQDataset'

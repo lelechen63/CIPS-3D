@@ -24,8 +24,7 @@ def init_weight(module):
         if type(m) in {nn.Conv2d, nn.Linear}:
             nn.init.kaiming_normal_(m.weight, a=0, mode='fan_in', nonlinearity='leaky_relu')
 
-
-class Latent2Code(pl.LightningModule):
+class Latent2CodeModule(pl.LightningModule):
     def __init__(self, flame_config, opt ):
         super().__init__()
         self.save_hyperparameters()
@@ -215,7 +214,7 @@ class Latent2Code(pl.LightningModule):
             genimage = np.clip(genimage, 0, 255)
 
             genlmark = util.tensor_vis_landmarks(batch['gt_image'][visind],landmarks2d[visind])
-            genlmark = tensor_util.tensor2im(genlmark  , normalize = True)
+            genlmark = tensor_util.tensor2im(genlossslmark  , normalize = True)
             genlmark = np.ascontiguousarray(genlmark, dtype=np.uint8)
             genlmark = util.writeText(genlmark, batch['image_path'][0])
             genlmark = np.ascontiguousarray(genlmark, dtype=np.uint8)
