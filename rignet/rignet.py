@@ -168,7 +168,7 @@ class Latent2CodeModule(pl.LightningModule):
                                   list(self.latent2shape.parameters()) + \
                                   list(self.Latent2exp.parameters()) + \
                                   list(self.latent2albedo.parameters()) + \
-                                  list(self.latent2lit.parameters()) + \        
+                                  list(self.latent2lit.parameters()) + \
                                     , lr=lr, betas=(self.opt.beta1, 0.999))
         
 
