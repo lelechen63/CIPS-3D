@@ -49,11 +49,11 @@ if opt.debug:
 if  opt.name == 'Latent2Code':
     from rignet import Latent2CodeModule as module
 
-dm = FFHQDataModule(flame_config, opt)
+dm = FFHQDataModule( opt)
 
 if opt.isTrain:
     print ( opt.name)
-    model = module(opt)
+    model = module(flame_config, opt)
     
     checkpoint_callback = ModelCheckpoint(
         monitor='train_loss',
