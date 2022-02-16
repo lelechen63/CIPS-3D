@@ -14,7 +14,7 @@ def debug_single():
     for key in flame_p.keys():
         print ('=-------------')
         print (key, flame_p[key].shape )
-        print (flame_p[key])
+        # print (flame_p[key])
 
     with open("/home/uss00022/lelechen/github/CIPS-3D/results/model_interpolation/gt.pkl", 'rb') as handle:
         info = pickle.load(handle)
@@ -23,11 +23,21 @@ def debug_single():
         print ('=-------------')
         try:
             print (key, info[key].shape )
-            # print (info[key])
         except:
             print (key, info[key] )
 
 
 debug_single()
+
+def get_debug():
+     with open("/home/uss00022/lelechen/github/CIPS-3D/photometric_optimization/gg/flame_p.pickle", 'rb') as f:
+        flame_p = pickle.load(f, encoding='latin1')
+    
+
+
+    with open("/home/uss00022/lelechen/github/CIPS-3D/results/model_interpolation/gt.pkl", 'rb') as handle:
+        info = pickle.load(handle)
+    info = info['results/model_interpolation/0.png']
+
 
 
