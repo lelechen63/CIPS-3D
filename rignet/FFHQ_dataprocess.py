@@ -39,6 +39,7 @@ def get_debug():
     info = info['results/model_interpolation/0.png']
     img_p = '/home/uss00022/lelechen/github/CIPS-3D/results/model_interpolation/0.png'
     img = cv2.imread(img_p)
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     shape = flame_p['shape'] #[1,100]
     exp = flame_p['exp'] #[1,50]
     pose = flame_p['pose'] #[1,6]
@@ -46,12 +47,9 @@ def get_debug():
     tex = flame_p['tex'] #[1,50]
     lit = flame_p['lit'] #[1,9,3]
     
-    landmark = flame_p['landmark2d']
-    print (landmark.shape, '++++++++')
+    landmark = flame_p['landmark2d'] #[1,68,2]
     
     camera_pose = info['cur_camera_pos'] #[1,3]
-    print (info['yaw'], info['pitch'])
-    print (type(info['yaw']))
     z_nerf = info['z_nerf'] # [1,256]
     z_gan = info['z_inr'] #[1,512]
 
@@ -64,7 +62,10 @@ def get_debug():
                  'lit': lit,
                  'cam_pose': camera_pose,
                  'z_nerf': z_nerf,
-                 'z_gan': z_gan
+                 'z_gan': z_gan,
+                 'img': img
                   }
+    with open("/home/uss00022/lelechen/github/CIPS-3D/photometric_optimization/gg/ffhq_train_debug.pickle", 'wb') as handle:
+            pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 get_debug()
