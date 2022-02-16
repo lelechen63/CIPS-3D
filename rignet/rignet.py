@@ -17,7 +17,7 @@ sys.path.append('./photometric_optimization/')
 from renderer import Renderer
 import util
 from models.FLAME import FLAME, FLAMETex
-from utils.visualizer import Visualizer
+from .utils.visualizer import Visualizer
 
 def init_weight(module):
     for m in module:
