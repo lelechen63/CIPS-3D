@@ -17,7 +17,7 @@ sys.path.append('./photometric_optimization/')
 from renderer import Renderer
 import util
 from models.FLAME import FLAME, FLAMETex
-sys.path.append('./utils/')
+sys.path.append('../utils/')
 from visualizer import Visualizer
 
 def init_weight(module):
