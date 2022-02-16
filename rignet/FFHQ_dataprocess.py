@@ -18,6 +18,7 @@ def debug_single():
 
     with open("/home/uss00022/lelechen/github/CIPS-3D/results/model_interpolation/gt.pkl", 'rb') as handle:
         info = pickle.load(handle)
+    info = info['results/model_interpolation/0.png']
     for key in info.keys():
         print ('=-------------')
         try:
