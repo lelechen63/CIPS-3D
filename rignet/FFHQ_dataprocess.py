@@ -71,8 +71,8 @@ def get_debug():
                  'z_gan': z_gan,
                  'img': img
                 }
-    with open("/home/uss00022/lelechen/github/CIPS-3D/photometric_optimization/gg/ffhq_train_debug.pickle", 'wb') as handle:
+    with open("/home/uss00022/lelechen/github/CIPS-3D/photometric_optimization/gg/ffhq_train_debug.pkl", 'wb') as handle:
         pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
-    with open("/home/uss00022/lelechen/github/CIPS-3D/photometric_optimization/gg/ffhq_trainlist_debug.pickle", 'wb') as handle:
+    with open("/home/uss00022/lelechen/github/CIPS-3D/photometric_optimization/gg/ffhq_trainlist_debug.pkl", 'wb') as handle:
         pickle.dump(ffhq_trainlist, handle, protocol=pickle.HIGHEST_PROTOCOL)
 get_debug()
