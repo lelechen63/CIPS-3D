@@ -30,7 +30,7 @@ def debug_single():
 debug_single()
 
 def get_debug():
-     with open("/home/uss00022/lelechen/github/CIPS-3D/photometric_optimization/gg/flame_p.pickle", 'rb') as f:
+    with open("/home/uss00022/lelechen/github/CIPS-3D/photometric_optimization/gg/flame_p.pickle", 'rb') as f:
         flame_p = pickle.load(f, encoding='latin1')
     
 
