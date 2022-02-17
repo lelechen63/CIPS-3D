@@ -215,7 +215,7 @@ class Latent2CodeModule(pl.LightningModule):
             genimage = np.ascontiguousarray(genimage, dtype=np.uint8)
             genimage = np.clip(genimage, 0, 255)
 
-            genlmark = util.batch_orth_proj(landmarks2d, batch['cam'])
+            genlmark = util.batch_orth_proj(landmarks3d, batch['cam'])
             genlmark[..., 1:] = - genlmark[..., 1:]
 
             genlmark = util.tensor_vis_landmarks(batch['gt_image'][visind].unsqueeze(0),genlmark[visind].unsqueeze(0))
