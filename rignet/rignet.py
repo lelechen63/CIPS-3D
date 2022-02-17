@@ -186,8 +186,7 @@ class Latent2CodeModule(pl.LightningModule):
             # cv2.imwrite('{}/{}.jpg'.format(savefolder, k), grid_image)
 
             gtimage = batch['gt_image'].data[0].cpu()
-            print (gtimage.max(), gtimage.min(), '++++++')
-            gtimage = tensor_util.tensor2im(gtimage  , normalize = True)
+            gtimage = tensor_util.tensor2im(gtimage  , normalize = False)
             gtimage = np.ascontiguousarray(gtimage, dtype=np.uint8)
             gtimage = tensor_util.writeText(gtimage, batch['image_path'][0])
             gtimage = np.ascontiguousarray(gtimage, dtype=np.uint8)
@@ -199,14 +198,14 @@ class Latent2CodeModule(pl.LightningModule):
             # torch.Size([1, 3, 512, 512]) torch.Size([1, 68, 2]) 
             gtlmark = util.tensor_vis_landmarks(batch['gt_image'][visind].unsqueeze(0), gtlmark[visind].unsqueeze(0))
             gtlmark = gtlmark.squeeze(0)
-            gtlmark = tensor_util.tensor2im(gtlmark  , normalize = True)
+            gtlmark = tensor_util.tensor2im(gtlmark  , normalize = False)
             gtlmark = np.ascontiguousarray(gtlmark, dtype=np.uint8)
             gtlmark = util.writeText(gtlmark, batch['image_path'][0])
             gtlmark = np.ascontiguousarray(gtlmark, dtype=np.uint8)
             gtlmark = np.clip(gtlmark, 0, 255)
 
             genimage = predicted_images.data[0].cpu() #  * self.stdtex + self.meantex 
-            genimage = tensor_util.tensor2im(genimage  , normalize = True)
+            genimage = tensor_util.tensor2im(genimage  , normalize = False)
             genimage = np.ascontiguousarray(genimage, dtype=np.uint8)
             genimage = tensor_util.writeText(genimage, batch['image_path'][0])
             genimage = np.ascontiguousarray(genimage, dtype=np.uint8)
@@ -217,7 +216,7 @@ class Latent2CodeModule(pl.LightningModule):
 
             genlmark = util.tensor_vis_landmarks(batch['gt_image'][visind].unsqueeze(0),genlmark[visind].unsqueeze(0))
             genlmark = genlmark.squeeze(0)
-            genlmark = tensor_util.tensor2im(genlmark  , normalize = True)
+            genlmark = tensor_util.tensor2im(genlmark  , normalize = False)
             genlmark = np.ascontiguousarray(genlmark, dtype=np.uint8)
             genlmark = util.writeText(genlmark, batch['image_path'][0])
             genlmark = np.ascontiguousarray(genlmark, dtype=np.uint8)
