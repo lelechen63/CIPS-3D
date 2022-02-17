@@ -110,6 +110,7 @@ class Latent2CodeModule(pl.LightningModule):
         shapecode = self.latent2shape(shape_fea)
         expcode = self.latent2exp(shape_fea)
         
+        print (appearance_latent.shape,'++++++')
         app_fea = self.Latent2AlbedoLitCode(appearance_latent)
 
         albedocode = self.latent2albedo(app_fea)
