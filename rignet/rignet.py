@@ -91,7 +91,7 @@ class Latent2CodeModule(pl.LightningModule):
         self.latent2lit = self.latent2lit.apply(init_weight)
 
         self.flame = FLAME(self.flame_config).to('cuda')
-       self.flametex = FLAMETex(self.flame_config).to('cuda')
+        self.flametex = FLAMETex(self.flame_config).to('cuda')
         self._setup_renderer()
 
         self.l1loss = torch.nn.L1Loss()
