@@ -121,25 +121,25 @@ class Latent2CodeModule(pl.LightningModule):
         vertices, landmarks2d, landmarks3d = self.flame(shape_params=shapecode, expression_params=expcode, pose_params=pose)
         trans_vertices = util.batch_orth_proj(vertices, cam)
         trans_vertices[..., 1:] = - trans_vertices[..., 1:]
-        landmarks2d = util.batch_orth_proj(landmarks2d, cam)
-        landmarks2d[..., 1:] = - landmarks2d[..., 1:]
+        # landmarks2d = util.batch_orth_proj(landmarks2d, cam)
+        # landmarks2d[..., 1:] = - landmarks2d[..., 1:]
 
         ## render
         albedos = self.flametex(albedocode, self.image_size) / 255.
         ops = self.render(vertices, trans_vertices, albedos, litcode)
         predicted_images = ops['images']
        
-        return landmarks2d, predicted_images
+        return landmarks3d, predicted_images
 
     def training_step(self, batch, batch_idx):
         self.batch = batch
-        landmarks2d, predicted_images = self(batch['shape_latent'], batch['appearance_latent'], batch['cam'], batch['pose'])
+        landmarks3d, predicted_images = self(batch['shape_latent'], batch['appearance_latent'], batch['cam'], batch['pose'])
 
         losses = {}
-        landmarks2d = landmarks2d.view(landmarks2d.shape[0], -1)
-        print (landmarks2d.max(), batch['gt_landmark'].max())
-        print (landmarks2d.shape, batch['gt_landmark'].shape, '+++++' )
-        losses['landmark'] = util.l2_distance(landmarks2d[:, 17:, :2], batch['gt_landmark'][:, 17:, :2]) * self.flame_config.w_lmks
+        landmarks3d = landmarks3d.view(landmarks3d.shape[0], -1)
+        print (landmarks3d.max(), batch['gt_landmark'].max)
+        print (landmarks3d.shape, batch['gt_landmark'].shape, '+++++' )
+        losses['landmark'] = util.l2_distance(landmarks3d[:, 17:, :2], batch['gt_landmark'][:, 17:, :2]) * self.flame_config.w_lmks
         losses['photometric_texture'] = (image_masks * (predicted_images - gt_images).abs()).mean() * self.flame.w_pho
 
         all_loss = 0.
