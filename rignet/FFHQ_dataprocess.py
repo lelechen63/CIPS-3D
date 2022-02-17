@@ -46,7 +46,7 @@ def get_debug():
     tex = flame_p['tex'].reshape(-1) #[1,50]
     lit = flame_p['lit'].reshape(-1) #[1,9,3]
     
-    landmark = flame_p['landmark2d'].reshape(-1) #[1,68,2]
+    landmark = flame_p['landmark3d'].reshape(-1) #[1,68,2]
     """ 
         we normalize the landmark into 0-1.
         landmark[:, 0] = landmark[:, 0] / float(image.shape[2]) * 2 - 1
