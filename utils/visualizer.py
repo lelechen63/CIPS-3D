@@ -15,9 +15,11 @@ except ImportError:
 def mkdirs(paths):
     if isinstance(paths, list) and not isinstance(paths, str):
         for path in paths:
-            mkdir(path)
+            if not os.path.exists(path):
+                os.makedirs(path)
     else:
-        mkdir(paths)
+        if not os.path.exists(paths):
+            os.makedirs(paths)
 
 class Visualizer():
     def __init__(self, opt):
