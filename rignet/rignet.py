@@ -20,6 +20,7 @@ from models.FLAME import FLAME, FLAMETex
 sys.path.append('/home/uss00022/lelechen/github/CIPS-3D/utils')
 from visualizer import Visualizer
 from blocks import *
+import face_alignment
 
 def init_weight(m):
     if type(m) in {nn.Conv2d, nn.Linear}:
