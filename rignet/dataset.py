@@ -63,6 +63,7 @@ class FFHQDataset(torch.utils.data.Dataset):
         """
         print (data.keys())
         data['gt_image'] = self.transform(data['gt_img'])
+        data['image_path'] = name
         return data
 
     def __len__(self):
