@@ -30,6 +30,7 @@ def init_weight(m):
 class Latent2CodeModule(pl.LightningModule):
     def __init__(self, flame_config, opt ):
         super().__init__()
+        self.opt = opt
         self.save_hyperparameters()
         self.flame_config = flame_config
     
