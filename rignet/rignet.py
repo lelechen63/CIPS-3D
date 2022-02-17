@@ -123,8 +123,6 @@ class Latent2CodeModule(pl.LightningModule):
         vertices, landmarks2d, landmarks3d = self.flame(shape_params=shapecode, expression_params=expcode, pose_params=pose)
         trans_vertices = util.batch_orth_proj(vertices, cam)
         trans_vertices[..., 1:] = - trans_vertices[..., 1:]
-        # landmarks2d = util.batch_orth_proj(landmarks2d, cam)
-        # landmarks2d[..., 1:] = - landmarks2d[..., 1:]
 
         ## render
         albedos = self.flametex(albedocode, self.image_size) / 255.
@@ -187,7 +185,8 @@ class Latent2CodeModule(pl.LightningModule):
             # grid_image = np.minimum(np.maximum(grid_image, 0), 255).astype(np.uint8)
             # cv2.imwrite('{}/{}.jpg'.format(savefolder, k), grid_image)
 
-            gtimage = batch['gt_image'].data[0].cpu() 
+            gtimage = batch['gt_image'].data[0].cpu()
+            print (gtimage.max(), gtimage.min(), '++++++')
             gtimage = tensor_util.tensor2im(gtimage  , normalize = True)
             gtimage = np.ascontiguousarray(gtimage, dtype=np.uint8)
             gtimage = tensor_util.writeText(gtimage, batch['image_path'][0])
