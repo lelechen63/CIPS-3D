@@ -61,7 +61,8 @@ class FFHQDataset(torch.utils.data.Dataset):
                 }
         """
         print (data.keys())
-
+        data['img'] = self.transform(img)
+        return data
         # tex_tensor = self.transform(tex)
         # input_dict = { 'Atex':tex_tensor,  'A_path': self.data_list[index]}
         # return input_dict
