@@ -5,8 +5,7 @@ import time
 import sys
 sys.path.append('/home/uss00022/lelechen/github/CIPS-3D')
 import util
-sys.path.append('/home/uss00022/lelechen/github/CIPS-3D/utils')
-import html
+from utils import html
 print(html.__file__, '++++++++++++++++++++++++')
 
 import scipy.misc
