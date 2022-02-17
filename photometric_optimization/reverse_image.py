@@ -198,6 +198,7 @@ class PhotometricFitting(object):
                 grids = {}
                 visind = range(bz)  # [0]
                 grids['images'] = torchvision.utils.make_grid(images[visind]).detach().cpu()
+                print  (images[visind].shape, landmarks[visind].shape,'++++++++++++++=')
                 grids['landmarks_gt'] = torchvision.utils.make_grid(
                     util.tensor_vis_landmarks(images[visind], landmarks[visind]))
                 grids['landmarks2d'] = torchvision.utils.make_grid(
