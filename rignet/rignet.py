@@ -158,7 +158,6 @@ class Latent2CodeModule(pl.LightningModule):
 
         errors = {k: v.data.item() if not isinstance(v, int) else v for k, v in tqdm_dict.items()}            
         self.visualizer.print_current_errors(self.current_epoch, batch_idx, errors, 0)
-        self.visualizer.plot_current_errors(errors, batch_idx)
         return output
                 
     def configure_optimizers(self):
