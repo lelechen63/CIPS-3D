@@ -171,20 +171,8 @@ class Latent2CodeModule(pl.LightningModule):
         if self.current_epoch % 10 == 0:
             batch = self.batch
             landmarks3d, predicted_images = self(batch['shape_latent'], batch['appearance_latent'], batch['cam'], batch['pose'])
-            
             visind = 0
-            # grids['images'] = torchvision.utils.make_grid(predicted_images[visind]).detach().cpu()
-            # grids['landmarks'] = torchvision.utils.make_grid(
-            #     util.tensor_vis_landmarks(predicted_images[visind], landmarks2d[visind]))
-            # grids['gt_images'] = torchvision.utils.make_grid(batch['gt_image'][visind]).detach().cpu()
-            # grids['gt_landmarks'] = torchvision.utils.make_grid(
-            #     util.tensor_vis_landmarks(batch['gt_image'][visind], batch['gt_landmark'][visind]))
-
-            # grid = torch.cat(list(grids.values()), 1)
-            # grid_image = (grid.numpy().transpose(1, 2, 0).copy() * 255)[:, :, [2, 1, 0]]
-            # grid_image = np.minimum(np.maximum(grid_image, 0), 255).astype(np.uint8)
-            # cv2.imwrite('{}/{}.jpg'.format(savefolder, k), grid_image)
-
+           
             gtimage = batch['gt_image'].data[0].cpu()
             gtimage = tensor_util.tensor2im(gtimage  , normalize = False)
             gtimage = np.ascontiguousarray(gtimage, dtype=np.uint8)
