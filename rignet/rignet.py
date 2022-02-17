@@ -108,10 +108,10 @@ class Latent2CodeModule(pl.LightningModule):
 
     def forward(self, shape_latent, appearance_latent, cam, pose ):
         shape_fea = self.Latent2ShapeExpCode(shape_latent)
+        
         shapecode = self.latent2shape(shape_fea)
         expcode = self.latent2exp(shape_fea)
         
-        print (appearance_latent.shape,'++++++')
         app_fea = self.Latent2AlbedoLitCode(appearance_latent)
 
         albedocode = self.latent2albedo(app_fea)
@@ -136,13 +136,7 @@ class Latent2CodeModule(pl.LightningModule):
         landmarks3d, predicted_images = self(batch['shape_latent'], batch['appearance_latent'], batch['cam'], batch['pose'])
 
         losses = {}
-
-        # landmarks3d = landmarks3d.view(landmarks3d.shape[0], -1)
-        print (landmarks3d.max(), batch['gt_landmark'].max)
-        print (landmarks3d.shape, batch['gt_landmark'].shape, '+++++' )
         losses['landmark'] = util.l2_distance(landmarks3d[:, 17:, :2], batch['gt_landmark'][:, 17:, :2]) * self.flame_config.w_lmks
-        
-        print  (batch['img_mask'].shape, predicted_images.shape,  batch['gt_image'].shape, '++++++')
         losses['photometric_texture'] = (batch['img_mask'] * (predicted_images - batch['gt_image'] ).abs()).mean() * self.flame_config.w_pho
 
         all_loss = 0.
@@ -177,28 +171,31 @@ class Latent2CodeModule(pl.LightningModule):
         if self.current_epoch % 10 == 0:
             batch = self.batch
             landmarks3d, predicted_images = self(batch['shape_latent'], batch['appearance_latent'], batch['cam'], batch['pose'])
-
+            
             visind = 0
-            grids['images'] = torchvision.utils.make_grid(predicted_images[visind]).detach().cpu()
-            grids['landmarks'] = torchvision.utils.make_grid(
-                util.tensor_vis_landmarks(predicted_images[visind], landmarks2d[visind]))
-            grids['gt_images'] = torchvision.utils.make_grid(batch['gt_image'][visind]).detach().cpu()
-            grids['gt_landmarks'] = torchvision.utils.make_grid(
-                util.tensor_vis_landmarks(batch['gt_image'][visind], batch['gt_landmark'][visind]))
+            # grids['images'] = torchvision.utils.make_grid(predicted_images[visind]).detach().cpu()
+            # grids['landmarks'] = torchvision.utils.make_grid(
+            #     util.tensor_vis_landmarks(predicted_images[visind], landmarks2d[visind]))
+            # grids['gt_images'] = torchvision.utils.make_grid(batch['gt_image'][visind]).detach().cpu()
+            # grids['gt_landmarks'] = torchvision.utils.make_grid(
+            #     util.tensor_vis_landmarks(batch['gt_image'][visind], batch['gt_landmark'][visind]))
 
-            grid = torch.cat(list(grids.values()), 1)
-            grid_image = (grid.numpy().transpose(1, 2, 0).copy() * 255)[:, :, [2, 1, 0]]
-            grid_image = np.minimum(np.maximum(grid_image, 0), 255).astype(np.uint8)
-            cv2.imwrite('{}/{}.jpg'.format(savefolder, k), grid_image)
+            # grid = torch.cat(list(grids.values()), 1)
+            # grid_image = (grid.numpy().transpose(1, 2, 0).copy() * 255)[:, :, [2, 1, 0]]
+            # grid_image = np.minimum(np.maximum(grid_image, 0), 255).astype(np.uint8)
+            # cv2.imwrite('{}/{}.jpg'.format(savefolder, k), grid_image)
 
-            gtimage = batch['gt_image'].data[0].cpu() #  * self.stdtex + self.meantex 
+            gtimage = batch['gt_image'].data[0].cpu() 
             gtimage = tensor_util.tensor2im(gtimage  , normalize = True)
             gtimage = np.ascontiguousarray(gtimage, dtype=np.uint8)
             gtimage = tensor_util.writeText(gtimage, batch['image_path'][0])
             gtimage = np.ascontiguousarray(gtimage, dtype=np.uint8)
             gtimage = np.clip(gtimage, 0, 255)
 
-            gtlmark = util.tensor_vis_landmarks(batch['gt_image'][visind], batch['gt_landmark'][visind])
+            gtlmark = util.batch_orth_proj(batch['gt_landmark'], batch['cam'])
+            gtlmark[..., 1:] = - gtlmark[..., 1:]
+
+            gtlmark = util.tensor_vis_landmarks(batch['gt_image'][visind], gtlmark[visind])
             gtlmark = tensor_util.tensor2im(gtlmark  , normalize = True)
             gtlmark = np.ascontiguousarray(gtlmark, dtype=np.uint8)
             gtlmark = util.writeText(gtlmark, batch['image_path'][0])
@@ -212,7 +209,10 @@ class Latent2CodeModule(pl.LightningModule):
             genimage = np.ascontiguousarray(genimage, dtype=np.uint8)
             genimage = np.clip(genimage, 0, 255)
 
-            genlmark = util.tensor_vis_landmarks(batch['gt_image'][visind],landmarks2d[visind])
+            genlmark = util.batch_orth_proj(landmarks2d, batch['cam'])
+            genlmark[..., 1:] = - genlmark[..., 1:]
+
+            genlmark = util.tensor_vis_landmarks(batch['gt_image'][visind],genlmark[visind])
             genlmark = tensor_util.tensor2im(genlossslmark  , normalize = True)
             genlmark = np.ascontiguousarray(genlmark, dtype=np.uint8)
             genlmark = util.writeText(genlmark, batch['image_path'][0])
