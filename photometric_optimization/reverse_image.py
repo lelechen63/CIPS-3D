@@ -225,7 +225,8 @@ class PhotometricFitting(object):
             'landmark3d': landmarks3d_save.detach().cpu().numpy(),
             'albedos':albedos.detach().cpu().numpy(),
             'tex': tex.detach().cpu().numpy(),
-            'lit': lights.detach().cpu().numpy()
+            'lit': lights.detach().cpu().numpy(),
+            'image_masks': image_masks.detach().cpu().numpy()
         }
         return single_params
 
