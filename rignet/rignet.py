@@ -100,6 +100,7 @@ class Latent2CodeModule(pl.LightningModule):
         self.GANloss = nn.BCEWithLogitsLoss()
 
         self.ckpt_path = os.path.join(opt.checkpoints_dir, opt.name)
+        os.makedirs(self.ckpt, exist_ok = True)
     
     def _setup_renderer(self):
         mesh_file = '/home/uss00022/lelechen/basic/flame_data/data/head_template_mesh.obj'
