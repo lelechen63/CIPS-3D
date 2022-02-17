@@ -196,6 +196,7 @@ class Latent2CodeModule(pl.LightningModule):
             gtlmark = util.batch_orth_proj(batch['gt_landmark'], batch['cam'])
             gtlmark[..., 1:] = - gtlmark[..., 1:]
 
+            print  (batch['gt_image'][visind].shape,gtlmark[visind].shape, "+++++++" )
             gtlmark = util.tensor_vis_landmarks(batch['gt_image'][visind], gtlmark[visind])
             gtlmark = tensor_util.tensor2im(gtlmark  , normalize = True)
             gtlmark = np.ascontiguousarray(gtlmark, dtype=np.uint8)
