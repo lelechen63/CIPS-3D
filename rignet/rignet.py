@@ -21,10 +21,9 @@ sys.path.append('/home/uss00022/lelechen/github/CIPS-3D/utils')
 from visualizer import Visualizer
 from blocks import *
 
-def init_weight(module):
-    for m in module:
-        if type(m) in {nn.Conv2d, nn.Linear}:
-            nn.init.kaiming_normal_(m.weight, a=0, mode='fan_in', nonlinearity='leaky_relu')
+def init_weight(m):
+    if type(m) in {nn.Conv2d, nn.Linear}:
+        nn.init.kaiming_normal_(m.weight, a=0, mode='fan_in', nonlinearity='leaky_relu')
 
 class Latent2CodeModule(pl.LightningModule):
     def __init__(self, flame_config, opt ):
