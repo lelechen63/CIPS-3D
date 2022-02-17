@@ -272,7 +272,7 @@ class PhotometricFitting(object):
 def demo():
     image_path = "/home/uss00022/lelechen/github/CIPS-3D/results/model_interpolation/0.png"
     img = cv2.imread(image_path)
-    img = cv2.resize(img, (256,256), interpolation = cv2.INTER_AREA)
+    img = cv2.resize(img, (512,512), interpolation = cv2.INTER_AREA)
 
     config = {
         # FLAME
@@ -287,7 +287,7 @@ def demo():
         'use_face_contour': True,
 
         'batch_size': 1,
-        'image_size': 256,
+        'image_size': 512,
         'e_lr': 0.005,
         'e_wd': 0.0001,
         'savefolder': '/home/uss00022/lelechen/github/CIPS-3D/photometric_optimization/gg',
@@ -339,7 +339,7 @@ def main():
         'use_face_contour': True,
 
         'batch_size': 1,
-        'image_size': 256,
+        'image_size': 512,
         'e_lr': 0.005,
         'e_wd': 0.0001,
         'savefolder': '/nfs/STG/CodecAvatar/lelechen/FFHQ/ffhq-dataset/flame/',
