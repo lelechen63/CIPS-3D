@@ -38,14 +38,15 @@ class Latent2CodeModule(pl.LightningModule):
         
         self.visualizer = Visualizer(opt)
         # networks
-        self.latent_dim = 256
+        self.nerf_latent_dim = 256
+        self.gan_latent_dim = 512
         self.shape_dim = 100
         self.exp_dim = 50
         self.albedo_dim = 50
         self.lit_dim = 27
     
         self.Latent2ShapeExpCode = th.nn.Sequential(
-            LinearWN( self.latent_dim , 256 ),
+            LinearWN( self.nerf_latent_dim , 256 ),
             th.nn.LeakyReLU( 0.2, inplace = True ),
             LinearWN( 256, 256 ),
             th.nn.LeakyReLU( 0.2, inplace = True ),
@@ -64,7 +65,7 @@ class Latent2CodeModule(pl.LightningModule):
         )
 
         self.Latent2AlbedoLitCode = th.nn.Sequential(
-            LinearWN( self.latent_dim , 512 ),
+            LinearWN( self.gan_latent_dim , 512 ),
             th.nn.LeakyReLU( 0.2, inplace = True ),
             LinearWN( 256, 256 ),
             th.nn.LeakyReLU( 0.2, inplace = True ),
