@@ -174,7 +174,7 @@ class Latent2CodeModule(pl.LightningModule):
     def on_epoch_end(self):
         if self.current_epoch % 10 == 0:
             batch = self.batch
-            landmarks2d, predicted_images = self(batch['shape_latent'], batch['appearance_latent'], batch['cam'], batch['pose'])
+            landmarks3d, predicted_images = self(batch['shape_latent'], batch['appearance_latent'], batch['cam'], batch['pose'])
 
             visind = 0
             grids['images'] = torchvision.utils.make_grid(predicted_images[visind]).detach().cpu()
