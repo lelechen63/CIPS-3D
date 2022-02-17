@@ -61,11 +61,8 @@ class FFHQDataset(torch.utils.data.Dataset):
                 }
         """
         print (data.keys())
-        data['img'] = self.transform(img)
+        data['img'] = self.transform(data['img'])
         return data
-        # tex_tensor = self.transform(tex)
-        # input_dict = { 'Atex':tex_tensor,  'A_path': self.data_list[index]}
-        # return input_dict
 
     def __len__(self):
         return len(self.total_data) // self.opt.batchSize * self.opt.batchSize
