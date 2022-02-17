@@ -7,6 +7,12 @@ import os
 from scipy.ndimage import morphology
 from skimage.io import imsave
 import cv2
+from PIL import Image
+
+
+def save_image(image_numpy, image_path):
+    image_pil = Image.fromarray(image_numpy)
+    image_pil.save(image_path)
 
 
 def dict2obj(d):
