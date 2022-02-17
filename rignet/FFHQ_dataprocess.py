@@ -45,6 +45,8 @@ def get_debug():
     cam = flame_p['cam'].reshape(-1) #[1,3]
     tex = flame_p['tex'].reshape(-1) #[1,50]
     lit = flame_p['lit'].reshape(-1) #[1,9,3]
+    print(flame_p['image_masks'].shape, '+++++')
+    image_masks = np.squeeze(flame_p['image_masks'],axis=0)
     
     landmark = np.squeeze(flame_p['landmark3d'], axis=0) #[1,68,2]
     """ 
@@ -70,7 +72,8 @@ def get_debug():
                  'shape_latent': z_nerf,
                  'appearance_latent': z_gan,
                  'gt_img': img,
-                 'gt_landmark': landmark
+                 'gt_landmark': landmark,
+                 'img_mask':
                 }
     with open("/home/uss00022/lelechen/github/CIPS-3D/photometric_optimization/gg/ffhq_train_debug.pkl", 'wb') as handle:
         pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
