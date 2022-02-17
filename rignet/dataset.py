@@ -57,11 +57,12 @@ class FFHQDataset(torch.utils.data.Dataset):
                  'cam_pose': camera_pose,
                  'z_nerf': z_nerf,
                  'z_gan': z_gan,
-                 'img': img
+                 'gt_img': img,
+                 'gt_landmark': landmark
                 }
         """
         print (data.keys())
-        data['img'] = self.transform(data['img'])
+        data['gt_image'] = self.transform(data['gt_img'])
         return data
 
     def __len__(self):

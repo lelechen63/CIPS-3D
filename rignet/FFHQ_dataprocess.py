@@ -67,9 +67,10 @@ def get_debug():
                  'tex': tex,
                  'lit': lit,
                  'cam_pose': camera_pose,
-                 'z_nerf': z_nerf,
-                 'z_gan': z_gan,
-                 'img': img
+                 'shape_latent': z_nerf,
+                 'appearance_latent': z_gan,
+                 'gt_img': img,
+                 'gt_landmark': landmark
                 }
     with open("/home/uss00022/lelechen/github/CIPS-3D/photometric_optimization/gg/ffhq_train_debug.pkl", 'wb') as handle:
         pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
