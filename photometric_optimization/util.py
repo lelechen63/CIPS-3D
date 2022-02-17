@@ -255,6 +255,10 @@ def plot_kpts(image, kpts, color = 'r'):
 
     return image
 
+def writeText(img, text, font = 0.5):
+    composite_img = cv2.putText(img, text, (25, 25), cv2.FONT_HERSHEY_SIMPLEX,
+                                font, (255, 255, 255), 1, cv2.LINE_AA, False)
+    return composite_img
 
 def save_obj(filename, vertices, faces, textures=None, uvcoords=None, uvfaces=None, texture_type='surface'):
     assert vertices.ndimension() == 2
