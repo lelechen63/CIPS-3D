@@ -198,6 +198,7 @@ class Latent2CodeModule(pl.LightningModule):
             gtlmark[..., 1:] = - gtlmark[..., 1:]
 
             print  (batch['gt_image'][visind].shape,gtlmark[visind].shape, "+++++++" )
+            # torch.Size([1, 3, 512, 512]) torch.Size([1, 68, 2]) 
             gtlmark = util.tensor_vis_landmarks(batch['gt_image'][visind], gtlmark[visind])
             print (gtlmark.shape, '++++')
             gtlmark = tensor_util.tensor2im(gtlmark  , normalize = True)
