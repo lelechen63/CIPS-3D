@@ -89,8 +89,7 @@ class Latent2CodeModule(pl.LightningModule):
         self.latent2lit = self.latent2lit.apply(init_weight)
 
         self.flame = FLAME(self.flame_config).to('cuda')
-        self._setup_landmark_detector()
-        self._setup_face_parser()
+       
         self._setup_renderer()
 
         self.l1loss = torch.nn.L1Loss()
@@ -102,18 +101,8 @@ class Latent2CodeModule(pl.LightningModule):
     def _setup_renderer(self):
         mesh_file = '/home/uss00022/lelechen/basic/flame_data/data/head_template_mesh.obj'
         self.render = Renderer(self.image_size, obj_filename=mesh_file).to('cuda')
-    def _setup_face_parser(self):
-        self.parse_net = BiSeNet(n_classes=19)
-        self.parse_net.cuda()
-        self.parse_net.load_state_dict(torch.load("/home/uss00022/lelechen/basic/flame_data/data/79999_iter.pth"))
-        self.parse_net.eval()
-        self.to_tensor = transforms.Compose([
-            transforms.ToTensor(),
-            # transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225)),
-        ])
-        self.frontal_regions = [1, 2, 3, 4, 5, 10, 12, 13]
-    def _setup_landmark_detector(self):
-        self.fa = face_alignment.FaceAlignment(face_alignment.LandmarksType._2D, flip_input=False)
+    
+   
 
     def forward(self, shape_latent, appearance_latent, cam, pose ):
         shape_fea = self.Latent2ShapeExpCode(shape_latent)
