@@ -81,7 +81,7 @@ class Latent2CodeModule(pl.LightningModule):
 
         self.Latent2ShapeExpCode = self.Latent2ShapeExpCode.apply(init_weight)
         self.latent2shape = self.latent2shape.apply(init_weight)
-        self.Latent2exp = self.Latent2exp.apply(init_weight)
+        self.latent2exp = self.latent2exp.apply(init_weight)
         self.Latent2AlbedoLitCode = self.Latent2AlbedoLitCode.apply(init_weight)
         self.latent2albedo = self.latent2albedo.apply(init_weight)
         self.latent2lit = self.latent2lit.apply(init_weight)
@@ -166,7 +166,7 @@ class Latent2CodeModule(pl.LightningModule):
         opt_g = torch.optim.Adam( list(self.Latent2ShapeExpCode.parameters()) + \
                                   list(self.Latent2AlbedoLitCode.parameters()) + \
                                   list(self.latent2shape.parameters()) + \
-                                  list(self.Latent2exp.parameters()) + \
+                                  list(self.latent2exp.parameters()) + \
                                   list(self.latent2albedo.parameters()) + \
                                   list(self.latent2lit.parameters()) \
                                   , lr=lr, betas=(self.opt.beta1, 0.999))
