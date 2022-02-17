@@ -2,8 +2,10 @@ import numpy as np
 import os
 import ntpath
 import time
-import .util
-import .html
+import sys
+sys.path.append('/home/uss00022/lelechen/github/CIPS-3D')
+import util
+import html
 import scipy.misc
 try:
     from StringIO import StringIO  # Python 2.7
