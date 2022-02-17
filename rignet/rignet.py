@@ -15,6 +15,7 @@ import cv2
 import sys
 sys.path.append('./photometric_optimization/')
 from renderer import Renderer
+from model import BiSeNet
 import util
 from models.FLAME import FLAME, FLAMETex
 sys.path.append('/home/uss00022/lelechen/github/CIPS-3D/utils')
