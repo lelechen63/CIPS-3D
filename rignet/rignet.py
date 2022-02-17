@@ -187,6 +187,7 @@ class Latent2CodeModule(pl.LightningModule):
             # cv2.imwrite('{}/{}.jpg'.format(savefolder, k), grid_image)
 
             gtimage = batch['gt_image'].data[0].cpu() 
+            print (gtimage.shape, '============')
             gtimage = tensor_util.tensor2im(gtimage  , normalize = True)
             gtimage = np.ascontiguousarray(gtimage, dtype=np.uint8)
             gtimage = tensor_util.writeText(gtimage, batch['image_path'][0])
@@ -198,6 +199,7 @@ class Latent2CodeModule(pl.LightningModule):
 
             print  (batch['gt_image'][visind].shape,gtlmark[visind].shape, "+++++++" )
             gtlmark = util.tensor_vis_landmarks(batch['gt_image'][visind], gtlmark[visind])
+            print (gtlmark.shape, '++++')
             gtlmark = tensor_util.tensor2im(gtlmark  , normalize = True)
             gtlmark = np.ascontiguousarray(gtlmark, dtype=np.uint8)
             gtlmark = util.writeText(gtlmark, batch['image_path'][0])
