@@ -1,6 +1,6 @@
 import pytorch_lightning as pl
 from torch.utils.data import DataLoader
-
+import dataset
 
 class FFHQDataModule(pl.LightningDataModule):
     def __init__(self, opt):
@@ -20,7 +20,7 @@ class FFHQDataModule(pl.LightningDataModule):
         # from data.facescape import FacescapeMeshTexDataset
         # dataset = FacescapeMeshTexDataset(self.opt)
         if self.opt.datasetname == 'ffhq':
-            from data.dataset import FFHQDataset
+            from dataset import FFHQDataset
             dataset = FFHQDataset(self.opt)
         
         print("dataset [%s] was created" % (dataset.name()))
