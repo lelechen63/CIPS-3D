@@ -19,10 +19,10 @@ class FFHQDataset(torch.utils.data.Dataset):
         self.opt = opt
 
         if opt.isTrain:
-            list_path = os.path.join(opt.dataroot, "lists/ffhq_trainlist.pkl")
+            list_path = os.path.join(opt.dataroot, "ffhq_trainlist.pkl")
             zip_path = os.path.join(opt.dataroot, 'ffhq_train.pkl' )
         else:
-            list_path = os.path.join(opt.dataroot, "lists/ffhq_testlist.pkl")
+            list_path = os.path.join(opt.dataroot, "ffhq_testlist.pkl")
             zip_path = os.path.join(opt.dataroot, 'ffhq_test.pkl' )
 
         if opt.debug:
