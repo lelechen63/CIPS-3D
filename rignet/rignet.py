@@ -67,7 +67,7 @@ class Latent2CodeModule(pl.LightningModule):
         self.Latent2AlbedoLitCode = th.nn.Sequential(
             LinearWN( self.gan_latent_dim , 512 ),
             th.nn.LeakyReLU( 0.2, inplace = True ),
-            LinearWN( 256, 256 ),
+            LinearWN( 512, 256 ),
             th.nn.LeakyReLU( 0.2, inplace = True ),
             LinearWN( 256, 256 ),
             th.nn.LeakyReLU( 0.2, inplace = True )
