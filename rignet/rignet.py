@@ -200,6 +200,7 @@ class Latent2CodeModule(pl.LightningModule):
             print  (batch['gt_image'][visind].shape,gtlmark[visind].shape, "+++++++" )
             # torch.Size([1, 3, 512, 512]) torch.Size([1, 68, 2]) 
             gtlmark = util.tensor_vis_landmarks(batch['gt_image'][visind].unsqueeze(0), gtlmark[visind].unsqueeze(0))
+            gtlmark = gtlmark.squeeze(0)
             print (gtlmark.shape, '++++')
             gtlmark = tensor_util.tensor2im(gtlmark  , normalize = True)
             gtlmark = np.ascontiguousarray(gtlmark, dtype=np.uint8)
@@ -218,6 +219,7 @@ class Latent2CodeModule(pl.LightningModule):
             genlmark[..., 1:] = - genlmark[..., 1:]
 
             genlmark = util.tensor_vis_landmarks(batch['gt_image'][visind].unsqueeze(0),genlmark[visind].unsqueeze(0))
+            genlmark = genlmark.squeeze(0)
             genlmark = tensor_util.tensor2im(genlossslmark  , normalize = True)
             genlmark = np.ascontiguousarray(genlmark, dtype=np.uint8)
             genlmark = util.writeText(genlmark, batch['image_path'][0])
