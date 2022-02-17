@@ -220,7 +220,7 @@ class Latent2CodeModule(pl.LightningModule):
 
             genlmark = util.tensor_vis_landmarks(batch['gt_image'][visind].unsqueeze(0),genlmark[visind].unsqueeze(0))
             genlmark = genlmark.squeeze(0)
-            genlmark = tensor_util.tensor2im(genlossslmark  , normalize = True)
+            genlmark = tensor_util.tensor2im(genlmark  , normalize = True)
             genlmark = np.ascontiguousarray(genlmark, dtype=np.uint8)
             genlmark = util.writeText(genlmark, batch['image_path'][0])
             genlmark = np.ascontiguousarray(genlmark, dtype=np.uint8)
