@@ -73,7 +73,7 @@ def get_debug():
                  'appearance_latent': z_gan,
                  'gt_img': img,
                  'gt_landmark': landmark,
-                 'img_mask':
+                 'img_mask':image_masks
                 }
     with open("/home/uss00022/lelechen/github/CIPS-3D/photometric_optimization/gg/ffhq_train_debug.pkl", 'wb') as handle:
         pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
