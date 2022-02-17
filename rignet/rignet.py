@@ -19,6 +19,7 @@ import util
 from models.FLAME import FLAME, FLAMETex
 sys.path.append('/home/uss00022/lelechen/github/CIPS-3D/utils')
 from visualizer import Visualizer
+form blocks import *
 
 def init_weight(module):
     for m in module:
