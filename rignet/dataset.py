@@ -61,7 +61,6 @@ class FFHQDataset(torch.utils.data.Dataset):
                  'gt_landmark': landmark
                 }
         """
-        print (data.keys())
         data['gt_image'] = self.transform(data['gt_img'])
         data['image_path'] = name
         return data
