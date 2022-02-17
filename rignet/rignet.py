@@ -141,6 +141,8 @@ class Latent2CodeModule(pl.LightningModule):
         print (landmarks3d.max(), batch['gt_landmark'].max)
         print (landmarks3d.shape, batch['gt_landmark'].shape, '+++++' )
         losses['landmark'] = util.l2_distance(landmarks3d[:, 17:, :2], batch['gt_landmark'][:, 17:, :2]) * self.flame_config.w_lmks
+        
+        print  (batch['img_mask'].shape, predicted_images.shape,  batch['gt_image'].shape, '++++++')
         losses['photometric_texture'] = (batch['img_mask'] * (predicted_images - batch['gt_image'] ).abs()).mean() * self.flame.w_pho
 
         all_loss = 0.
