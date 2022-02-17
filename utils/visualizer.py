@@ -5,9 +5,9 @@ import time
 import sys
 sys.path.append('/home/uss00022/lelechen/github/CIPS-3D')
 import util
-print(util.__file__, '++++++++++++++++++++++++')
-
 import html
+print(html.__file__, '++++++++++++++++++++++++')
+
 import scipy.misc
 try:
     from StringIO import StringIO  # Python 2.7
