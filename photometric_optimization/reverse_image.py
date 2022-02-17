@@ -159,12 +159,12 @@ class PhotometricFitting(object):
         # non-rigid fitting of all the parameters with 68 face landmarks, photometric loss and regularization terms.
         for k in range(200, 1000):
             losses = {}
-            vertices, landmarks2d, landmarks3d = self.flame(shape_params=shape, expression_params=exp, pose_params=pose)
+            vertices, landmarks2d, landmarks3d_save = self.flame(shape_params=shape, expression_params=exp, pose_params=pose)
             trans_vertices = util.batch_orth_proj(vertices, cam)
             trans_vertices[..., 1:] = - trans_vertices[..., 1:]
             landmarks2d = util.batch_orth_proj(landmarks2d, cam)
             landmarks2d[..., 1:] = - landmarks2d[..., 1:]
-            landmarks3d = util.batch_orth_proj(landmarks3d, cam)
+            landmarks3d = util.batch_orth_proj(landmarks3d_save, cam)
             landmarks3d[..., 1:] = - landmarks3d[..., 1:]
 
             losses['landmark'] = util.l2_distance(landmarks2d[:, :, :2], gt_landmark[:, :, :2]) * self.config.w_lmks
@@ -222,7 +222,7 @@ class PhotometricFitting(object):
             'pose': pose.detach().cpu().numpy(),
             'cam': cam.detach().cpu().numpy(),
             'verts': trans_vertices.detach().cpu().numpy(),
-            'landmark2d': gt_landmark.detach().cpu().numpy(),
+            'landmark3d': landmarks3d_save.detach().cpu().numpy(),
             'albedos':albedos.detach().cpu().numpy(),
             'tex': tex.detach().cpu().numpy(),
             'lit': lights.detach().cpu().numpy()
