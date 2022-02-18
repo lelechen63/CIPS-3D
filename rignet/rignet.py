@@ -143,7 +143,7 @@ class Latent2CodeModule(pl.LightningModule):
         for key in losses.keys():
             all_loss = all_loss + losses[key]
         
-        print (self.optimizers.lr, '+++++++')
+        print (self.optimizers().lr, '+++++++')
         tqdm_dict = {'loss_landmark': losses['landmark'].data, 'loss_tex': losses['photometric_texture'],  }
         output = OrderedDict({
             'loss': all_loss,
