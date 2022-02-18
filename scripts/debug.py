@@ -98,8 +98,10 @@ class CIPS_3D_Demo(object):
     print ('yaw', yaw)
     print ('pitch', pitch)
 
+    galary = [72216891, 88542011, 92577341, 86271113, 92674084, 578916, 99738897, 99860786, 354348]
     
-    for kk in range(72216891,72216892):
+    # for kk in range(72216891,72216892):
+    for kk in galary:
       torch.manual_seed(kk)
       zs = generator.get_zs(1)
       info = {}
