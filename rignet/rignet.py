@@ -143,7 +143,6 @@ class Latent2CodeModule(pl.LightningModule):
         for key in losses.keys():
             all_loss = all_loss + losses[key]
         
-        print (self.optimizers().param_groups[0]['lr'], '+++++++')
         tqdm_dict = {'loss_landmark': losses['landmark'].data, 'loss_tex': losses['photometric_texture'],  }
         output = OrderedDict({
             'loss': all_loss,
@@ -157,7 +156,7 @@ class Latent2CodeModule(pl.LightningModule):
 
 
     def configure_optimizers(self):
-        lr = max(self.opt.lr / 2 ** int(self.current_epoch%10), 0.0000001)
+        
         optimizer = torch.optim.Adam( list(self.Latent2ShapeExpCode.parameters()) + \
                                   list(self.Latent2AlbedoLitCode.parameters()) + \
                                   list(self.latent2shape.parameters()) + \
@@ -191,6 +190,7 @@ class Latent2CodeModule(pl.LightningModule):
     #    }
 
     def on_epoch_end(self):
+        
         if self.current_epoch % 10 == 0:
             batch = self.batch
             landmarks3d, predicted_images = self(batch['shape_latent'], batch['appearance_latent'], batch['cam'], batch['pose'])
