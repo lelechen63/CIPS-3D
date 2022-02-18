@@ -80,32 +80,30 @@ class CIPS_3D_Demo(object):
     fov_list = [fov] * len(xyz)
 
     st_image = st.empty()
- 
+    idx = 1
+      curriculum['h_mean'] = 0
+      curriculum['v_mean'] = 0
+      curriculum['h_stddev'] = 0
+      curriculum['v_stddev'] = 0
+
+      cur_camera_pos = xyz[[idx]]
+      cur_camera_lookup = lookup[[idx]]
+      yaw = yaws[idx]
+      pitch = pitchs[idx]
+      fov = fov_list[idx]
+      curriculum['fov'] = fov
+
+      print ('cur_camera_pos', cur_camera_pos)
+      print ('cur_camera_lookup', cur_camera_lookup)
+      print ('yaw', yaw)
+      print ('pitch', pitch)
 
     
     for kk in range(1,100):
       torch.manual_seed(kk)
-      zs = generator.get_zs(kk)
+      zs = generator.get_zs(1)
       info = {}
-      with torch.no_grad():
-        idx = 1
-        curriculum['h_mean'] = 0
-        curriculum['v_mean'] = 0
-        curriculum['h_stddev'] = 0
-        curriculum['v_stddev'] = 0
-
-        cur_camera_pos = xyz[[idx]]
-        cur_camera_lookup = lookup[[idx]]
-        yaw = yaws[idx]
-        pitch = pitchs[idx]
-        fov = fov_list[idx]
-        curriculum['fov'] = fov
-
-        print ('cur_camera_pos', cur_camera_pos)
-        print ('cur_camera_lookup', cur_camera_lookup)
-        print ('yaw', yaw)
-        print ('pitch', pitch)
-        
+      with torch.no_grad():        
         frame, depth_map = generator.forward_camera_pos_and_lookup(
             zs=zs,
             return_aux_img=False,
