@@ -99,7 +99,7 @@ class CIPS_3D_Demo(object):
     print ('pitch', pitch)
 
     
-    for kk in range(10000,10100):
+    for kk in range(72216891,72216892):
       torch.manual_seed(kk)
       zs = generator.get_zs(1)
       info = {}
