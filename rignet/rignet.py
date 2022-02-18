@@ -157,7 +157,7 @@ class Latent2CodeModule(pl.LightningModule):
 
 
     def configure_optimizers(self):
-        lr = max(self.opt.lr / 2 ** int(self.current_epoch%100), 0.0000001)
+        lr = max(self.opt.lr / 2 ** int(self.current_epoch%10), 0.0000001)
         optimizer = torch.optim.Adam( list(self.Latent2ShapeExpCode.parameters()) + \
                                   list(self.Latent2AlbedoLitCode.parameters()) + \
                                   list(self.latent2shape.parameters()) + \
