@@ -143,7 +143,8 @@ class Latent2CodeModule(pl.LightningModule):
         for key in losses.keys():
             all_loss = all_loss + losses[key]
         
-        tqdm_dict = {'loss_landmark': losses['landmark'].data, 'loss_tex': losses['photometric_texture'] }
+        print (self.optimizers, '+++++++')
+        tqdm_dict = {'loss_landmark': losses['landmark'].data, 'loss_tex': losses['photometric_texture'], 'lr:'  }
         output = OrderedDict({
             'loss': all_loss,
             'progress_bar': tqdm_dict,
@@ -164,8 +165,17 @@ class Latent2CodeModule(pl.LightningModule):
                                   list(self.latent2lit.parameters()) \
                                   , lr=lr, betas=(self.opt.beta1, 0.999))
         
+        reduce_lr_on_plateau = torch.optim.lr_scheduler.ReduceLROnPlateau(
+            opt_g,
+            mode='min',
+            factor=0.1,
+            patience=10,
+            verbose=True,
+            cooldown=5,
+            min_lr=1e-8,
+        )
 
-        return [opt_g], []
+        return [opt_g], [reduce_lr_on_plateau]
 
     def on_epoch_end(self):
         if self.current_epoch % 10 == 0:
