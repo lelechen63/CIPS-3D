@@ -84,8 +84,9 @@ class CIPS_3D_Demo(object):
     output_name = Path(f'seed_{seed}.mp4')
     video_f = cv2_utils.ImageioVideoWriter(f"{outdir}/{output_name}", fps=fps)
 
-    torch.manual_seed(seed)
+    
     for kk in range(1,100):
+      torch.manual_seed(kk)
       zs = generator.get_zs(1)
       info = {}
       with torch.no_grad():

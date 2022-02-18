@@ -74,14 +74,11 @@ class CIPS_3D_Demo(object):
     target_pil = PIL.Image.open('results/model_interpolation/0.png')
     image = np.array(target_pil)
     target_uint8 = image.astype(np.uint8)
-    print (target_uint8.max(), target_uint8.min(),'====')
     target=torch.tensor(target_uint8.transpose([2, 0, 1]), device=device)
     target_images = target.unsqueeze(0).to(device).to(torch.float32)
-    print (target_images.max(), target_images.min(),'====')
     if target_images.shape[2] > 256:
         target_images = F.interpolate(target_images, size=(256, 256), mode='area')
     target_features = vgg16(target_images, resize_images=False, return_lpips=True)
-    print (target_images.max(), target_images.min(),'====')
     curriculum = comm_utils.get_metadata_from_json(metafile=cfg.metadata,
                                                    num_steps=num_steps,
                                                    image_size=image_size,
@@ -90,7 +87,6 @@ class CIPS_3D_Demo(object):
     with open(f"{outdir}/gt.pkl", 'rb') as handle:
         info = pickle.load(handle)
     info = info['results/model_interpolation/0.png']
-    print ('++++++++++++++++++++++++++++')
     xyz = info['cur_camera_pos']
     xyz = torch.from_numpy(xyz).to(device)
     lookup = -xyz 
@@ -151,14 +147,7 @@ class CIPS_3D_Demo(object):
 
 
     for step in tqdm(range(num_steps)):
-        # t = step / num_steps
-        # lr_ramp = min(1.0, (1.0 - t) / lr_rampdown_length)
-        # lr_ramp = 0.5 - 0.5 * np.cos(lr_ramp * np.pi)
-        # lr_ramp = lr_ramp * min(1.0, t / lr_rampup_length)
-        # lr_ramp = -int(step/1000)
-        # lr = max(0.00001, initial_learning_rate * 10**lr_ramp)
-        # for param_group in optimizer.param_groups:
-        #     param_group['lr'] = lr
+       
         lr = initial_learning_rate
         synth_images, depth_map = generator.forward_camera_pos_and_lookup(
             zs=zs,
