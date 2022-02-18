@@ -157,14 +157,14 @@ class Latent2CodeModule(pl.LightningModule):
 
 
     def configure_optimizers(self):
-        
+        lr = max(self.opt.lr / 2 ** int(current_epoch%100), 0.0000001)
         optimizer = torch.optim.Adam( list(self.Latent2ShapeExpCode.parameters()) + \
                                   list(self.Latent2AlbedoLitCode.parameters()) + \
                                   list(self.latent2shape.parameters()) + \
                                   list(self.latent2exp.parameters()) + \
                                   list(self.latent2albedo.parameters()) + \
                                   list(self.latent2lit.parameters()) \
-                                  , lr=self.opt.lr, betas=(self.opt.beta1, 0.999))
+                                  , lr= lr , betas=(self.opt.beta1, 0.999))
         
         return [optimizer], []
         # scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
