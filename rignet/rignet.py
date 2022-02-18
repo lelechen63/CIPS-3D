@@ -156,17 +156,16 @@ class Latent2CodeModule(pl.LightningModule):
         return output
                 
     def configure_optimizers(self):
-        lr = self.opt.lr
-        opt_g = torch.optim.Adam( list(self.Latent2ShapeExpCode.parameters()) + \
+        optimizer = torch.optim.Adam( list(self.Latent2ShapeExpCode.parameters()) + \
                                   list(self.Latent2AlbedoLitCode.parameters()) + \
                                   list(self.latent2shape.parameters()) + \
                                   list(self.latent2exp.parameters()) + \
                                   list(self.latent2albedo.parameters()) + \
                                   list(self.latent2lit.parameters()) \
-                                  , lr=lr, betas=(self.opt.beta1, 0.999))
+                                  , lr=self.opt.lr, betas=(self.opt.beta1, 0.999))
         
-        reduce_lr_on_plateau = torch.optim.lr_scheduler.ReduceLROnPlateau(
-            opt_g,
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+            optimizer,
             mode='min',
             factor=0.1,
             patience=10,
@@ -175,7 +174,11 @@ class Latent2CodeModule(pl.LightningModule):
             min_lr=1e-8,
         )
 
-        return [opt_g], [reduce_lr_on_plateau]
+        return {
+           'optimizer': optimizer,
+           'lr_scheduler': scheduler, # Changed scheduler to lr_scheduler
+           'monitor': 'val_loss'
+       }
 
     def on_epoch_end(self):
         if self.current_epoch % 10 == 0:
