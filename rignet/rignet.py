@@ -165,21 +165,22 @@ class Latent2CodeModule(pl.LightningModule):
                                   list(self.latent2lit.parameters()) \
                                   , lr=self.opt.lr, betas=(self.opt.beta1, 0.999))
         
-        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
-            optimizer,
-            mode='min',
-            factor=0.1,
-            patience=10,
-            verbose=True,
-            cooldown=5,
-            min_lr=1e-8,
-        )
+        return [optimizer], []
+        # scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+        #     optimizer,
+        #     mode='min',
+        #     factor=0.1,
+        #     patience=10,
+        #     verbose=True,
+        #     cooldown=5,
+        #     min_lr=1e-8,
+        # )
 
-        return {
-           'optimizer': optimizer,
-           'lr_scheduler': scheduler, # Changed scheduler to lr_scheduler
-           'monitor': 'loss'
-       }
+    #     return {
+    #        'optimizer': optimizer,
+    #        'lr_scheduler': scheduler, # Changed scheduler to lr_scheduler
+    #        'monitor': 'loss'
+    #    }
 
     def on_epoch_end(self):
         if self.current_epoch % 10 == 0:
