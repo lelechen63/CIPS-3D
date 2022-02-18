@@ -177,7 +177,7 @@ class Latent2CodeModule(pl.LightningModule):
         return {
            'optimizer': optimizer,
            'lr_scheduler': scheduler, # Changed scheduler to lr_scheduler
-           'monitor': 'val_loss'
+        #    'monitor': 'val_loss'
        }
 
     def on_epoch_end(self):
