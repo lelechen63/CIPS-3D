@@ -71,7 +71,7 @@ model_interpolation:
       - 99860786
       - 354348
     fps: 1
-    num_frames: 3
+    num_frames: 1
     num_samples_translate: 30
     fov: 12
     max_fov: 20
