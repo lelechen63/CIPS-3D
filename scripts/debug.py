@@ -88,7 +88,7 @@ class CIPS_3D_Demo(object):
       zs = generator.get_zs(1)
       info = {}
       with torch.no_grad():
-        idx = 1
+        idx = 0
         curriculum['h_mean'] = 0
         curriculum['v_mean'] = 0
         curriculum['h_stddev'] = 0
