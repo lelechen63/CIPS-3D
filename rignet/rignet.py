@@ -154,7 +154,8 @@ class Latent2CodeModule(pl.LightningModule):
         errors = {k: v.data.item() if not isinstance(v, int) else v for k, v in tqdm_dict.items()}            
         self.visualizer.print_current_errors(self.current_epoch, batch_idx, errors, 0)
         return output
-                
+
+
     def configure_optimizers(self):
         optimizer = torch.optim.Adam( list(self.Latent2ShapeExpCode.parameters()) + \
                                   list(self.Latent2AlbedoLitCode.parameters()) + \
@@ -177,7 +178,7 @@ class Latent2CodeModule(pl.LightningModule):
         return {
            'optimizer': optimizer,
            'lr_scheduler': scheduler, # Changed scheduler to lr_scheduler
-        #    'monitor': 'val_loss'
+           'monitor': 'train_loss'
        }
 
     def on_epoch_end(self):
