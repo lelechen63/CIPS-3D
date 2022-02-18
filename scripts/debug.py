@@ -52,7 +52,6 @@ class CIPS_3D_Demo(object):
 
     # seed
     # seed = st_utils.get_seed(cfg.seeds_gallery)
-    seed = 1
     # trajectory
     
     forward_points = st_utils.number_input('forward_points', cfg.forward_points, sidebar=True)
@@ -81,8 +80,7 @@ class CIPS_3D_Demo(object):
     fov_list = [fov] * len(xyz)
 
     st_image = st.empty()
-    output_name = Path(f'seed_{seed}.mp4')
-    video_f = cv2_utils.ImageioVideoWriter(f"{outdir}/{output_name}", fps=fps)
+ 
 
     
     for kk in range(1,100):
