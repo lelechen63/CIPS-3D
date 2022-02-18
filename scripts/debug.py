@@ -85,7 +85,7 @@ class CIPS_3D_Demo(object):
     
     for kk in range(1,100):
       torch.manual_seed(kk)
-      zs = generator.get_zs(1)
+      zs = generator.get_zs(kk)
       info = {}
       with torch.no_grad():
         idx = 1
