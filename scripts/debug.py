@@ -81,22 +81,22 @@ class CIPS_3D_Demo(object):
 
     st_image = st.empty()
     idx = 1
-      curriculum['h_mean'] = 0
-      curriculum['v_mean'] = 0
-      curriculum['h_stddev'] = 0
-      curriculum['v_stddev'] = 0
+    curriculum['h_mean'] = 0
+    curriculum['v_mean'] = 0
+    curriculum['h_stddev'] = 0
+    curriculum['v_stddev'] = 0
 
-      cur_camera_pos = xyz[[idx]]
-      cur_camera_lookup = lookup[[idx]]
-      yaw = yaws[idx]
-      pitch = pitchs[idx]
-      fov = fov_list[idx]
-      curriculum['fov'] = fov
+    cur_camera_pos = xyz[[idx]]
+    cur_camera_lookup = lookup[[idx]]
+    yaw = yaws[idx]
+    pitch = pitchs[idx]
+    fov = fov_list[idx]
+    curriculum['fov'] = fov
 
-      print ('cur_camera_pos', cur_camera_pos)
-      print ('cur_camera_lookup', cur_camera_lookup)
-      print ('yaw', yaw)
-      print ('pitch', pitch)
+    print ('cur_camera_pos', cur_camera_pos)
+    print ('cur_camera_lookup', cur_camera_lookup)
+    print ('yaw', yaw)
+    print ('pitch', pitch)
 
     
     for kk in range(1,100):
