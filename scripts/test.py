@@ -100,7 +100,7 @@ class CIPS_3D_Demo(object):
     # seed
     seed = 3
     # for seed in range(0, 70000):
-    print (xyz_list[0], yaws_list[0], pitchs_list[0] )
+    print (xyz_list[1], yaws_list[1], pitchs_list[1] )
     torch.manual_seed(seed)
     zs = generator.get_zs(1)
 
