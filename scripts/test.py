@@ -91,7 +91,6 @@ class CIPS_3D_Demo(object):
     yaws_list = np.concatenate((yaws_list, yaws), axis = 0)    
     pitchs_list = np.concatenate((pitchs_list, pitchs), axis = 0)   
     
-    
     xyz_list = torch.from_numpy(xyz_list).to(device)
     lookup_list = torch.from_numpy(lookup_list).to(device)
     fov_list = [fov] * len(xyz_list)

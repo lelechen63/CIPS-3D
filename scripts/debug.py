@@ -54,10 +54,7 @@ class CIPS_3D_Demo(object):
     # seed = st_utils.get_seed(cfg.seeds_gallery)
     seed = 1
     # trajectory
-    trajectory_mode = st_utils.selectbox('trajectory_mode', cfg.trajectory_mode, sidebar=True)
-    # print (type(trajectory_mode))
-    # print (trajectory_mode)
-    trajectory_mode = 'yaw'
+    
     forward_points = st_utils.number_input('forward_points', cfg.forward_points, sidebar=True)
 
     # ****************************************************************************
@@ -71,52 +68,17 @@ class CIPS_3D_Demo(object):
     model_pkl = model_pkl.strip(' ')
     generator = build_model(cfg=cfg.G_cfg).to(device)
     Checkpointer(generator).load_state_dict_from_file(model_pkl)
-
-
    
     curriculum = comm_utils.get_metadata_from_json(metafile=cfg.metadata,
                                                    num_steps=num_steps,
                                                    image_size=image_size,
                                                    psi=psi)
 
-    if trajectory_mode == 'circle_near_far':
-      xyz, lookup, yaws, pitchs = comm_utils.get_circle_camera_pos_and_lookup(
-        alpha=math.pi / alpha_pi_div, num_samples=num_frames, periods=2)
-      xyz = torch.from_numpy(xyz).to(device)
-      lookup = torch.from_numpy(lookup).to(device)
-      fov_list = []
-      for idx, t in enumerate(np.linspace(0, 1, num_frames)):
-        fov_list.append(fov + t * (max_fov - fov))
-      fov_list.extend(fov_list[::-1])
-
-    elif trajectory_mode == 'translate_circle_near_far':
-      xyz, lookup, yaws, pitchs, num_samples_translate = comm_utils.get_translate_circle_camera_pos_and_lookup(
-        num_samples_translate=num_samples_translate,
-        translate_dist=translate_dist,
-        alpha=math.pi / alpha_pi_div,
-        num_samples=num_frames,
-        periods=2)
-      xyz = torch.from_numpy(xyz).to(device)
-      lookup = torch.from_numpy(lookup).to(device)
-      fov_list = [fov] * num_samples_translate * 2
-      for idx, t in enumerate(np.linspace(0, 1, num_frames)):
-        fov_list.append(fov + t * (max_fov - fov))
-      fov_list.extend(fov_list[-num_frames:][::-1])
-      assert len(fov_list) == len(xyz)
-
-    elif trajectory_mode == 'circle':
-      xyz, lookup, yaws, pitchs = comm_utils.get_circle_camera_pos_and_lookup(alpha=math.pi / alpha_pi_div,
-                                                                              num_samples=num_frames,
-                                                                              periods=2)
-      xyz = torch.from_numpy(xyz).to(device)
-      lookup = torch.from_numpy(lookup).to(device)
-      fov_list = [fov] * len(xyz)
-
-    elif trajectory_mode == 'yaw':
-      xyz, lookup, yaws, pitchs = comm_utils.get_yaw_camera_pos_and_lookup(num_samples=num_frames, )
-      xyz = torch.from_numpy(xyz).to(device)
-      lookup = torch.from_numpy(lookup).to(device)
-      fov_list = [fov] * len(xyz)
+    
+    xyz, lookup, yaws, pitchs = comm_utils.get_yaw_camera_pos_and_lookup(num_samples=num_frames, )
+    xyz = torch.from_numpy(xyz).to(device)
+    lookup = torch.from_numpy(lookup).to(device)
+    fov_list = [fov] * len(xyz)
 
     st_image = st.empty()
     output_name = Path(f'seed_{seed}.mp4')
