@@ -85,46 +85,47 @@ class CIPS_3D_Demo(object):
     video_f = cv2_utils.ImageioVideoWriter(f"{outdir}/{output_name}", fps=fps)
 
     torch.manual_seed(seed)
-    zs = generator.get_zs(1)
-    info = {}
-    with torch.no_grad():
-      idx = 0
-      curriculum['h_mean'] = 0
-      curriculum['v_mean'] = 0
-      curriculum['h_stddev'] = 0
-      curriculum['v_stddev'] = 0
+    for kk in range(1,100):
+      zs = generator.get_zs(1)
+      info = {}
+      with torch.no_grad():
+        idx = 1
+        curriculum['h_mean'] = 0
+        curriculum['v_mean'] = 0
+        curriculum['h_stddev'] = 0
+        curriculum['v_stddev'] = 0
 
-      cur_camera_pos = xyz[[idx]]
-      cur_camera_lookup = lookup[[idx]]
-      yaw = yaws[idx]
-      pitch = pitchs[idx]
-      fov = fov_list[idx]
-      curriculum['fov'] = fov
+        cur_camera_pos = xyz[[idx]]
+        cur_camera_lookup = lookup[[idx]]
+        yaw = yaws[idx]
+        pitch = pitchs[idx]
+        fov = fov_list[idx]
+        curriculum['fov'] = fov
 
-      print ('cur_camera_pos', cur_camera_pos)
-      print ('cur_camera_lookup', cur_camera_lookup)
-      print ('yaw', yaw)
-      print ('pitch', pitch)
-      
-      frame, depth_map = generator.forward_camera_pos_and_lookup(
-          zs=zs,
-          return_aux_img=False,
-          forward_points=forward_points ** 2,
-          camera_pos=cur_camera_pos,
-          camera_lookup=cur_camera_lookup,
-          **curriculum)
-      #====
-      tmp_frm = (frame.squeeze().permute(1,2,0) + 1) * 0.5 * 255
-      tmp_frm = tmp_frm.detach().cpu().numpy()
-      img_name = Path(f'{idx}.png')
-      img_name = f"{outdir}/{img_name}"
-      tmp_frm = cv2.cvtColor(tmp_frm, cv2.COLOR_RGB2BGR)
+        print ('cur_camera_pos', cur_camera_pos)
+        print ('cur_camera_lookup', cur_camera_lookup)
+        print ('yaw', yaw)
+        print ('pitch', pitch)
+        
+        frame, depth_map = generator.forward_camera_pos_and_lookup(
+            zs=zs,
+            return_aux_img=False,
+            forward_points=forward_points ** 2,
+            camera_pos=cur_camera_pos,
+            camera_lookup=cur_camera_lookup,
+            **curriculum)
+        #====
+        tmp_frm = (frame.squeeze().permute(1,2,0) + 1) * 0.5 * 255
+        tmp_frm = tmp_frm.detach().cpu().numpy()
+        img_name = Path(f'{kk}.png')
+        img_name = f"{outdir}/{img_name}"
+        tmp_frm = cv2.cvtColor(tmp_frm, cv2.COLOR_RGB2BGR)
 
-      cv2.imwrite(img_name, tmp_frm)
-      
+        cv2.imwrite(img_name, tmp_frm)
+        
 
-      info[img_name] = {"xyz": xyz.detach().cpu().numpy(), 'cur_camera_pos':cur_camera_pos.detach().cpu().numpy(), 'yaw': yaw,"pitch": pitch, 
-                              'z_nerf': zs['z_nerf'].detach().cpu().numpy(),'z_inr':  zs['z_inr'].detach().cpu().numpy()  }
+        info[img_name] = {"xyz": xyz.detach().cpu().numpy(), 'cur_camera_pos':cur_camera_pos.detach().cpu().numpy(), 'yaw': yaw,"pitch": pitch, 
+                                'z_nerf': zs['z_nerf'].detach().cpu().numpy(),'z_inr':  zs['z_inr'].detach().cpu().numpy()  }
       with open(f"{outdir}/gt.pkl", 'wb') as handle:
           pickle.dump(info, handle, protocol=pickle.HIGHEST_PROTOCOL)  
 
