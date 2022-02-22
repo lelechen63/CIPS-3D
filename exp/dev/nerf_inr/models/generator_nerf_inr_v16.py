@@ -1750,11 +1750,13 @@ class GeneratorNerfINR(GeneratorNerfINR_base):
                 dist='gaussian'):
     print ('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
     # if dist == 'gaussian':
-    z = torch.randn(shape, device=device) 
+    # z = torch.randn(shape, device=device) 
+    z = 0.02 * truncnorm.rvs(-2, 2, size=shape, random_state=np.random.RandomState(0))
     # elif dist == 'uniform':
     #   z = torch.rand(shape, device=device) * 2 - 1
     print (z.shape)
     print (type(z))
+  
     return z
 
   def get_zs(self, b):
