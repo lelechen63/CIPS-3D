@@ -1751,7 +1751,7 @@ class GeneratorNerfINR(GeneratorNerfINR_base):
                 dist='gaussian'):
     # print ('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
     # if dist == 'gaussian':
-    z = 0.1 * torch.randn(shape, device=device) 
+    z = 0.01 * torch.randn(shape, device=device) 
     
     # z = truncnorm.rvs(-5, 5, size=shape, random_state=np.random.RandomState(0))
     # z= torch.FloatTensor(z).to(device)
