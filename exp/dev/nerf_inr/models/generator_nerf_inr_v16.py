@@ -1754,6 +1754,7 @@ class GeneratorNerfINR(GeneratorNerfINR_base):
     # elif dist == 'uniform':
     #   z = torch.rand(shape, device=device) * 2 - 1
     print (z.shape)
+    print (type(z))
     return z
 
   def get_zs(self, b):
