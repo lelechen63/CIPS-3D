@@ -1757,7 +1757,7 @@ class GeneratorNerfINR(GeneratorNerfINR_base):
     #   z = torch.rand(shape, device=device) * 2 - 1
     # print (z.shape)
     # print (type(z))
-    z= torch.from_numpy(z).to(device, dtype=torch.float64)
+    z= torch.FloatTensor(z).to(device)
   
     return z
 
