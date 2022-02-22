@@ -1753,7 +1753,7 @@ class GeneratorNerfINR(GeneratorNerfINR_base):
     # if dist == 'gaussian':
     # z = torch.randn(shape, device=device) 
     
-    z = 0.02 * truncnorm.rvs(-2, 2, size=shape, random_state=np.random.RandomState(0))
+    truncnorm.rvs(-5, 5, size=shape, random_state=np.random.RandomState(0))
     z= torch.FloatTensor(z).to(device)
     # elif dist == 'uniform':
     #   z = torch.rand(shape, device=device) * 2 - 1
