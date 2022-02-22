@@ -1748,10 +1748,12 @@ class GeneratorNerfINR(GeneratorNerfINR_base):
                 shape,
                 device,
                 dist='gaussian'):
-    if dist == 'gaussian':
-      z = torch.randn(shape, device=device)
-    elif dist == 'uniform':
-      z = torch.rand(shape, device=device) * 2 - 1
+    print ('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
+    # if dist == 'gaussian':
+    z = torch.randn(shape, device=device) 
+    # elif dist == 'uniform':
+    #   z = torch.rand(shape, device=device) * 2 - 1
+    print (z.shape)
     return z
 
   def get_zs(self, b):
