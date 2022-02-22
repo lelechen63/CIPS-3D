@@ -1755,8 +1755,9 @@ class GeneratorNerfINR(GeneratorNerfINR_base):
     z = 0.02 * truncnorm.rvs(-2, 2, size=shape, random_state=np.random.RandomState(0))
     # elif dist == 'uniform':
     #   z = torch.rand(shape, device=device) * 2 - 1
-    print (z.shape)
-    print (type(z))
+    # print (z.shape)
+    # print (type(z))
+    z= torch.from_numpy(z)
   
     return z
 
