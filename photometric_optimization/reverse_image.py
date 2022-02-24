@@ -375,10 +375,7 @@ def main_ffhq_cips3d(start_idx =1):
             continue 
 
 
-
 def main_ffhq():
-    
-
     config = {
         # FLAME
         'flame_model_path': '/home/uss00022/lelechen/basic/flame_data/data/generic_model.pkl',  # acquire it from FLAME project page
