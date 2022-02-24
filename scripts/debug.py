@@ -106,7 +106,7 @@ class CIPS_3D_Demo(object):
     with open(f"{outdir}/positioninfo.pkl", 'wb') as handle:
             pickle.dump(positioninfo, handle, protocol=pickle.HIGHEST_PROTOCOL)  
 
-    for kk in tqdm(range(1,100000)):
+    for kk in tqdm(range(100000,200000)):
     # for kk in galary:
       torch.manual_seed(kk)
       zs = generator.get_zs(1)
