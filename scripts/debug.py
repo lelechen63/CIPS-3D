@@ -111,7 +111,7 @@ class CIPS_3D_Demo(object):
       torch.manual_seed(kk)
       zs = generator.get_zs(1)
       if os.path.exists(f"{outdir}/{kk}.pkl"): 
-        openfile = open(f"{outdir}/{kk}.pkl", "rb"))
+        openfile = open(f"{outdir}/{kk}.pkl", "rb")
         info = pickle.load(openfile)
       else:
         info = {}
