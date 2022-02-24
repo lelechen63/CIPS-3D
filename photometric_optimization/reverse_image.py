@@ -361,7 +361,7 @@ def main_ffhq_cips3d(start_idx =1):
     root = '/nfs/STG/CodecAvatar/lelechen/FFHQ/generated_cips3d'
     
     for idx in tqdm(range(start_idx, start_idx + 100000 )):
-        try:
+        # try:
             img_p = os.path.join( root, 'images', '%d.png'%idx)
             
             if not os.path.exists( config.savefolder + '/%d/flame_p.pickle'%idx):
@@ -370,9 +370,9 @@ def main_ffhq_cips3d(start_idx =1):
                 params = fitting.run(img, vis_folder = config.savefolder + '%d'%idx)
             else:
                 print (idx,'======')
-        except:
-            print (idx, '==++++++')
-            continue 
+        # except:
+        #     print (idx, '==++++++')
+        #     continue 
 
 
 
