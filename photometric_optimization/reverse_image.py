@@ -311,8 +311,6 @@ def demo():
               
 
 
-
-
 def parse_args():
     parser = argparse.ArgumentParser()
 
@@ -322,7 +320,7 @@ def parse_args():
     return parser.parse_args()
 
 
-def main_ffhq_cips3d():
+def main_ffhq_cips3d(start_idx =1):
     # image_path = "./test_images/69956.png"
     # img = imageio.imread(image_path)
 
