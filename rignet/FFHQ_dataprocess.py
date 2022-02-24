@@ -86,7 +86,7 @@ def get_flame_total(root_p):
         flame_p = os.path.join(root_p, 'flame', str(i), 'flame_p.pickle')
         if os.path.exists(flame_p):
             with open(flame_p, 'rb') as f:
-            flamelist = pickle.load(f, encoding='latin1')
+                flamelist = pickle.load(f, encoding='latin1')
             total_flame[str(i)] = flamelist
         else:
             print (flame_p,' not exists!!')
