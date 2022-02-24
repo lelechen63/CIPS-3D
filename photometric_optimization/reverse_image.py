@@ -190,8 +190,8 @@ class PhotometricFitting(object):
             for key in losses.keys():
                 loss_info = loss_info + '{}: {}, '.format(key, float(losses[key]))
 
-            if k % 10 == 0:
-                print(loss_info)
+            # if k % 10 == 0:
+            #     print(loss_info)
 
             # visualize
             if k % 999 == 0:
