@@ -356,7 +356,6 @@ def main_ffhq_cips3d(start_idx =1):
     # gpuid = 6
     config.batch_size = 1
     fitting = PhotometricFitting(config, device="cuda:%d"%gpuid)
-    
 
     root = '/nfs/STG/CodecAvatar/lelechen/FFHQ/generated_cips3d'
     
