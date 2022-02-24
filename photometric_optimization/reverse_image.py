@@ -352,17 +352,16 @@ def main_ffhq_cips3d(start_idx =1):
     config = util.dict2obj(config)
     
     k =  parse_args().k
-    gpuid = k % 7
+    # gpuid = k % 7
     # gpuid = 6
     config.batch_size = 1
-    fitting = PhotometricFitting(config, device="cuda:%d"%gpuid)
+    fitting = PhotometricFitting(config, device="cuda:%d"%0)
 
     root = '/nfs/STG/CodecAvatar/lelechen/FFHQ/generated_cips3d'
     
-    for idx in tqdm(range(start_idx, start_idx + 100000 )):
-        # try:
+    for idx in tqdm(range(10000 * k, start_idx + 10000 )):
+        try:
             img_p = os.path.join( root, 'images', '%d.png'%idx)
-            
             if not os.path.exists( config.savefolder + '/%d/flame_p.pickle'%idx):
                 os.makedirs(config.savefolder + '/%d'%idx, exist_ok = True)
                 img = cv2.imread(img_p)
@@ -370,9 +369,9 @@ def main_ffhq_cips3d(start_idx =1):
                 params = fitting.run(img, vis_folder = config.savefolder + '%d'%idx)
             else:
                 print (idx,'======')
-        # except:
-        #     print (idx, '==++++++')
-        #     continue 
+        except:
+            print (idx, '==++++++')
+            continue 
 
 
 
