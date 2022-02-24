@@ -96,7 +96,8 @@ def get_flame_total(root_p):
         pickle.dump(total_flame, handle, protocol=pickle.HIGHEST_PROTOCOL)
     
 def get_train():
-    get_flame_total()
+    root_p = '/nfs/STG/CodecAvatar/lelechen/FFHQ/generated_cips3d'
+    get_flame_total(root_p)
     # with open("/home/uss00022/lelechen/github/CIPS-3D/results/model_interpolation/gt.pkl", 'rb') as handle:
     #     info = pickle.load(handle)
     
