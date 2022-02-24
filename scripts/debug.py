@@ -3,7 +3,7 @@ from pathlib import Path
 import math
 import numpy as np
 import os
-import tqdm
+from tqdm import tqdm
 import streamlit as st
 import torch
 import sys
@@ -106,7 +106,7 @@ class CIPS_3D_Demo(object):
     with open(f"{outdir}/positioninfo.pkl", 'wb') as handle:
             pickle.dump(positioninfo, handle, protocol=pickle.HIGHEST_PROTOCOL)  
 
-    for kk in range(10,100):
+    for kk in tqdm(range(100,1000000)):
     # for kk in galary:
       torch.manual_seed(kk)
       zs = generator.get_zs(1)
