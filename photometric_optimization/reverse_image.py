@@ -91,6 +91,7 @@ class PhotometricFitting(object):
         return msk # (h,w), 0~1
 
     def optimize(self, images, landmarks, image_masks, savefolder=None):
+        itt = 500
         bz = images.shape[0]
         shape = nn.Parameter(torch.zeros(bz, self.config.shape_params).float().to(self.device))
         tex = nn.Parameter(torch.zeros(bz, self.config.tex_params).float().to(self.device))
@@ -157,7 +158,7 @@ class PhotometricFitting(object):
                 cv2.imwrite('{}/{}.jpg'.format(savefolder, k), grid_image)
 
         # non-rigid fitting of all the parameters with 68 face landmarks, photometric loss and regularization terms.
-        for k in range(200, 1000):
+        for k in range(200, itt):
             losses = {}
             vertices, landmarks2d, landmarks3d_save = self.flame(shape_params=shape, expression_params=exp, pose_params=pose)
             trans_vertices = util.batch_orth_proj(vertices, cam)
@@ -194,7 +195,7 @@ class PhotometricFitting(object):
             #     print(loss_info)
 
             # visualize
-            if k % 999 == 0:
+            if k % (itt-1) == 0:
                 grids = {}
                 visind = range(bz)  # [0]
                 grids['images'] = torchvision.utils.make_grid(images[visind]).detach().cpu()
