@@ -106,7 +106,7 @@ class CIPS_3D_Demo(object):
     with open(f"{outdir}/positioninfo.pkl", 'wb') as handle:
             pickle.dump(positioninfo, handle, protocol=pickle.HIGHEST_PROTOCOL)  
 
-    for kk in tqdm(range(100,100000)):
+    for kk in tqdm(range(1,100000)):
     # for kk in galary:
       torch.manual_seed(kk)
       zs = generator.get_zs(1)
@@ -168,7 +168,7 @@ def main(outdir,
 def build_args():
   parser = argparser_utils.get_parser()
 
-  argparser_utils.add_argument_str(parser, name='outdir', default='results/model_interpolation')
+  argparser_utils.add_argument_str(parser, name='outdir', default='/nfs/STG/CodecAvatar/lelechen/FFHQ/generated_cips3d/images')
   argparser_utils.add_argument_str(parser, name='cfg_file', default='configs/web_demo.yaml')
   argparser_utils.add_argument_str(parser, name='command', default='model_interpolation')
   argparser_utils.add_argument_bool(parser, name='debug', default=False)
