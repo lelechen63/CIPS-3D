@@ -113,6 +113,7 @@ class CIPS_3D_Demo(object):
       if os.path.exists(f"{outdir}/{kk}.pkl"): 
         openfile = open(f"{outdir}/{kk}.pkl", "rb")
         info = pickle.load(openfile)
+        print (info)
       else:
         info = {}
 
