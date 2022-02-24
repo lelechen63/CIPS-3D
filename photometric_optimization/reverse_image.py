@@ -366,7 +366,7 @@ def main_ffhq_cips3d(start_idx =1):
             
             if not os.path.exists( config.savefolder + '/%d/flame_p.pickle'%idx):
                 os.makedirs(config.savefolder + '/%d'%idx, exist_ok = True)
-                img = cv.imread(img_p)
+                img = cv2.imread(img_p)
                 params = fitting.run(img, vis_folder = config.savefolder + '%d'%idx)
             else:
                 print (idx,'======')
