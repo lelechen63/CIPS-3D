@@ -322,7 +322,7 @@ def parse_args():
     return parser.parse_args()
 
 
-def main():
+def main_ffhq_cips3d():
     # image_path = "./test_images/69956.png"
     # img = imageio.imread(image_path)
 
@@ -342,7 +342,62 @@ def main():
         'image_size': 512,
         'e_lr': 0.005,
         'e_wd': 0.0001,
-        'savefolder': '/nfs/STG/CodecAvatar/lelechen/FFHQ/ffhq-dataset/flame/',
+        'savefolder': '/nfs/STG/CodecAvatar/lelechen/FFHQ/generated_cips3d/flame/',
+        # weights of losses and reg terms
+        'w_pho': 8,
+        'w_lmks': 1,
+        'w_shape_reg': 1e-4,
+        'w_expr_reg': 1e-4,
+        'w_pose_reg': 0,
+    }
+
+    config = util.dict2obj(config)
+    
+    k =  parse_args().k
+    gpuid = k % 7
+    # gpuid = 6
+    config.batch_size = 1
+    fitting = PhotometricFitting(config, device="cuda:%d"%gpuid)
+    
+
+    root = '/nfs/STG/CodecAvatar/lelechen/FFHQ/generated_cips3d'
+    
+    for idx in tqdm(range(start_idx, start_idx + 100000 )):
+        try:
+            img_p = os.path.join( root, 'images', '%d.png'%idx)
+            
+            if not os.path.exists( config.savefolder + '/%d/flame_p.pickle'%idx):
+                os.makedirs(config.savefolder + '/%d'%idx, exist_ok = True)
+                img = cv.imread(img_p)
+                params = fitting.run(img, vis_folder = config.savefolder + '%d'%idx)
+            else:
+                print (idx,'======')
+        except:
+            print (idx, '==++++++')
+            continue 
+
+
+
+def main_ffhq():
+    
+
+    config = {
+        # FLAME
+        'flame_model_path': '/home/uss00022/lelechen/basic/flame_data/data/generic_model.pkl',  # acquire it from FLAME project page
+        'flame_lmk_embedding_path': '/home/uss00022/lelechen/basic/flame_data/data/landmark_embedding.npy',
+        'tex_space_path': '/home/uss00022/lelechen/basic/flame_data/data/FLAME_texture.npz',  # acquire it from FLAME project page
+        'camera_params': 3,
+        'shape_params': 100,
+        'expression_params': 50,
+        'pose_params': 6,
+        'tex_params': 50,
+        'use_face_contour': True,
+
+        'batch_size': 1,
+        'image_size': 512,
+        'e_lr': 0.005,
+        'e_wd': 0.0001,
+        'savefolder': '/nfs/STG/CodecAvatar/lelechen/FFHQ/generated_cips3d/flame/',
         # weights of losses and reg terms
         'w_pho': 8,
         'w_lmks': 1,
@@ -379,5 +434,6 @@ def main():
                 print (idx, image['label'])
                 continue 
 
-    
-demo()
+
+
+main_ffhq_cips3d()

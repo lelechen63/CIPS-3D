@@ -169,8 +169,8 @@ class Latent2CodeModule(pl.LightningModule):
        
 
     def on_epoch_end(self):
-        
-        if self.current_epoch % 10 == 0:
+        step = 10
+        if self.current_epoch % step == 0:
             batch = self.batch
             landmarks3d, predicted_images = self(batch['shape_latent'], batch['appearance_latent'], batch['cam'], batch['pose'])
             visind = 0
@@ -219,6 +219,6 @@ class Latent2CodeModule(pl.LightningModule):
             ('genlmark', genlmark )
             ])
        
-            self.visualizer.display_current_results(visuals, self.current_epoch, 1000000) 
+            self.visualizer.display_current_results(visuals, self.current_epoch, step) 
 
             self.trainer.save_checkpoint( os.path.join( self.ckpt_path, 'latest.ckpt') )

@@ -6,7 +6,6 @@ import sys
 sys.path.append('/home/uss00022/lelechen/github/CIPS-3D')
 import util
 from utils import html
-print(html.__file__, '++++++++++++++++++++++++')
 
 import scipy.misc
 try:
@@ -57,7 +56,7 @@ class Visualizer():
 
             # update website
             webpage = html.HTML(self.web_dir, 'Experiment name = %s' % self.name, refresh=30)
-            for n in range(epoch, 0, -1):
+            for n in range(epoch, 0, -step):
                 webpage.add_header('epoch [%d]' % n)
                 ims = []
                 txts = []
