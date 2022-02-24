@@ -99,12 +99,23 @@ class CIPS_3D_Demo(object):
     print ('pitch', pitch)
 
     # galary = [72216891, 88542011, 92577341, 86271113, 92674084, 578916, 99738897, 99860786, 354348]
-    
+    positioninfo = {"xyz": xyz.detach().cpu().numpy(), \
+                   'cur_camera_pos':cur_camera_pos.detach().cpu().numpy(),\
+                   'yaw': yaw,"pitch": pitch
+                              }
+    with open(f"{outdir}/positioninfo.pkl", 'wb') as handle:
+            pickle.dump(positioninfo, handle, protocol=pickle.HIGHEST_PROTOCOL)  
+
     for kk in range(1,10):
     # for kk in galary:
       torch.manual_seed(kk)
       zs = generator.get_zs(1)
-      # info = {}
+      if os.path.exists(f"{outdir}/{kk}.pkl"): 
+        openfile = open(f"{outdir}/{kk}.pkl", "rb"))
+        info = pickle.load(openfile)
+      else:
+        info = {}
+
       with torch.no_grad():        
         frame, depth_map = generator.forward_camera_pos_and_lookup(
             zs=zs,
@@ -122,10 +133,10 @@ class CIPS_3D_Demo(object):
 
         cv2.imwrite(img_name, tmp_frm)
         
-        info = {"xyz": xyz.detach().cpu().numpy(), 'cur_camera_pos':cur_camera_pos.detach().cpu().numpy(), 'yaw': yaw,"pitch": pitch, 
-                                'z_nerf': zs['z_nerf'].detach().cpu().numpy(),'z_inr':  zs['z_inr'].detach().cpu().numpy()}
-        with open(f"{outdir}/{kk}.pkl", 'wb') as handle:
-            pickle.dump(info, handle, protocol=pickle.HIGHEST_PROTOCOL)  
+        info['{kk}.png'] = { 'z_nerf': zs['z_nerf'].detach().cpu().numpy(),
+                  'z_inr':  zs['z_inr'].detach().cpu().numpy()}
+      with open(f"{outdir}/{kk}.pkl", 'wb') as handle:
+          pickle.dump(info, handle, protocol=pickle.HIGHEST_PROTOCOL)  
 
 
 def main(outdir,
