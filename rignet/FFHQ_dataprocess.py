@@ -100,10 +100,10 @@ def get_flame_total(root_p):
 def get_train():
     root_p = '/nfs/STG/CodecAvatar/lelechen/FFHQ/generated_cips3d'
     # get_flame_total(root_p)
-    with open(os.path.join(root_p, 'flame', 'total_flame.pickle', 'rb')) as handle:
+    with open(os.path.join(root_p, 'flame', 'total_flame.pickle'), 'rb') as handle:
         flame_p = pickle.load(handle)
     
-    with open(os.path.join(root_p, 'images', 'z_info.pkl', 'rb')) as handle:
+    with open(os.path.join(root_p, 'images', 'z_info.pkl'), 'rb') as handle:
         z_p = pickle.load(handle)
     print (len(flame_p), len(z_p))
     print (flame_p.keys()[:10])
