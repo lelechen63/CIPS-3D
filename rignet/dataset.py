@@ -62,12 +62,11 @@ class FFHQDataset(torch.utils.data.Dataset):
                  # 'img_mask':image_masks
                 }
         """
-        img_path = os.path.join(self.dataroot, 'images',name)
+        img_path = os.path.join(self.opt.dataroot, 'images',name)
         img = cv2.imread(img_path)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
-        maskimg_path = os.path.join(self.dataroot, 'imagemasks',name[:-3] +'npy')
-        # img = cv2.imread(img_path)
+        maskimg_path = os.path.join(self.opt.dataroot, 'imagemasks',name[:-3] +'npy')
         data['img_mask'] = np.load(maskimg_path)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
