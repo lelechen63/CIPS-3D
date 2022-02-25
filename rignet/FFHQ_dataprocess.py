@@ -90,7 +90,7 @@ def get_flame_total(root_p):
             total_flame[str(i)] = flamelist
         else:
             print (flame_p,' not exists!!')
-    print (total_flame)
+    print (len(total_flame))
     total_flame_p = os.path.join(root_p, 'flame', 'total_flame.pickle')
     with open(total_flame_p, 'wb') as handle:
         pickle.dump(total_flame, handle, protocol=pickle.HIGHEST_PROTOCOL)
