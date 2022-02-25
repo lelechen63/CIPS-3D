@@ -59,9 +59,19 @@ class FFHQDataset(torch.utils.data.Dataset):
                  'z_gan': z_gan,
                  'gt_img': img,
                  'gt_landmark': landmark
+                 # 'img_mask':image_masks
                 }
         """
-        data['gt_image'] = self.transform(data['gt_img'])
+        img_path = os.path.join(self.dataroot, 'images',name)
+        img = cv2.imread(img_path)
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+        maskimg_path = os.path.join(self.dataroot, 'imagemasks',name[:-3] +'npy')
+        # img = cv2.imread(img_path)
+        data['img_mask'] = np.load(maskimg_path)
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+        data['gt_image'] = self.transform(img)
         data['image_path'] = name
         return data
 
