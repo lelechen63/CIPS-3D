@@ -103,7 +103,7 @@ def get_flame_total(root_p, k, debug = False):
 
 def get_train(k = 200000, debug = False):
     root_p = '/nfs/STG/CodecAvatar/lelechen/FFHQ/generated_cips3d'
-    get_flame_total(root_p,k, debug )
+    # get_flame_total(root_p,k, debug )
     total_flame_p = os.path.join(root_p, 'flame', 'total_flame.pickle')
     if debug:
         total_flame_p = total_flame_p[:-7] +'_debug.pickle'
@@ -137,9 +137,9 @@ def get_train(k = 200000, debug = False):
             lit = flame_p['lit'].reshape(-1) #[1,9,3]
             image_masks = np.squeeze(flame_p['image_masks'],axis=0)
             print (image_masks.shape)
-            print (ggggg)
-            imgmask_path = os.path.join(root_p, 'images', k+'.png' )
-            img = cv2.imread(img_path)
+
+            imgmask_path = os.path.join(root_p, 'imagemasks', k+'.npy' )
+            np.save(imgmask_path, image_masks)
 
             landmark = np.squeeze(flame_p['landmark3d'], axis=0) #[1,68,2]
             """ 
