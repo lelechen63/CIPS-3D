@@ -82,7 +82,7 @@ def get_debug():
 
 def get_flame_total(root_p):
     total_flame = {}
-    for i in range(0,3):
+    for i in range(0,200000):
         flame_p = os.path.join(root_p, 'flame', str(i), 'flame_p.pickle')
         if os.path.exists(flame_p):
             with open(flame_p, 'rb') as f:
