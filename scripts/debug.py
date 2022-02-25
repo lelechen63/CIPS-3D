@@ -111,7 +111,7 @@ class CIPS_3D_Demo(object):
         print (info)
     else:
       info = {}
-    for kk in tqdm(range(1,200000)):
+    for kk in tqdm(range(200000,400000)):
     # for kk in galary:
       torch.manual_seed(kk)
       zs = generator.get_zs(1)
