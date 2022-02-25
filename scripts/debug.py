@@ -108,7 +108,7 @@ class CIPS_3D_Demo(object):
     if os.path.exists(f"{outdir}/z_info.pkl"): 
         openfile = open(f"{outdir}/z_info.pkl", "rb")
         info = pickle.load(openfile)
-        print (info)
+        # print (info)
     else:
       info = {}
     for kk in tqdm(range(200000,400000)):
