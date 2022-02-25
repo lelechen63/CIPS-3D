@@ -116,9 +116,9 @@ def get_train(k = 200000):
         name = k+'.png'
         if name in z_p.keys():
             
-            img_path = os.path.join(root_p, 'images', k+'.png' )
-            img = cv2.imread(img_path)
-            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            # img_path = os.path.join(root_p, 'images', k+'.png' )
+            # img = cv2.imread(img_path)
+            # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
             
             flame_p = flame_total[k]
             shape = flame_p['shape'].reshape(-1) #[1,100]
@@ -128,6 +128,11 @@ def get_train(k = 200000):
             tex = flame_p['tex'].reshape(-1) #[1,50]
             lit = flame_p['lit'].reshape(-1) #[1,9,3]
             image_masks = np.squeeze(flame_p['image_masks'],axis=0)
+            print (image_mask.shape)
+            print (ggggg)
+            img_path = os.path.join(root_p, 'images', k+'.png' )
+            img = cv2.imread(img_path)
+
             landmark = np.squeeze(flame_p['landmark3d'], axis=0) #[1,68,2]
             """ 
                 we normalize the landmark into 0-1.
@@ -150,10 +155,11 @@ def get_train(k = 200000):
                         # 'cam_pose': camera_pose,
                         'shape_latent': z_nerf,
                         'appearance_latent': z_gan,
-                        'gt_img': img,
+                        # 'gt_img': img,
                         'gt_landmark': landmark,
-                        'img_mask':image_masks
+                        # 'img_mask':image_masks
                         }
+            
     print (len(data), len(ffhq_trainlist))
     with open( os.path.join(root_p, "ffhq_train.pkl" ), 'wb') as handle:
         pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
