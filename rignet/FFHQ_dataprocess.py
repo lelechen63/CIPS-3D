@@ -130,7 +130,7 @@ def get_train(k = 200000):
             image_masks = np.squeeze(flame_p['image_masks'],axis=0)
             print (image_mask.shape)
             print (ggggg)
-            img_path = os.path.join(root_p, 'images', k+'.png' )
+            imgmask_path = os.path.join(root_p, 'images', k+'.png' )
             img = cv2.imread(img_path)
 
             landmark = np.squeeze(flame_p['landmark3d'], axis=0) #[1,68,2]
