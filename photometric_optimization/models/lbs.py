@@ -354,6 +354,7 @@ def batch_rigid_transform(rot_mats, joints, parents, dtype=torch.float32):
         rot_mats.view(-1, 3, 3),
         rel_joints.view(-1, 3, 1))
     print (transforms_mat.shape, '+++-------1111---++++')
+    
     transforms_mat = transforms_mat.view(-1, joints.shape[1], 4, 4)
 
     transform_chain = [transforms_mat[:, 0]]
