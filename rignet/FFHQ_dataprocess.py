@@ -106,8 +106,8 @@ def get_train():
     with open(os.path.join(root_p, 'images', 'z_info.pkl'), 'rb') as handle:
         z_p = pickle.load(handle)
     print (len(flame_p), len(z_p))
-    print (flame_p.keys())
-    print (z_p.keys())
+    print (flame_p.keys()) # key: 1.png
+    # print (z_p.keys())
     # name = '0.png'
     # info = info['results/model_interpolation/0.png']
     # img_p = '/home/uss00022/lelechen/github/CIPS-3D/results/model_interpolation/0.png'
