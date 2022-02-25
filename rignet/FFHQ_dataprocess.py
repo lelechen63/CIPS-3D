@@ -154,10 +154,10 @@ def get_train(k = 200000):
                         'gt_landmark': landmark,
                         'img_mask':image_masks
                         }
-
-    with open( os.path.join(root_p, "/ffhq_train.pkl" ), 'wb') as handle:
+    print (len(data), len(ffhq_trainlist))
+    with open( os.path.join(root_p, "ffhq_train.pkl" ), 'wb') as handle:
         pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
-    with open( os.path.join(root_p, "/ffhq_trainlist.pkl" ), 'wb') as handle:
+    with open( os.path.join(root_p, "ffhq_trainlist.pkl" ), 'wb') as handle:
         pickle.dump(ffhq_trainlist, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 get_train()
