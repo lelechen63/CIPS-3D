@@ -99,7 +99,7 @@ def get_flame_total(root_p, k):
 
 def get_train(k = 200000):
     root_p = '/nfs/STG/CodecAvatar/lelechen/FFHQ/generated_cips3d'
-    get_flame_total(root_p,k )
+    # get_flame_total(root_p,k )
     with open(os.path.join(root_p, 'flame', 'total_flame.pickle'), 'rb') as handle:
         flame_total = pickle.load(handle)
     
