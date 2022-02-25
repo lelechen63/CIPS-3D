@@ -136,7 +136,7 @@ def get_train(k = 200000, debug = False):
             tex = flame_p['tex'].reshape(-1) #[1,50]
             lit = flame_p['lit'].reshape(-1) #[1,9,3]
             image_masks = np.squeeze(flame_p['image_masks'],axis=0)
-            print (image_mask.shape)
+            print (image_masks.shape)
             print (ggggg)
             imgmask_path = os.path.join(root_p, 'images', k+'.png' )
             img = cv2.imread(img_path)
