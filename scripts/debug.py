@@ -135,7 +135,7 @@ class CIPS_3D_Demo(object):
 
           cv2.imwrite(img_name, tmp_frm)
         
-      info['{kk}.png'] = { 'z_nerf': zs['z_nerf'].detach().cpu().numpy(),
+      info[f'{kk}.png'] = { 'z_nerf': zs['z_nerf'].detach().cpu().numpy(),
                 'z_inr':  zs['z_inr'].detach().cpu().numpy()}
     with open(f"{outdir}/z_info.pkl", 'wb') as handle:
       pickle.dump(info, handle, protocol=pickle.HIGHEST_PROTOCOL)  
