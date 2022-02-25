@@ -2,7 +2,7 @@ import os
 import pickle 
 
 import numpy as np 
-
+from tqdm import tqdm
 import cv2
 
 def debug_single():
@@ -112,7 +112,7 @@ def get_train(k = 200000):
     data = {}
     ffhq_trainlist = []
 
-    for k in flame_total.keys():
+    for k in tqdm(flame_total.keys()):
         name = k+'.png'
         if name in z_p.keys():
             
