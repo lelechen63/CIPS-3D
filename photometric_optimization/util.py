@@ -182,7 +182,7 @@ def vertex_normals(vertices, faces):
     faces = faces.view(-1, 3)
     vertices_faces = vertices_faces.view(-1, 3, 3)
     print ('==============')
-    print ('0:', type(0) 'faces[:, 1].long():', type(faces[:, 1].long()), 'vertices_faces[:, 2]:', type(vertices_faces[:, 2]) )
+    print ('0:', type(0), 'faces[:, 1].long():', type(faces[:, 1].long()), 'vertices_faces[:, 2]:', type(vertices_faces[:, 2]) )
     normals.index_add_(0, faces[:, 1].long(),
                        torch.cross(vertices_faces[:, 2] - vertices_faces[:, 1], vertices_faces[:, 0] - vertices_faces[:, 1]))
     normals.index_add_(0, faces[:, 2].long(),
