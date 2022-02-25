@@ -109,8 +109,8 @@ class CIPS_3D_Demo(object):
         openfile = open(f"{outdir}/z_info.pkl", "rb")
         info = pickle.load(openfile)
         print (info)
-      else:
-        info = {}
+    else:
+      info = {}
     for kk in tqdm(range(1,100000)):
     # for kk in galary:
       torch.manual_seed(kk)
