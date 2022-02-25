@@ -101,10 +101,14 @@ def get_flame_total(root_p, k, debug = False):
 
 # def get_cips_total():
 
-def get_train(k = 200000):
+def get_train(k = 200000, debug = False):
     root_p = '/nfs/STG/CodecAvatar/lelechen/FFHQ/generated_cips3d'
-    # get_flame_total(root_p,k )
-    with open(os.path.join(root_p, 'flame', 'total_flame.pickle'), 'rb') as handle:
+    get_flame_total(root_p,k, debug )
+    total_flame_p = os.path.join(root_p, 'flame', 'total_flame.pickle')
+    if debug:
+        total_flame_p = total_flame_p[:-7] +'_debug.pickle'
+
+    with open(total_flame_p, 'rb') as handle:
         flame_total = pickle.load(handle)
     
     with open(os.path.join(root_p, 'images', 'z_info.pkl'), 'rb') as handle:
@@ -170,4 +174,4 @@ def get_train(k = 200000):
     with open( os.path.join(root_p, "ffhq_trainlist.pkl" ), 'wb') as handle:
         pickle.dump(ffhq_trainlist, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-get_train()
+get_train(debug = True)
