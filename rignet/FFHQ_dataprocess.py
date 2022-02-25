@@ -174,4 +174,4 @@ def get_train(k = 200000, debug = False):
     with open( os.path.join(root_p, "ffhq_trainlist.pkl" ), 'wb') as handle:
         pickle.dump(ffhq_trainlist, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-get_train(debug = True)
+get_train(debug = False)
