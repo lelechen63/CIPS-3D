@@ -105,39 +105,40 @@ class CIPS_3D_Demo(object):
                               }
     with open(f"{outdir}/positioninfo.pkl", 'wb') as handle:
             pickle.dump(positioninfo, handle, protocol=pickle.HIGHEST_PROTOCOL)  
-
-    for kk in tqdm(range(100000,200000)):
-    # for kk in galary:
-      torch.manual_seed(kk)
-      zs = generator.get_zs(1)
-      if os.path.exists(f"{outdir}/{kk}.pkl"): 
-        openfile = open(f"{outdir}/{kk}.pkl", "rb")
+    if os.path.exists(f"{outdir}/z_info.pkl"): 
+        openfile = open(f"{outdir}/z_info.pkl", "rb")
         info = pickle.load(openfile)
         print (info)
       else:
         info = {}
+    for kk in tqdm(range(1,100000)):
+    # for kk in galary:
+      torch.manual_seed(kk)
+      zs = generator.get_zs(1)
+      img_name = Path(f'{kk}.png')
+      img_name = f"{outdir}/{img_name}"
 
-      with torch.no_grad():        
-        frame, depth_map = generator.forward_camera_pos_and_lookup(
-            zs=zs,
-            return_aux_img=False,
-            forward_points=forward_points ** 2,
-            camera_pos=cur_camera_pos,
-            camera_lookup=cur_camera_lookup,
-            **curriculum)
-        #====
-        tmp_frm = (frame.squeeze().permute(1,2,0) + 1) * 0.5 * 255
-        tmp_frm = tmp_frm.detach().cpu().numpy()
-        img_name = Path(f'{kk}.png')
-        img_name = f"{outdir}/{img_name}"
-        tmp_frm = cv2.cvtColor(tmp_frm, cv2.COLOR_RGB2BGR)
+      if not  os.path.exists(img_name):
+        with torch.no_grad():        
+          frame, depth_map = generator.forward_camera_pos_and_lookup(
+              zs=zs,
+              return_aux_img=False,
+              forward_points=forward_points ** 2,
+              camera_pos=cur_camera_pos,
+              camera_lookup=cur_camera_lookup,
+              **curriculum)
+          #====
+          tmp_frm = (frame.squeeze().permute(1,2,0) + 1) * 0.5 * 255
+          tmp_frm = tmp_frm.detach().cpu().numpy()
+          
+          tmp_frm = cv2.cvtColor(tmp_frm, cv2.COLOR_RGB2BGR)
 
-        cv2.imwrite(img_name, tmp_frm)
+          cv2.imwrite(img_name, tmp_frm)
         
-        info['{kk}.png'] = { 'z_nerf': zs['z_nerf'].detach().cpu().numpy(),
-                  'z_inr':  zs['z_inr'].detach().cpu().numpy()}
-      with open(f"{outdir}/z_info.pkl", 'wb') as handle:
-        pickle.dump(info, handle, protocol=pickle.HIGHEST_PROTOCOL)  
+      info['{kk}.png'] = { 'z_nerf': zs['z_nerf'].detach().cpu().numpy(),
+                'z_inr':  zs['z_inr'].detach().cpu().numpy()}
+    with open(f"{outdir}/z_info.pkl", 'wb') as handle:
+      pickle.dump(info, handle, protocol=pickle.HIGHEST_PROTOCOL)  
 
 
 def main(outdir,
