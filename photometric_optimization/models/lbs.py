@@ -350,7 +350,7 @@ def batch_rigid_transform(rot_mats, joints, parents, dtype=torch.float32):
 
     print(rot_mats.shape, '++++++++++++++')
     print(rel_joints.shape, '+++----------++++')
-    rel_joints =  rel_joints.view(-1, 3, 1)
+    rel_joints =  rel_joints.view(rel_joints.shape[0] * rel_joints.shape[1], 3, 1)
     print(rot_mats.shape, '+++++++22222+++++++')
     print(rel_joints.shape, '+++-----2222-----++++')
     rot_mats = rot_mats.view(-1, 3, 3)
