@@ -80,7 +80,9 @@ def get_debug():
     with open("/home/uss00022/lelechen/github/CIPS-3D/photometric_optimization/gg/ffhq_trainlist_debug.pkl", 'wb') as handle:
         pickle.dump(ffhq_trainlist, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
-def get_flame_total(root_p, k):
+def get_flame_total(root_p, k, debug = False):
+    if debug:
+        k = 10
     total_flame = {}
     for i in range(0,k):
         flame_p = os.path.join(root_p, 'flame', str(i), 'flame_p.pickle')
@@ -92,6 +94,8 @@ def get_flame_total(root_p, k):
             print (flame_p,' not exists!!')
     print (len(total_flame))
     total_flame_p = os.path.join(root_p, 'flame', 'total_flame.pickle')
+    if debug:
+        total_flame_p = total_flame_p[:-7] +'_debug.pickle'
     with open(total_flame_p, 'wb') as handle:
         pickle.dump(total_flame, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
