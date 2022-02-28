@@ -217,7 +217,6 @@ class Latent2CodeModule(pl.LightningModule):
             self.trainer.save_checkpoint( os.path.join( self.ckpt_path, 'latest.ckpt') )
 
 
-
 class RigNerfModule(pl.LightningModule):
     def __init__(self, flame_config, opt ):
         super().__init__()
@@ -227,7 +226,8 @@ class RigNerfModule(pl.LightningModule):
         self.image_size = self.flame_config.image_size
         self.visualizer = Visualizer(opt)
 
-        Latent2CodeF = Latent2CodeModule(flame_config, opt)        
+        Latent2CodeF = 
+              
         # networks
         self.nerf_latent_dim = 256
         self.gan_latent_dim = 512

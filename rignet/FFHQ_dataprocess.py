@@ -102,43 +102,33 @@ def get_flame_total(root_p, k, debug = False):
 # def get_cips_total():
 
 def get_train(k = 200000, debug = False):
-    root_p = '/nfs/STG/CodecAvatar/lelechen/FFHQ/generated_cips3d'
-    # get_flame_total(root_p,k, debug )
-    total_flame_p = os.path.join(root_p, 'flame', 'total_flame.pickle')
-    if debug:
-        total_flame_p = total_flame_p[:-7] +'_debug.pickle'
-
-    with open(total_flame_p, 'rb') as handle:
-        flame_total = pickle.load(handle)
-    
+    root_p = '/nfs/STG/CodecAvatar/lelechen/FFHQ/generated_cips3d'    
     with open(os.path.join(root_p, 'images', 'z_info.pkl'), 'rb') as handle:
         z_p = pickle.load(handle)
-    print (len(flame_total), len(z_p))
+    print ( len(z_p))
     # print (flame_p.keys()) # key: 1
     # print (z_p.keys()) # key: 1.png
 
     data = {}
     ffhq_trainlist = []
 
-    for k in tqdm(flame_total.keys()):
-        name = k+'.png'
-        if name in z_p.keys():
-            
-            # img_path = os.path.join(root_p, 'images', k+'.png' )
-            # img = cv2.imread(img_path)
-            # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-            
-            flame_p = flame_total[k]
+    for name in tqdm(z_p.keys()):
+        k = name[:-4]
+        flame_path = os.path.join(root_p, 'flame', str(k), 'flame_p.pickle')
+        if os.path.exists(flame_path):
+            with open(flame_path, 'rb') as f:
+                flame_p = pickle.load(f, encoding='latin1')
             shape = flame_p['shape'].reshape(-1) #[1,100]
             exp = flame_p['exp'].reshape(-1) #[1,50]
             pose = flame_p['pose'].reshape(-1) #[1,6]
             cam = flame_p['cam'].reshape(-1) #[1,3]
             tex = flame_p['tex'].reshape(-1) #[1,50]
             lit = flame_p['lit'].reshape(-1) #[1,9,3]
-            image_masks = np.squeeze(flame_p['image_masks'],axis=0)
 
             imgmask_path = os.path.join(root_p, 'imagemasks', k+'.npy' )
-            np.save(imgmask_path, image_masks)
+            if not os.path.exists(imgmask_path):
+                image_masks = np.squeeze(flame_p['image_masks'],axis=0)
+                np.save(imgmask_path, image_masks)
 
             landmark = np.squeeze(flame_p['landmark3d'], axis=0) #[1,68,2]
             """ 
