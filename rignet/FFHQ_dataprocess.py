@@ -156,7 +156,8 @@ def get_train(k = 200000, debug = False):
                         'gt_landmark': landmark,
                         # 'img_mask':image_masks
                         }
-            
+        else:
+            print (flame_path, 'Does not exist!!!')
     print (len(data), len(ffhq_trainlist))
     with open( os.path.join(root_p, "ffhq_train.pkl" ), 'wb') as handle:
         pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
