@@ -164,7 +164,7 @@ class Latent2CodeModule(pl.LightningModule):
         return [optimizer], []
        
     def on_epoch_end(self):
-        step = 10
+        step = 5
         if self.current_epoch % step == 0:
             batch = self.batch
             landmarks3d, predicted_images = self(batch['shape_latent'], batch['appearance_latent'], batch['cam'], batch['pose'])
