@@ -369,9 +369,9 @@ def main_ffhq_cips3d(start_idx =1):
                 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
                 params = fitting.run(img, vis_folder = config.savefolder + '%d'%idx)
             else:
-                print (idx,'======')
+                print (img_p,'======')
         except:
-            print (idx, '==++++++')
+            print (img_p, '==++++++')
             continue 
 
 
