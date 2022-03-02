@@ -10,6 +10,7 @@ import torch
 from tqdm import tqdm
 import  os, time
 import torchvision.transforms as transforms
+from torch.utils.data import DataLoader
 
 from torch.utils.data.dataloader import (
     _SingleProcessDataLoaderIter,
