@@ -12,7 +12,7 @@ from dataset import *
 
 class Latent2CodeModule():
     def __init__(self, flame_config, opt ):
-        super().__init__(flame_config, opt):
+        super().__init__(flame_config, opt)
         self.opt = opt
         self.visualizer = Visualizer(opt)
         self.device = opt.cuda
@@ -33,8 +33,6 @@ class Latent2CodeModule():
         os.makedirs(self.ckpt_path, exist_ok = True)
 
         def train(self):
-            
-
             for p in self.latent2code.parameters():
                     p.requires_grad = False 
             for epoch in range( 1000):
