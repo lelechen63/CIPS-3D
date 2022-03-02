@@ -135,7 +135,7 @@ class RigNerfModule(nn.Module):
         self.image_size = self.flame_config.image_size
         self.visualizer = Visualizer(opt)
 
-        Latent2CodeF = 
+        # Latent2CodeF = 
               
         # networks
         self.nerf_latent_dim = 256
