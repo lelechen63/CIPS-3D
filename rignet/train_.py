@@ -54,27 +54,12 @@ random.seed(opt.manualSeed)
 torch.manual_seed(opt.manualSeed)
 
 if  opt.name == 'Latent2Code':
-    from rignet import Latent2CodeModule as module
+    from rignet_ import Latent2CodeModule as module
 
-dm = FFHQDataModule( opt)
 
 if opt.isTrain:
     print ( opt.name)
-    model = module(flame_config, opt)
-    
-    checkpoint_callback = ModelCheckpoint(
-        monitor='train_loss',
-        dirpath= os.path.join(opt.checkpoints_dir, opt.name),
-        filename= opt.name +  '-{epoch:02d}-{train_loss:.2f}'
-    )
-
-    if len( opt.gpu_ids ) == 1:
-        trainer = pl.Trainer(callbacks=[checkpoint_callback], gpus=1,  max_epochs= 100000, progress_bar_refresh_rate=20)
-    else:
-        trainer = pl.Trainer(callbacks=[checkpoint_callback], precision=32,gpus= len( opt.gpu_ids ), accelerator='ddp', max_epochs= 100000, progress_bar_refresh_rate=20)
-        # trainer = pl.Trainer(callbacks=[checkpoint_callback], gpus=len( opt.gpu_ids ), accelerator='dp', max_epochs= 10000, progress_bar_refresh_rate=20)
-
-    trainer.fit(model, dm)
+    module.train()
 
 else:
     print ('!!!!!!' + opt.name + '!!!!!!!!')
