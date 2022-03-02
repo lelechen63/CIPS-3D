@@ -1,0 +1,147 @@
+
+import torch
+from torch import nn
+import torch.optim as optim
+import torch.nn.functional as F
+
+from model import *
+sys.path.append('/home/uss00022/lelechen/github/CIPS-3D/utils')
+from visualizer import Visualizer
+import util
+from dataset import *
+
+class Latent2CodeModule():
+    def __init__(self, flame_config, opt ):
+        super().__init__(flame_config, opt):
+        self.opt = opt
+        self.visualizer = Visualizer(opt)
+        self.device = opt.cuda
+        self.latent2code = Latent2Code( flame_config, opt).to(self.device)
+
+        self.optimizer = optim.Adam( list(self.latent2code.Latent2ShapeExpCode.parameters()) + \
+                                  list(self.latent2code.Latent2AlbedoLitCode.parameters()) + \
+                                  list(self.latent2code.latent2shape.parameters()) + \
+                                  list(self.latent2code.latent2exp.parameters()) + \
+                                  list(self.latent2code.latent2albedo.parameters()) + \
+                                  list(self.latent2code.latent2lit.parameters()) \
+                                  , lr= self.opt.lr , betas=(self.opt.beta1, 0.999))
+        self.dataset  = FFHQDataset(opt)
+        self.data_loader = DataLoaderWithPrefetch(self.dataset, batchSize = opt.batchSize, \
+                                              num_workers = opt.nThreads, prefetch_size = 8)
+
+        def train(self):
+            for p in self.latent2code.parameters():
+                    p.requires_grad = False 
+            for epoch in range( 1000):
+                for step, batch in enumerate(tqdm(self.data_loader)):
+                    landmarks3d, predicted_images = self.latent2code(batch['shape_latent'].to(self.device), \
+                                                batch['appearance_latent'].to(self.device), \
+                                                batch['cam'].to(self.device), batch['pose'].to(self.device))
+
+                    losses = {}
+                    losses['landmark'] = util.l2_distance(landmarks3d[:, 17:, :2], batch['gt_landmark'][:, 17:, :2]) * self.flame_config.w_lmks
+                    losses['photometric_texture'] = (batch['img_mask'] * (predicted_images - batch['gt_image'] ).abs()).mean() * self.flame_config.w_pho
+
+                    all_loss = 0.
+                    for key in losses.keys():
+                        all_loss = all_loss + losses[key]
+                    self.optimizer.zero_grad()
+                    all_loss.backward()
+                    self.optimizer.step()
+                    tqdm_dict = {'loss_landmark': losses['landmark'].data, 'loss_tex': losses['photometric_texture'].data  }
+                    errors = {k: v.data.item() if not isinstance(v, int) else v for k, v in tqdm_dict.items()} 
+                    self.visualizer.print_current_errors(epoch, step, errors, 0)
+
+
+        # network
+        
+def training_step(self, batch, batch_idx):
+        self.batch = batch
+        landmarks3d, predicted_images = self(batch['shape_latent'], batch['appearance_latent'], batch['cam'], batch['pose'])
+
+        losses = {}
+        losses['landmark'] = util.l2_distance(landmarks3d[:, 17:, :2], batch['gt_landmark'][:, 17:, :2]) * self.flame_config.w_lmks
+        losses['photometric_texture'] = (batch['img_mask'] * (predicted_images - batch['gt_image'] ).abs()).mean() * self.flame_config.w_pho
+
+        all_loss = 0.
+        for key in losses.keys():
+            all_loss = all_loss + losses[key]
+        
+        tqdm_dict = {'loss_landmark': losses['landmark'].data, 'loss_tex': losses['photometric_texture'].data  }
+        
+        output = OrderedDict({
+            'loss': all_loss,
+            'progress_bar': tqdm_dict,
+            'log': tqdm_dict
+        })
+
+        errors = {k: v.data.item() if not isinstance(v, int) else v for k, v in tqdm_dict.items()}            
+        self.visualizer.print_current_errors(self.current_epoch, batch_idx, errors, 0)
+        return output
+
+    def configure_optimizers(self):
+        
+        optimizer = torch.optim.Adam( list(self.Latent2ShapeExpCode.parameters()) + \
+                                  list(self.Latent2AlbedoLitCode.parameters()) + \
+                                  list(self.latent2shape.parameters()) + \
+                                  list(self.latent2exp.parameters()) + \
+                                  list(self.latent2albedo.parameters()) + \
+                                  list(self.latent2lit.parameters()) \
+                                  , lr= self.opt.lr , betas=(self.opt.beta1, 0.999))
+        return [optimizer], []
+       
+    def on_epoch_end(self):
+        step = 5
+        if self.current_epoch % step == 0:
+            batch = self.batch
+            landmarks3d, predicted_images = self(batch['shape_latent'], batch['appearance_latent'], batch['cam'], batch['pose'])
+            visind = 0
+           
+            gtimage = batch['gt_image'].data[0].cpu()
+            gtimage = tensor_util.tensor2im(gtimage  , normalize = False)
+            gtimage = np.ascontiguousarray(gtimage, dtype=np.uint8)
+            gtimage = tensor_util.writeText(gtimage, batch['image_path'][0])
+            gtimage = np.ascontiguousarray(gtimage, dtype=np.uint8)
+            gtimage = np.clip(gtimage, 0, 255)
+
+            gtlmark = util.batch_orth_proj(batch['gt_landmark'], batch['cam'])
+            gtlmark[..., 1:] = - gtlmark[..., 1:]
+
+            gtlmark = util.tensor_vis_landmarks(batch['gt_image'][visind].unsqueeze(0), gtlmark[visind].unsqueeze(0))
+            gtlmark = gtlmark.squeeze(0)
+            gtlmark = tensor_util.tensor2im(gtlmark  , normalize = False)
+            gtlmark = np.ascontiguousarray(gtlmark, dtype=np.uint8)
+            gtlmark = util.writeText(gtlmark, batch['image_path'][0])
+            gtlmark = np.ascontiguousarray(gtlmark, dtype=np.uint8)
+            gtlmark = np.clip(gtlmark, 0, 255)
+
+            genimage = predicted_images.data[0].cpu() #  * self.stdtex + self.meantex 
+            genimage = tensor_util.tensor2im(genimage  , normalize = False)
+            genimage = np.ascontiguousarray(genimage, dtype=np.uint8)
+            genimage = tensor_util.writeText(genimage, batch['image_path'][0])
+            genimage = np.ascontiguousarray(genimage, dtype=np.uint8)
+            genimage = np.clip(genimage, 0, 255)
+
+            genlmark = util.batch_orth_proj(landmarks3d, batch['cam'])
+            genlmark[..., 1:] = - genlmark[..., 1:]
+
+            genlmark = util.tensor_vis_landmarks(batch['gt_image'][visind].unsqueeze(0),genlmark[visind].unsqueeze(0))
+            genlmark = genlmark.squeeze(0)
+            genlmark = tensor_util.tensor2im(genlmark  , normalize = False)
+            genlmark = np.ascontiguousarray(genlmark, dtype=np.uint8)
+            genlmark = util.writeText(genlmark, batch['image_path'][0])
+            genlmark = np.ascontiguousarray(genlmark, dtype=np.uint8)
+            genlmark = np.clip(genlmark, 0, 255)
+
+            visuals = OrderedDict([
+            ('gtimage', gtimage),
+            ('gtlmark', gtlmark ),
+            ('genimage', genimage),
+            ('genlmark', genlmark )
+            ])
+       
+            self.visualizer.display_current_results(visuals, self.current_epoch, step) 
+            self.trainer.save_checkpoint( os.path.join( self.ckpt_path, 'latest.ckpt') )
+            torch.save(self.ImageEncoder, os.path.join( self.ckpt_path, 'ImageEncoder.pth'))
+            torch.save(self.meshcode_dec, os.path.join( self.ckpt_path, 'meshcode_dec.pth'))
+

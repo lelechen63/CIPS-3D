@@ -8,7 +8,8 @@ class BaseOptions():
         self.initialized = False
 
     def initialize(self):    
-        # experiment specifics
+        # experiment specifics        
+        self.parser.add_argument('--cuda', type=str, default='cuda', help='cuda/cpu')        
         self.parser.add_argument('--name', type=str, default='Latent2Code', help='name of the experiment. It decides where to store samples and models')        
         self.parser.add_argument('--gpu_ids', type=str, default='0', help='gpu ids: e.g. 0  0,1,2, 0,2. use -1 for CPU')
         self.parser.add_argument('--checkpoints_dir', type=str, default='./checkpoints', help='models are saved here')

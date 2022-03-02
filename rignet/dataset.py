@@ -11,7 +11,51 @@ from tqdm import tqdm
 import  os, time
 import torchvision.transforms as transforms
 
+from torch.utils.data.dataloader import (
+    _SingleProcessDataLoaderIter,
+    _MultiProcessingDataLoaderIter,
+)
 
+
+class DataLoaderWithPrefetch(DataLoader):
+    def __init__(self, *args, prefetch_size=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.prefetch_size = (
+            prefetch_size
+            if prefetch_size is not None
+            else 2 * kwargs.get("num_workers", 0)
+        )
+
+    def __iter__(self):
+        if self.num_workers == 0:
+            return _SingleProcessDataLoaderIter(self)
+        else:
+            return _MultiProcessingDataLoaderIterWithPrefetch(self)
+
+
+class _MultiProcessingDataLoaderIterWithPrefetch(_MultiProcessingDataLoaderIter):
+    def __init__(self, loader):
+        self.prefetch_size = loader.prefetch_size
+        self._tasks_outstanding=self.prefetch_size
+        super().__init__(loader)
+        
+    def _reset(self, loader, first_iter=False):
+        super(_MultiProcessingDataLoaderIter, self)._reset(loader, first_iter)
+        self._send_idx = 0  # idx of the next task to be sent to workers
+        self._rcvd_idx = 0  # idx of the next task to be returned in __next__
+        self._task_info = {}
+        self._workers_status = [True for i in range(self._num_workers)]
+        if not first_iter:
+            for idx in range(self._num_workers):
+                self._index_queues[idx].put(_utils.worker._ResumeIteration())
+            resume_iteration_cnt = self._num_workers
+            while resume_iteration_cnt > 0:
+                data = self._get_data()
+                if isinstance(data, _utils.worker._ResumeIteration):
+                    resume_iteration_cnt -= 1
+        # print(f"im fetching {self.prefetch_size}")
+        for _ in range(self.prefetch_size):
+            self._try_put_index()
 
 
 class FFHQDataset(torch.utils.data.Dataset):

@@ -48,6 +48,11 @@ if opt.debug:
 
 os.environ['CUDA_VISIBLE_DEVICES'] = opt.gpu_ids
 
+opt.manualSeed = random.randint(1, 10000)
+print("Random Seed: ", opt.manualSeed)
+random.seed(opt.manualSeed)
+torch.manual_seed(opt.manualSeed)
+
 if  opt.name == 'Latent2Code':
     from rignet import Latent2CodeModule as module
 
