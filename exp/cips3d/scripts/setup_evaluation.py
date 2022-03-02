@@ -49,7 +49,8 @@ def setup_evaluation(rank,
   logger = logging.getLogger('tl')
 
   if rank == 0 and del_fid_real_images:
-    shutil.rmtree(real_dir, ignore_errors=True)
+    if os.path.exists(real_dir):
+      shutil.rmtree(real_dir)
   ddp_utils.d2_synchronize()
 
   if os.path.exists(real_dir):
@@ -80,7 +81,7 @@ def setup_evaluation(rank,
 
       # imgs_norm = to_norm_tensor(imgs, device=device)
       for img, idx in zip(real_imgs, imgs_idx):
-        saved_path = f"{real_dir}/{idx:0>5}.jpg"
+        saved_path = f"{real_dir}/{idx:0>5}_{rank}.jpg"
         img_pil = pil_utils.np_to_pil(img.numpy(), channel_first=True)
         img_pil.save(saved_path)
 

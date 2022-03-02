@@ -61,17 +61,25 @@ export PORT=12345
 #
 export PYTHONPATH=.:./tl2_lib
 
-# bash = bash CIPS-3D/exp/cips3d_inversion/bash/ffhq_diffcam_exp/train_ffhq_r64.sh 0 bucket-3690
+# bash = bash CIPS-3D/exp/cips3d_inversion/bash/ffhq_diffcam_exp_v4/train_ffhq_r128.sh 0 bucket-3690
 
-python -c "from exp.tests.test_cips3d_inversion import Testing_ffhq_diffcam_exp;\
-  Testing_ffhq_diffcam_exp().test_train_ffhq(debug=False)" \
+python -c "from exp.tests.test_cips3d_inversion import Testing_ffhq_diffcam_exp_v4;\
+  Testing_ffhq_diffcam_exp_v4().test_train_ffhq(debug=False)" \
   --tl_opts \
-    batch_size 4 img_size 64 total_iters 200000 \
+    batch_size 4 img_size 128 total_iters 800000 \
+    gen_lr 0.0001 disc_lr 0.001 \
     warmup_D True fade_steps 10000 \
     train_aux_img True G_kwargs.nerf_kwargs.N_samples 12 G_kwargs.nerf_kwargs.N_importance 12 \
-    grad_points 64 freeze_intr True \
-    load_finetune False
-#    load_finetune True finetune_dir results/CIPS-3D/ffhq_exp/train_ffhq-20211231_221845_770/ckptdir/best_fid
+    grad_points 128 \
+    G_cfg.shape_block_end_index 2 G_cfg.app_block_end_index 1 G_cfg.inr_block_end_index 9 \
+    G_cfg.nerf_cfg.shape_net_cfg.use_pos_enc True G_cfg.nerf_cfg.shape_net_cfg.gradient_scale None \
+    G_cfg.nerf_cfg.shape_net_cfg.freq_scale 1. G_cfg.nerf_cfg.shape_net_cfg.freq_shift 4.86 \
+    G_cfg.inr_detach True \
+    cam_cfg.normalize_rays_d True \
+    load_finetune True finetune_dir results/CIPS-3D/ffhq_diffcam_exp_v4/train_ffhq-20220225_225313_381/ckptdir/resume
+#    load_finetune True finetune_dir results/CIPS-3D/ffhq_diffcam_exp_v4/train_ffhq-20220225_164209_334/ckptdir/resume
+#    load_finetune True finetune_dir results/CIPS-3D/ffhq_diffcam_exp_v4/train_ffhq-20220225_223444_066/ckptdir/resume
+
 #  --tl_outdir results/ffhq_exp/train_ffhq
 
 
