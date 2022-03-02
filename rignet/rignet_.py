@@ -26,7 +26,7 @@ class Latent2CodeModule():
                                   list(self.latent2code.latent2lit.parameters()) \
                                   , lr= self.opt.lr , betas=(self.opt.beta1, 0.999))
         self.dataset  = FFHQDataset(opt)
-        self.data_loader = DataLoaderWithPrefetch(self.dataset, batchSize = opt.batchSize, \
+        self.data_loader = DataLoaderWithPrefetch(self.dataset, \
                                               num_workers = opt.nThreads, prefetch_size = 8)
 
         self.ckpt_path = os.path.join(opt.checkpoints_dir, opt.name)
