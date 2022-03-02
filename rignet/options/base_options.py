@@ -32,7 +32,7 @@ class BaseOptions():
         # for setting inputs
         self.parser.add_argument('--dataroot', type=str, default='/nfs/STG/CodecAvatar/lelechen/FFHQ/generated_cips3d/') 
         self.parser.add_argument('--nThreads', default=1, type=int, help='# threads for loading data') 
-        self.parser.add_argument('--isTrain', action='store_true', help='isTrain is for training')                
+        self.parser.add_argument('--isTrain', action='store_false', help='isTrain is for training')                
         self.parser.add_argument('--meannorm', action='store_true', help='weight for feature matching loss')          
         self.parser.add_argument('--modeltype', type=int, default=2, help='number of clusters for features')        
 
@@ -43,16 +43,16 @@ class BaseOptions():
             self.initialize()
         self.opt = self.parser.parse_args()
         self.opt.model = self.opt.name
-        str_ids = self.opt.gpu_ids.split(',')
-        self.opt.gpu_ids = []
-        for str_id in str_ids:
-            id = int(str_id)
-            if id >= 0:
-                self.opt.gpu_ids.append(id)
+        # str_ids = self.opt.gpu_ids.split(',')
+        # self.opt.gpu_ids = []
+        # for str_id in str_ids:
+        #     id = int(str_id)
+        #     if id >= 0:
+        #         self.opt.gpu_ids.append(id)
         
-        # set gpu ids
-        if len(self.opt.gpu_ids) > 0:
-            torch.cuda.set_device(self.opt.gpu_ids[0])
+        # # set gpu ids
+        # if len(self.opt.gpu_ids) > 0:
+        #     torch.cuda.set_device(self.opt.gpu_ids[0])
 
         args = vars(self.opt)
 
