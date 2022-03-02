@@ -12,7 +12,7 @@ from dataset import *
 
 class Latent2CodeModule():
     def __init__(self, flame_config, opt ):
-        super().__init__(flame_config, opt)
+        super().__init__()
         self.opt = opt
         self.visualizer = Visualizer(opt)
         self.device = opt.cuda
