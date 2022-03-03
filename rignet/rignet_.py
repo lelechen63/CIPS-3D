@@ -20,13 +20,14 @@ class Latent2CodeModule():
             self.device = torch.device("cuda")
         self.latent2code = Latent2Code( flame_config, opt)
         
-        self.optimizer = optim.Adam( list(self.latent2code.Latent2ShapeExpCode.parameters()) + \
-                                  list(self.latent2code.Latent2AlbedoLitCode.parameters()) + \
-                                  list(self.latent2code.latent2shape.parameters()) + \
-                                  list(self.latent2code.latent2exp.parameters()) + \
-                                  list(self.latent2code.latent2albedo.parameters()) + \
-                                  list(self.latent2code.latent2lit.parameters()) \
-                                  , lr= self.opt.lr , betas=(self.opt.beta1, 0.999))
+        self.optimizer =  optim.Adam(self.latent2code.parameters(),lr= self.opt.lr , betas=(self.opt.beta1, 0.999))
+        # self.optimizer = optim.Adam( list(self.latent2code.Latent2ShapeExpCode.parameters()) + \
+        #                           list(self.latent2code.Latent2AlbedoLitCode.parameters()) + \
+        #                           list(self.latent2code.latent2shape.parameters()) + \
+        #                           list(self.latent2code.latent2exp.parameters()) + \
+        #                           list(self.latent2code.latent2albedo.parameters()) + \
+        #                           list(self.latent2code.latent2lit.parameters()) \
+        #                           , lr= self.opt.lr , betas=(self.opt.beta1, 0.999))
         self.latent2code =torch.nn.DataParallel(self.latent2code, device_ids=range(len(self.opt.gpu_ids)))
         self.latent2code = self.latent2code.to(self.device)
         self.dataset  = FFHQDataset(opt)
