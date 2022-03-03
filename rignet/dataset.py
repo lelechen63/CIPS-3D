@@ -122,7 +122,7 @@ class FFHQDataset(torch.utils.data.Dataset):
         return data
 
     def __len__(self):
-        return len(self.total_data) // self.opt.batchSize * self.opt.batchSize
+        return len(self.data_list) // self.opt.batchSize * self.opt.batchSize
 
     def name(self):
         return 'FFHQDataset'
