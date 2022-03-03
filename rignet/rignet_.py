@@ -27,7 +27,7 @@ class Latent2CodeModule():
                                   list(self.latent2code.latent2albedo.parameters()) + \
                                   list(self.latent2code.latent2lit.parameters()) \
                                   , lr= self.opt.lr , betas=(self.opt.beta1, 0.999))
-        self.latent2code = nn.DataParallel(self.latent2code)
+        self.latent2code = torch.nn.DataParallel(self.latent2code, device_ids=opt.gpu_ids)
         self.dataset  = FFHQDataset(opt)
         self.data_loader = DataLoaderWithPrefetch(self.dataset, \
                                     batch_size=opt.batchSize,\
