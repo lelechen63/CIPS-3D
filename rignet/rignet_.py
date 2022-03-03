@@ -195,6 +195,5 @@ class Latent2CodeModule():
             ('genimage', genimage),
             ('genlmark', genlmark )
             ])
-    
-            self.visualizer.display_current_results(visuals, epoch, 1) 
+            self.visualizer.display_current_results(visuals, 0, 1) 
            
