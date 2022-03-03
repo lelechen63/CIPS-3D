@@ -27,7 +27,7 @@ class BaseOptions():
         self.parser.add_argument('--tf_log', action='store_true', help='if specified, use tensorboard logging. Requires tensorflow installed')
 
         # input/output sizes       
-        self.parser.add_argument('--batchSize', type=int, default=1 , help='input batch size')
+        self.parser.add_argument('--batchSize', type=int, default=8 , help='input batch size')
 
         # for setting inputs
         self.parser.add_argument('--dataroot', type=str, default='/nfs/STG/CodecAvatar/lelechen/FFHQ/generated_cips3d/') 

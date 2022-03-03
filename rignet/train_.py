@@ -45,7 +45,7 @@ opt = TrainOptions().parse()
 
 # if opt.debug:
 #     opt.nThreads = 1
-print (opt.gpu_ids, '=+++++++')
+print (opt.batchSize, '=+++++++')
 
 os.environ['CUDA_VISIBLE_DEVICES'] = opt.gpu_ids
 
