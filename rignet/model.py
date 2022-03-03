@@ -68,7 +68,7 @@ class Latent2Code(nn.Module):
         )
         if len(weight) > 0:
             print ('loading weights for latent2ShapeExpCode feature extraction network')
-            Latent2ShapeExpCode.load_state_dict(torch.load(weights))
+            Latent2ShapeExpCode.load_state_dict(torch.load(weight))
         return Latent2ShapeExpCode
     def build_latent2shape(self,  weight = ''):
         latent2shape= th.nn.Sequential(
