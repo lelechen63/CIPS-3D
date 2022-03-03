@@ -14,6 +14,7 @@ class Latent2CodeModule():
     def __init__(self, flame_config, opt ):
         super().__init__()
         self.opt = opt
+        self.flame_config = flame_config
         self.visualizer = Visualizer(opt)
         self.device = opt.cuda
         self.latent2code = Latent2Code( flame_config, opt).to(self.device)
