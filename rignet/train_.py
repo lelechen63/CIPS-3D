@@ -43,8 +43,8 @@ flame_config = util.dict2obj(flame_config)
 
 opt = TrainOptions().parse()
 
-if opt.debug:
-    opt.nThreads = 1
+# if opt.debug:
+#     opt.nThreads = 1
 
 os.environ['CUDA_VISIBLE_DEVICES'] = opt.gpu_ids
 
