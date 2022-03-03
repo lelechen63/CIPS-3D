@@ -17,7 +17,7 @@ class Latent2CodeModule():
         self.flame_config = flame_config
         self.visualizer = Visualizer(opt)
         if opt.cuda:
-            device = torch.device("cuda")
+            self.device = torch.device("cuda")
         self.latent2code = Latent2Code( flame_config, opt)
         
         self.optimizer = optim.Adam( list(self.latent2code.Latent2ShapeExpCode.parameters()) + \
