@@ -53,6 +53,17 @@ class BaseOptions():
         # set gpu ids
         # if len(self.opt.gpu_ids) > 0:
         #     torch.cuda.set_device(self.opt.gpu_ids[0])
+        
+        # save to the disk        
+        expr_dir = os.path.join(self.opt.checkpoints_dir, self.opt.name)
+        os.makedirs(expr_dir, exist_ok = True )
+        
+        self.opt.Latent2ShapeExpCode_weight = os.path.join(expr_dir,'Latent2ShapeExpCode.pth' )
+        self.opt.Latent2AlbedoLitCode_weight = os.path.join(expr_dir,'Latent2AlbedoLitCode.pth' )
+        self.opt.latent2shape_weight = os.path.join(expr_dir,'latent2shape.pth' )
+        self.opt.latent2exp_weight = os.path.join(expr_dir,'latent2exp.pth' )
+        self.opt.latent2albedo_weight = os.path.join(expr_dir,'latent2albedo.pth' )
+        self.opt.latent2lit_weight = os.path.join(expr_dir,'latent2lit.pth' )
 
         args = vars(self.opt)
 
@@ -61,16 +72,7 @@ class BaseOptions():
             print('%s: %s' % (str(k), str(v)))
         print('-------------- End ----------------')
 
-        # save to the disk        
-        expr_dir = os.path.join(self.opt.checkpoints_dir, self.opt.name)
-        os.makedirs(expr_dir, exist_ok = True )
         
-        opt.Latent2ShapeExpCode_weight = os.path.join(expr_dir,'Latent2ShapeExpCode.pth' )
-        opt.Latent2AlbedoLitCode_weight = os.path.join(expr_dir,'Latent2AlbedoLitCode.pth' )
-        opt.latent2shape_weight = os.path.join(expr_dir,'latent2shape.pth' )
-        opt.latent2exp_weight = os.path.join(expr_dir,'latent2exp.pth' )
-        opt.latent2albedo_weight = os.path.join(expr_dir,'latent2albedo.pth' )
-        opt.latent2lit_weight = os.path.join(expr_dir,'latent2lit.pth' )
             
         if save and not self.opt.continue_train:
             file_name = os.path.join(expr_dir, 'opt.txt')
