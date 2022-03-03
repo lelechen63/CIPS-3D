@@ -80,6 +80,12 @@ class Latent2Code(nn.Module):
             th.nn.LeakyReLU( 0.2, inplace = True ),
             LinearWN( 256, self.lit_dim)
         )
+        self.Latent2ShapeExpCode = nn.DataParallel(self.Latent2ShapeExpCode)
+        self.latent2shape = nn.DataParallel(self.latent2shape)
+        self.latent2exp = nn.DataParallel(self.latent2exp)
+        self.Latent2AlbedoLitCode = nn.DataParallel(self.Latent2AlbedoLitCode)
+        self.latent2albedo = nn.DataParallel(self.latent2albedo)
+        self.latent2lit = nn.DataParallel(self.latent2lit)
 
         self.Latent2ShapeExpCode = self.Latent2ShapeExpCode.apply(init_weight)
         self.latent2shape = self.latent2shape.apply(init_weight)
