@@ -87,12 +87,12 @@ class Latent2Code(nn.Module):
             th.nn.LeakyReLU( 0.2, inplace = True ),
             LinearWN( 256, self.lit_dim)
         )
-        self.Latent2ShapeExpCode = nn.DataParallel(self.Latent2ShapeExpCode)
-        self.latent2shape = nn.DataParallel(self.latent2shape)
-        self.latent2exp = nn.DataParallel(self.latent2exp)
-        self.Latent2AlbedoLitCode = nn.DataParallel(self.Latent2AlbedoLitCode)
-        self.latent2albedo = nn.DataParallel(self.latent2albedo)
-        self.latent2lit = nn.DataParallel(self.latent2lit)
+        # self.Latent2ShapeExpCode = nn.DataParallel(self.Latent2ShapeExpCode)
+        # self.latent2shape = nn.DataParallel(self.latent2shape)
+        # self.latent2exp = nn.DataParallel(self.latent2exp)
+        # self.Latent2AlbedoLitCode = nn.DataParallel(self.Latent2AlbedoLitCode)
+        # self.latent2albedo = nn.DataParallel(self.latent2albedo)
+        # self.latent2lit = nn.DataParallel(self.latent2lit)
 
         # self.Latent2ShapeExpCode = self.Latent2ShapeExpCode.apply(init_weight)
         # self.latent2shape = self.latent2shape.apply(init_weight)
@@ -100,7 +100,8 @@ class Latent2Code(nn.Module):
         # self.Latent2AlbedoLitCode = self.Latent2AlbedoLitCode.apply(init_weight)
         # self.latent2albedo = self.latent2albedo.apply(init_weight)
         # self.latent2lit = self.latent2lit.apply(init_weight)
-
+        
+        self._initialize_weights()
         self.flame = FLAME(self.flame_config).to('cuda')
         self.flametex = FLAMETex(self.flame_config).to('cuda')
         self._setup_renderer()
@@ -111,7 +112,7 @@ class Latent2Code(nn.Module):
 
         self.ckpt_path = os.path.join(opt.checkpoints_dir, opt.name)
         os.makedirs(self.ckpt_path, exist_ok = True)
-    
+        
     def _setup_renderer(self):
         mesh_file = '/home/uss00022/lelechen/basic/flame_data/data/head_template_mesh.obj'
         self.render = Renderer(self.image_size, obj_filename=mesh_file).to('cuda')
@@ -139,7 +140,18 @@ class Latent2Code(nn.Module):
         predicted_images = ops['images']
         return landmarks3d, predicted_images
 
-    
+    def _initialize_weights(self):
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
+                if m.bias is not None:
+                    nn.init.constant_(m.bias, 0)
+            elif isinstance(m, nn.BatchNorm2d):
+                nn.init.constant_(m.weight, 1)
+                nn.init.constant_(m.bias, 0)
+            elif isinstance(m, nn.Linear):
+                nn.init.normal_(m.weight, 0, 0.01)
+                nn.init.constant_(m.bias, 0)
 class RigNerfModule(nn.Module):
     def __init__(self, flame_config, opt ):
         super().__init__()
