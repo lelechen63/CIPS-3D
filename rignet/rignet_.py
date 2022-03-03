@@ -44,7 +44,7 @@ class Latent2CodeModule():
 
                 losses = {}
                 losses['landmark'] = util.l2_distance(landmarks3d[:, 17:, :2], batch['gt_landmark'][:, 17:, :2].to(self.device)) * self.flame_config.w_lmks
-                losses['photometric_texture'] = (batch['img_mask'] * (predicted_images - batch['gt_image'].to(self.device) ).abs()).mean() * self.flame_config.w_pho
+                losses['photometric_texture'] = (batch['img_mask'].to(device) * (predicted_images - batch['gt_image'].to(self.device) ).abs()).mean() * self.flame_config.w_pho
 
                 all_loss = 0.
                 for key in losses.keys():
