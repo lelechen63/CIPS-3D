@@ -104,7 +104,7 @@ class Latent2Code(nn.Module):
             Latent2AlbedoLitCode.load_state_dict(torch.load(weight))
         return Latent2AlbedoLitCode
     
-    def build_latent2albedo(self, weight = '')
+    def build_latent2albedo(self, weight = ''):
         latent2albedo= th.nn.Sequential(
             LinearWN( 256 , 256 ),
             th.nn.LeakyReLU( 0.2, inplace = True ),
@@ -114,7 +114,7 @@ class Latent2Code(nn.Module):
             print ('loading weights for latent2albedo feature extraction network')
             latent2albedo.load_state_dict(torch.load(weight))
         return latent2albedo
-    def build_latent2lit(self, weight = '')
+    def build_latent2lit(self, weight = ''):
         latent2lit= th.nn.Sequential(
             LinearWN( 256 , 256 ),
             th.nn.LeakyReLU( 0.2, inplace = True ),
