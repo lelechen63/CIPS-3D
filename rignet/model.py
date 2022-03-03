@@ -42,15 +42,23 @@ class Latent2Code(nn.Module):
         self.exp_dim = 50
         self.albedo_dim = 50
         self.lit_dim = 27
-        # self.Latent2ShapeExpCode = th.nn.Sequential(
-        #     th.nn.Linear( self.nerf_latent_dim , 256 ),
-        #     th.nn.LeakyReLU( 0.2, inplace = True ),
-        #     th.nn.Linear( 256, 256 ),
-        #     th.nn.LeakyReLU( 0.2, inplace = True ),
-        #     th.nn.Linear( 256, 256 ),
-        #     th.nn.LeakyReLU( 0.2, inplace = True )
-        # )
-        self.Latent2ShapeExpCode = th.nn.Sequential(
+        self.Latent2ShapeExpCode = self.build_Latent2ShapeExpCodeFea( weight = '' if opt.isTrain else opt.Latent2ShapeExpCode_weight)
+        self.latent2shape = self.build_latent2shape( weight = '' if opt.isTrain else opt.latent2shape_weight)
+        self.latent2exp = self.build_latent2exp(weight = '' if opt.isTrain else opt.latent2exp_weight)
+        self.Latent2AlbedoLitCode = self.build_Latent2AlbedoLitCodeFea(weight = '' if opt.isTrain else opt.Latent2AlbedoLitCode_weight)
+        self.latent2albedo = self.build_latent2albedo(weight = '' if opt.isTrain else opt.latent2albedo_weight)
+        self.latent2lit = self.build_latent2lit(weight = '' if opt.isTrain else opt.latent2lit_weight)
+        if opt.isTrain:
+            self._initialize_weights()
+        self.flame = FLAME(self.flame_config).to('cuda')
+        self.flametex = FLAMETex(self.flame_config).to('cuda')
+        self._setup_renderer()
+
+        self.ckpt_path = os.path.join(opt.checkpoints_dir, opt.name)
+        os.makedirs(self.ckpt_path, exist_ok = True)
+    
+    def build_Latent2ShapeExpCodeFea(self, weight = ''):
+        Latent2ShapeExpCode = th.nn.Sequential(
             LinearWN( self.nerf_latent_dim , 256 ),
             th.nn.LeakyReLU( 0.2, inplace = True ),
             LinearWN( 256, 256 ),
@@ -58,18 +66,32 @@ class Latent2Code(nn.Module):
             LinearWN( 256, 256 ),
             th.nn.LeakyReLU( 0.2, inplace = True )
         )
-        self.latent2shape= th.nn.Sequential(
+        if len(weight) > 0:
+            print ('loading weights for latent2ShapeExpCode feature extraction network')
+            Latent2ShapeExpCode.load_state_dict(torch.load(weights))
+        return Latent2ShapeExpCode
+    def build_latent2shape(self,  weight = ''):
+        latent2shape= th.nn.Sequential(
             LinearWN( 256 , 256 ),
             th.nn.LeakyReLU( 0.2, inplace = True ),
             LinearWN( 256, self.shape_dim )
         )
-        self.latent2exp= th.nn.Sequential(
+        if len(weight) > 0:
+            print ('loading weights for latent2Shape network')
+            latent2shape.load_state_dict(torch.load(weight))
+        return latent2shape
+    def build_latent2exp(self, weight = ''):
+        latent2shape= th.nn.Sequential(
             LinearWN( 256 , 256 ),
             th.nn.LeakyReLU( 0.2, inplace = True ),
             LinearWN( 256, self.exp_dim )
         )
-
-        self.Latent2AlbedoLitCode = th.nn.Sequential(
+        if len(weight) > 0:
+            print ('loading weights for latent2exp network')
+            latent2exp.load_state_dict(torch.load(weight))
+        return latent2exp
+    def build_Latent2AlbedoLitCodeFea(self, weight = ''):
+        Latent2AlbedoLitCode = th.nn.Sequential(
             LinearWN( self.gan_latent_dim , 512 ),
             th.nn.LeakyReLU( 0.2, inplace = True ),
             LinearWN( 512, 256 ),
@@ -77,57 +99,45 @@ class Latent2Code(nn.Module):
             LinearWN( 256, 256 ),
             th.nn.LeakyReLU( 0.2, inplace = True )
         )
-        self.latent2albedo= th.nn.Sequential(
+        if len(weight) > 0:
+            print ('loading weights for Latent2AlbedoLitCode feature extraction network')
+            Latent2AlbedoLitCode.load_state_dict(torch.load(weight))
+        return Latent2AlbedoLitCode
+    
+    def build_latent2albedo(self, weight = '')
+        latent2albedo= th.nn.Sequential(
             LinearWN( 256 , 256 ),
             th.nn.LeakyReLU( 0.2, inplace = True ),
             LinearWN( 256, self.albedo_dim )
         )
-        self.latent2lit= th.nn.Sequential(
+        if len(weight) > 0:
+            print ('loading weights for latent2albedo feature extraction network')
+            latent2albedo.load_state_dict(torch.load(weight))
+        return latent2albedo
+    def build_latent2lit(self, weight = '')
+        latent2lit= th.nn.Sequential(
             LinearWN( 256 , 256 ),
             th.nn.LeakyReLU( 0.2, inplace = True ),
-            LinearWN( 256, self.lit_dim)
+            LinearWN( 256, self.albedo_dim )
         )
-        # self.Latent2ShapeExpCode = nn.DataParallel(self.Latent2ShapeExpCode)
-        # self.latent2shape = nn.DataParallel(self.latent2shape)
-        # self.latent2exp = nn.DataParallel(self.latent2exp)
-        # self.Latent2AlbedoLitCode = nn.DataParallel(self.Latent2AlbedoLitCode)
-        # self.latent2albedo = nn.DataParallel(self.latent2albedo)
-        # self.latent2lit = nn.DataParallel(self.latent2lit)
+        if len(weight) > 0:
+            print ('loading weights for latent2lit feature extraction network')
+            latent2lit.load_state_dict(torch.load(weight))
+        return latent2lit
 
-        # self.Latent2ShapeExpCode = self.Latent2ShapeExpCode.apply(init_weight)
-        # self.latent2shape = self.latent2shape.apply(init_weight)
-        # self.latent2exp = self.latent2exp.apply(init_weight)
-        # self.Latent2AlbedoLitCode = self.Latent2AlbedoLitCode.apply(init_weight)
-        # self.latent2albedo = self.latent2albedo.apply(init_weight)
-        # self.latent2lit = self.latent2lit.apply(init_weight)
-        
-        self._initialize_weights()
-        self.flame = FLAME(self.flame_config).to('cuda')
-        self.flametex = FLAMETex(self.flame_config).to('cuda')
-        self._setup_renderer()
-
-        self.l1loss = torch.nn.L1Loss()
-        self.l2loss = torch.nn.MSELoss()
-        self.GANloss = nn.BCEWithLogitsLoss()
-
-        self.ckpt_path = os.path.join(opt.checkpoints_dir, opt.name)
-        os.makedirs(self.ckpt_path, exist_ok = True)
-        
     def _setup_renderer(self):
         mesh_file = '/home/uss00022/lelechen/basic/flame_data/data/head_template_mesh.obj'
         self.render = Renderer(self.image_size, obj_filename=mesh_file).to('cuda')
     
     def forward(self, shape_latent, appearance_latent, cam, pose ):
-        shape_fea = self.Latent2ShapeExpCode(shape_latent)
         
+        shape_fea = self.Latent2ShapeExpCode(shape_latent)
         shapecode = self.latent2shape(shape_fea)
         expcode = self.latent2exp(shape_fea)
         
         app_fea = self.Latent2AlbedoLitCode(appearance_latent)
-
         albedocode = self.latent2albedo(app_fea)
-        litcode = self.latent2lit(app_fea)
-        litcode = litcode.view(shape_latent.shape[0], 9,3)
+        litcode = self.latent2lit(app_fea).view(shape_latent.shape[0], 9,3)
         
         vertices, landmarks2d, landmarks3d = self.flame(shape_params=shapecode, expression_params=expcode, pose_params=pose)
         trans_vertices = util.batch_orth_proj(vertices, cam)
