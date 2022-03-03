@@ -46,7 +46,7 @@ class Latent2CodeModule():
         for epoch in range( 1000):
             for step, batch in enumerate(tqdm(self.data_loader)):
 
-                landmarks3d, predicted_images = self.latent2code(batch['shape_latent'].to(self.device), \
+                landmarks3d, predicted_images = self.latent2code.forward(batch['shape_latent'].to(self.device), \
                                             batch['appearance_latent'].to(self.device), \
                                             batch['cam'].to(self.device), batch['pose'].to(self.device))
                 losses = {}
