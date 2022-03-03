@@ -27,7 +27,7 @@ class Latent2CodeModule():
                                   , lr= self.opt.lr , betas=(self.opt.beta1, 0.999))
         self.dataset  = FFHQDataset(opt)
         self.data_loader = DataLoaderWithPrefetch(self.dataset, \
-                                              num_workers = opt.nThreads, prefetch_size = max(8, opt.nThreads))
+                                              num_workers = opt.nThreads, prefetch_size = min(8, opt.nThreads))
 
         self.ckpt_path = os.path.join(opt.checkpoints_dir, opt.name)
         os.makedirs(self.ckpt_path, exist_ok = True)
