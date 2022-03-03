@@ -106,7 +106,7 @@ class Latent2CodeModule():
                 ('genlmark', genlmark )
                 ])
         
-                self.visualizer.display_current_results(visuals, epoch, save_step) 
+                self.visualizer.display_current_results(visuals, epoch, self.opt.save_step) 
                 torch.save(self.latent2code, os.path.join( self.ckpt_path, 'latent2code.pth'))
 
                 torch.save(self.latent2code.Latent2ShapeExpCode, os.path.join( self.ckpt_path, 'Latent2ShapeExpCode.pth'))
