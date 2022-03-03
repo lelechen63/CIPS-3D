@@ -81,7 +81,7 @@ class Latent2Code(nn.Module):
             latent2shape.load_state_dict(torch.load(weight))
         return latent2shape
     def build_latent2exp(self, weight = ''):
-        latent2shape= th.nn.Sequential(
+        latent2exp= th.nn.Sequential(
             LinearWN( 256 , 256 ),
             th.nn.LeakyReLU( 0.2, inplace = True ),
             LinearWN( 256, self.exp_dim )
