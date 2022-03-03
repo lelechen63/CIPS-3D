@@ -26,7 +26,7 @@ class Latent2CodeModule():
                                   list(self.latent2code.latent2albedo.parameters()) + \
                                   list(self.latent2code.latent2lit.parameters()) \
                                   , lr= self.opt.lr , betas=(self.opt.beta1, 0.999))
-        self.latent2code = nn.DataParallel(self.latent2code).to(self.device)
+        self.latent2code = nn.DataParallel(self.latent2code.to(self.device))
         self.dataset  = FFHQDataset(opt)
         self.data_loader = DataLoaderWithPrefetch(self.dataset, \
                                               num_workers = opt.nThreads, prefetch_size = min(8, opt.nThreads))
