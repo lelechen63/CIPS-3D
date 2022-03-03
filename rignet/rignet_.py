@@ -196,15 +196,46 @@ class Latent2CodeModule():
             ])
             self.visualizer.display_current_results(visuals, 0, 1) 
 
-    def test(self):
+    def debug(self):
         for p in self.latent2code.parameters():
             p.requires_grad = False 
         for step, batch in enumerate(tqdm(self.data_loader)):
             with torch.no_grad():    
-                landmarks3d, predicted_images = self.latent2code.forward(
-                        batch['shape_latent'].to(self.device), \
-                        batch['appearance_latent'].to(self.device), \
-                        batch['cam'].to(self.device), batch['pose'].to(self.device))
+                shape_latent = batch['shape_latent'].to(self.device)
+                appearance_latent = batch['appearance_latent'].to(self.device)
+                cam, pose = batch['cam'].to(self.device), batch['pose'].to(self.device)
+
+                shape_fea = self.latent2code.Latent2ShapeExpCode(shape_latent)
+                shapecode = self.latent2code.latent2shape(shape_fea)
+                expcode = self.latent2code.latent2exp(shape_fea)
+
+                app_fea = self.latent2code.Latent2AlbedoLitCode(appearance_latent)
+                albedocode = self.latent2code.latent2albedo(app_fea)
+                litcode = self.latent2code.latent2lit(app_fea).view(shape_latent.shape[0], 9,3)
+
+                # flame from synthesized shape, exp, lit, albedo
+                vertices, landmarks2d, landmarks3d = self.latent2code.flame(shape_params=shapecode, expression_params=expcode, pose_params=pose)
+                trans_vertices = util.batch_orth_proj(vertices, cam)
+                trans_vertices[..., 1:] = - trans_vertices[..., 1:]
+
+                ## render
+                albedos = self.flametex(albedocode, self.image_size) / 255.
+                ops = self.render(vertices, trans_vertices, albedos, litcode)
+                predicted_images = ops['images']
+                
+                # flame from sudo ground truth shape, exp, lit, albedo
+                recons_vertices, recons_landmarks2d, recons_landmarks3d = self.latent2code.flame(
+                                                shape_params = batch['shape'].to(self.device), 
+                                                expression_params = batch['exp'].to(self.device),
+                                                pose_params=batch['pose'].to(self.device))
+                recons_trans_vertices = util.batch_orth_proj(recons_vertices, batch['cam'].to(self.device))
+                recons_trans_vertices[..., 1:] = -recons_trans_vertices[..., 1:]
+
+                ## render
+                recons_albedos = self.flametex(batch['albedo'].to(self.device), self.image_size) / 255.
+                recons_ops = self.render(recons_vertices, recons_trans_vertices, recons_albedos, batch['lit'].to(self.device))
+                recons_images = recons_ops['images']
+
             losses = {}
             losses['landmark'] = util.l2_distance(landmarks3d[:, 17:, :2], batch['gt_landmark'][:, 17:, :2].to(self.device)) * self.flame_config.w_lmks
             losses['photometric_texture'] = (batch['img_mask'].to(self.device) * (predicted_images - batch['gt_image'].to(self.device) ).abs()).mean() * self.flame_config.w_pho
@@ -240,6 +271,14 @@ class Latent2CodeModule():
             genimage = np.ascontiguousarray(genimage, dtype=np.uint8)
             genimage = np.clip(genimage, 0, 255)
 
+            reconsimage = recons_images.data[visind].cpu() #  * self.stdtex + self.meantex 
+            reconsimage = tensor_util.tensor2im(reconsimage  , normalize = False)
+            reconsimage = np.ascontiguousarray(reconsimage, dtype=np.uint8)
+            reconsimage = tensor_util.writeText(reconsimage, batch['image_path'][visind])
+            reconsimage = np.ascontiguousarray(reconsimage, dtype=np.uint8)
+            reconsimage = np.clip(reconsimage, 0, 255)
+
+
             genlmark = util.batch_orth_proj(landmarks3d, batch['cam'].to(self.device))
             genlmark[..., 1:] = - genlmark[..., 1:]
 
@@ -255,6 +294,7 @@ class Latent2CodeModule():
             ('gtimage', gtimage),
             ('gtlmark', gtlmark ),
             ('genimage', genimage),
+            ('reconsimage', reconsimage),
             ('genlmark', genlmark )
             ])
             self.visualizer.display_current_results(visuals, step, 1) 
