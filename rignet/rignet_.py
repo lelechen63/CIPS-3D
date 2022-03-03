@@ -31,7 +31,7 @@ class Latent2CodeModule():
         self.latent2code =torch.nn.DataParallel(self.latent2code, device_ids=range(len(self.opt.gpu_ids)))
         self.latent2code = self.latent2code.to(self.device)
         self.dataset  = FFHQDataset(opt)
-        if opt.is_train:
+        if opt.isTrain:
             self.data_loader = DataLoaderWithPrefetch(self.dataset, \
                         batch_size=opt.batchSize,\
                         drop_last=True,\
