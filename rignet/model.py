@@ -118,7 +118,7 @@ class Latent2Code(nn.Module):
         latent2lit= th.nn.Sequential(
             LinearWN( 256 , 256 ),
             th.nn.LeakyReLU( 0.2, inplace = True ),
-            LinearWN( 256, self.albedo_dim )
+            LinearWN( 256, self.lit_dim )
         )
         if len(weight) > 0:
             print ('loading weights for latent2lit feature extraction network')
