@@ -26,7 +26,7 @@ class Latent2CodeModule():
                                   list(self.latent2code.latent2albedo.parameters()) + \
                                   list(self.latent2code.latent2lit.parameters()) \
                                   , lr= self.opt.lr , betas=(self.opt.beta1, 0.999))
-        self.latent2code = nn.DataParallel(self.latent2code)
+        self.latent2code = nn.DataParallel(self.latent2code).to(device)
         self.dataset  = FFHQDataset(opt)
         self.data_loader = DataLoaderWithPrefetch(self.dataset, \
                                               num_workers = opt.nThreads, prefetch_size = min(8, opt.nThreads))
@@ -42,6 +42,7 @@ class Latent2CodeModule():
             print (epoch)
             for step, batch in enumerate(tqdm(self.data_loader)):
                 print (step)
+
                 landmarks3d, predicted_images = self.latent2code(batch['shape_latent'].to(self.device), \
                                             batch['appearance_latent'].to(self.device), \
                                             batch['cam'].to(self.device), batch['pose'].to(self.device))
