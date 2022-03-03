@@ -35,7 +35,7 @@ class Latent2CodeModule():
 
     def train(self):
         for p in self.latent2code.parameters():
-                p.requires_grad = False 
+            p.requires_grad = True 
         for epoch in range( 1000):
             for step, batch in enumerate(tqdm(self.data_loader)):
                 landmarks3d, predicted_images = self.latent2code(batch['shape_latent'].to(self.device), \
