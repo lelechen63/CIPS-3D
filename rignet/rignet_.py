@@ -32,7 +32,7 @@ class Latent2CodeModule():
         print ('========', len(self.data_loader),'========')
         self.ckpt_path = os.path.join(opt.checkpoints_dir, opt.name)
         os.makedirs(self.ckpt_path, exist_ok = True)
-
+        
     def train(self):
         print ('!!!!!!!!!!!!!!!!!!!')
         for p in self.latent2code.parameters():

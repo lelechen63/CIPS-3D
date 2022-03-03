@@ -62,7 +62,7 @@ print (opt.isTrain,'!!!!!')
 if opt.isTrain:
     print ( opt.name)
     model.train()
-
+    print ('+++++++++')
 else:
     print ('!!!!!!' + opt.name + '!!!!!!!!')
     if opt.name == 'Latent2Code':
