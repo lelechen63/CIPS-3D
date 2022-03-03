@@ -34,6 +34,7 @@ class Latent2CodeModule():
         os.makedirs(self.ckpt_path, exist_ok = True)
 
     def train(self):
+        print ('!!!!!!!!!!!!!!!!!!!')
         for p in self.latent2code.parameters():
             p.requires_grad = True 
         for epoch in range( 1000):
