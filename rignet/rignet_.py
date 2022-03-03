@@ -150,7 +150,7 @@ class Latent2CodeModule():
             
             tqdm_dict = {'loss_landmark': losses['landmark'].data, 'loss_tex': losses['photometric_texture'].data  }
             errors = {k: v.data.item() if not isinstance(v, int) else v for k, v in tqdm_dict.items()} 
-            self.visualizer.print_current_errors(epoch, step, errors, 0)
+            self.visualizer.print_current_errors(0, step, errors, 0)
 
             visind = 0
             gtimage = batch['gt_image'].data[visind].cpu()
