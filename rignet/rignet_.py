@@ -17,7 +17,7 @@ class Latent2CodeModule():
         self.flame_config = flame_config
         self.visualizer = Visualizer(opt)
         if opt.cuda:
-            self.device = torch.device("cuda:0")
+            device = torch.device("cuda")
         self.latent2code = Latent2Code( flame_config, opt)
         
         self.optimizer = optim.Adam( list(self.latent2code.Latent2ShapeExpCode.parameters()) + \
@@ -27,7 +27,7 @@ class Latent2CodeModule():
                                   list(self.latent2code.latent2albedo.parameters()) + \
                                   list(self.latent2code.latent2lit.parameters()) \
                                   , lr= self.opt.lr , betas=(self.opt.beta1, 0.999))
-        self.latent2code = torch.nn.DataParallel(self.latent2code, device_ids=opt.gpu_ids)
+        self.latent2code =torch.nn.DataParallel(latent2code, device_ids=range(len(self.opt.gpu_ids)))
         self.dataset  = FFHQDataset(opt)
         self.data_loader = DataLoaderWithPrefetch(self.dataset, \
                                     batch_size=opt.batchSize,\
