@@ -67,8 +67,8 @@ class FFHQDataset(torch.utils.data.Dataset):
             list_path = os.path.join(opt.dataroot, "ffhq_trainlist.pkl")
             zip_path = os.path.join(opt.dataroot, 'ffhq_train.pkl' )
         else:
-            list_path = os.path.join(opt.dataroot, "ffhq_testlist.pkl")
-            zip_path = os.path.join(opt.dataroot, 'ffhq_test.pkl' )
+            list_path = os.path.join(opt.dataroot, "ffhq_trainlist.pkl")
+            zip_path = os.path.join(opt.dataroot, 'ffhq_train.pkl' )
 
         if opt.debug:
             list_path = list_path[:-4] + '_debug.pkl'
