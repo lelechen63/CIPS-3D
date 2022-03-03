@@ -29,7 +29,10 @@ class Latent2CodeModule():
         self.latent2code = nn.DataParallel(self.latent2code.to(self.device))
         self.dataset  = FFHQDataset(opt)
         self.data_loader = DataLoaderWithPrefetch(self.dataset, \
-                                              num_workers = opt.nThreads, prefetch_size = min(8, opt.nThreads))
+                                    batch_size=opt.batchSize,\
+                                    drop_last=True,\
+                                    num_workers = opt.nThreads, \
+                                    prefetch_size = min(8, opt.nThreads))
         print ('========', len(self.data_loader),'========')
         self.ckpt_path = os.path.join(opt.checkpoints_dir, opt.name)
         os.makedirs(self.ckpt_path, exist_ok = True)
