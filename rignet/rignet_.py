@@ -47,7 +47,6 @@ class Latent2CodeModule():
                 losses['photometric_texture'] = (batch['img_mask'].to(self.device) * (predicted_images - batch['gt_image'].to(self.device) ).abs()).mean() * self.flame_config.w_pho
                 loss = losses['landmark'] + losses['photometric_texture']
                 
-                print (loss)
                 self.optimizer.zero_grad()
                 loss.backward()
                 self.optimizer.step()
