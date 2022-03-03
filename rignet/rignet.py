@@ -215,13 +215,14 @@ class Latent2CodeModule(pl.LightningModule):
        
             self.visualizer.display_current_results(visuals, self.current_epoch, step) 
             self.trainer.save_checkpoint( os.path.join( self.ckpt_path, 'latest.ckpt') )
+            torch.save(self.ImageEncoder, os.path.join( self.ckpt_path, 'ImageEncoder.pth'))
+            torch.save(self.meshcode_dec, os.path.join( self.ckpt_path, 'meshcode_dec.pth'))
 
 
 class RigNerfModule(nn.Module):
     def __init__(self, flame_config, opt ):
         super().__init__()
         self.opt = opt
-        self.save_hyperparameters()
         self.flame_config = flame_config
         self.image_size = self.flame_config.image_size
         self.visualizer = Visualizer(opt)
