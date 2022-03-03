@@ -107,12 +107,12 @@ class Latent2CodeModule():
                 ])
         
                 self.visualizer.display_current_results(visuals, epoch, self.opt.save_step) 
-                torch.save(self.latent2code, os.path.join( self.ckpt_path, 'latent2code.pth'))
+                torch.save(self.latent2code.state_dict(), os.path.join( self.ckpt_path, 'latent2code.pth'))
 
-                torch.save(self.latent2code.Latent2ShapeExpCode, os.path.join( self.ckpt_path, 'Latent2ShapeExpCode.pth'))
-                torch.save(self.latent2code.Latent2AlbedoLitCode, os.path.join( self.ckpt_path, 'Latent2AlbedoLitCode.pth'))
-                torch.save(self.latent2code.latent2shape, os.path.join( self.ckpt_path, 'latent2shape.pth'))
-                torch.save(self.latent2code.latent2exp, os.path.join( self.ckpt_path, 'latent2exp.pth'))
-                torch.save(self.latent2code.latent2albedo, os.path.join( self.ckpt_path, 'latent2albedo.pth'))
-                torch.save(self.latent2code.latent2lit, os.path.join( self.ckpt_path, 'latent2lit.pth'))
+                torch.save(self.latent2code.Latent2ShapeExpCode.state_dict(), os.path.join( self.ckpt_path, 'Latent2ShapeExpCode.pth'))
+                torch.save(self.latent2code.Latent2AlbedoLitCode.state_dict(), os.path.join( self.ckpt_path, 'Latent2AlbedoLitCode.pth'))
+                torch.save(self.latent2code.latent2shape.state_dict(), os.path.join( self.ckpt_path, 'latent2shape.pth'))
+                torch.save(self.latent2code.latent2exp.state_dict(), os.path.join( self.ckpt_path, 'latent2exp.pth'))
+                torch.save(self.latent2code.latent2albedo.state_dict(), os.path.join( self.ckpt_path, 'latent2albedo.pth'))
+                torch.save(self.latent2code.latent2lit.state_dict(), os.path.join( self.ckpt_path, 'latent2lit.pth'))
 
