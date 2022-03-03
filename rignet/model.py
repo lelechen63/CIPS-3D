@@ -42,22 +42,22 @@ class Latent2Code(nn.Module):
         self.exp_dim = 50
         self.albedo_dim = 50
         self.lit_dim = 27
-        self.Latent2ShapeExpCode = th.nn.Sequential(
-            th.nn.Linear( self.nerf_latent_dim , 256 ),
-            th.nn.LeakyReLU( 0.2, inplace = True ),
-            th.nn.Linear( 256, 256 ),
-            th.nn.LeakyReLU( 0.2, inplace = True ),
-            th.nn.Linear( 256, 256 ),
-            th.nn.LeakyReLU( 0.2, inplace = True )
-        )
         # self.Latent2ShapeExpCode = th.nn.Sequential(
-        #     LinearWN( self.nerf_latent_dim , 256 ),
+        #     th.nn.Linear( self.nerf_latent_dim , 256 ),
         #     th.nn.LeakyReLU( 0.2, inplace = True ),
-        #     LinearWN( 256, 256 ),
+        #     th.nn.Linear( 256, 256 ),
         #     th.nn.LeakyReLU( 0.2, inplace = True ),
-        #     LinearWN( 256, 256 ),
+        #     th.nn.Linear( 256, 256 ),
         #     th.nn.LeakyReLU( 0.2, inplace = True )
         # )
+        self.Latent2ShapeExpCode = th.nn.Sequential(
+            LinearWN( self.nerf_latent_dim , 256 ),
+            th.nn.LeakyReLU( 0.2, inplace = True ),
+            LinearWN( 256, 256 ),
+            th.nn.LeakyReLU( 0.2, inplace = True ),
+            LinearWN( 256, 256 ),
+            th.nn.LeakyReLU( 0.2, inplace = True )
+        )
         self.latent2shape= th.nn.Sequential(
             LinearWN( 256 , 256 ),
             th.nn.LeakyReLU( 0.2, inplace = True ),
