@@ -17,8 +17,8 @@ class Latent2CodeModule():
         self.flame_config = flame_config
         self.visualizer = Visualizer(opt)
         self.device = opt.cuda
-        self.latent2code = Latent2Code( flame_config, opt).to(self.device)
-
+        self.latent2code = Latent2Code( flame_config, opt)
+        self.latent2code = nn.DataParallel(self.latent2code)
         self.optimizer = optim.Adam( list(self.latent2code.Latent2ShapeExpCode.parameters()) + \
                                   list(self.latent2code.Latent2AlbedoLitCode.parameters()) + \
                                   list(self.latent2code.latent2shape.parameters()) + \
@@ -32,7 +32,7 @@ class Latent2CodeModule():
         print ('========', len(self.data_loader),'========')
         self.ckpt_path = os.path.join(opt.checkpoints_dir, opt.name)
         os.makedirs(self.ckpt_path, exist_ok = True)
-        
+
     def train(self):
         print ('!!!!!!!!!!!!!!!!!!!')
         for p in self.latent2code.parameters():

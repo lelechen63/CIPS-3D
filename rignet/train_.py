@@ -57,7 +57,7 @@ torch.manual_seed(opt.manualSeed)
 if  opt.name == 'Latent2Code':
     from rignet_ import Latent2CodeModule as module
     model = module(flame_config, opt )
-    model = nn.DataParallel(model)
+
 print (opt.isTrain,'!!!!!')
 if opt.isTrain:
     print ( opt.name)
