@@ -118,7 +118,6 @@ class Latent2Code(nn.Module):
         self.render = Renderer(self.image_size, obj_filename=mesh_file).to('cuda')
     
     def forward(self, shape_latent, appearance_latent, cam, pose ):
-        print ( shape_latent.device,'++++')
         shape_fea = self.Latent2ShapeExpCode(shape_latent)
         
         shapecode = self.latent2shape(shape_fea)
