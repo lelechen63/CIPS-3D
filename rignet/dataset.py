@@ -56,7 +56,6 @@ class _MultiProcessingDataLoaderIterWithPrefetch(_MultiProcessingDataLoaderIter)
                     resume_iteration_cnt -= 1
         # print(f"im fetching {self.prefetch_size}")
         for _ in range(self.prefetch_size):
-            print (self._tasks_outstanding, self._prefetch_factor * self._num_workers,'++++++++')
             self._try_put_index()
 
 
