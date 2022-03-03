@@ -148,7 +148,7 @@ class Latent2Code(nn.Module):
         ops = self.render(vertices, trans_vertices, albedos, litcode)
         predicted_images = ops['images']
         return landmarks3d, predicted_images
-
+    
     def _initialize_weights(self):
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
