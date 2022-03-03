@@ -87,12 +87,12 @@ class Latent2Code(nn.Module):
         self.latent2albedo = nn.DataParallel(self.latent2albedo)
         self.latent2lit = nn.DataParallel(self.latent2lit)
 
-        self.Latent2ShapeExpCode = self.Latent2ShapeExpCode.apply(init_weight)
-        self.latent2shape = self.latent2shape.apply(init_weight)
-        self.latent2exp = self.latent2exp.apply(init_weight)
-        self.Latent2AlbedoLitCode = self.Latent2AlbedoLitCode.apply(init_weight)
-        self.latent2albedo = self.latent2albedo.apply(init_weight)
-        self.latent2lit = self.latent2lit.apply(init_weight)
+        # self.Latent2ShapeExpCode = self.Latent2ShapeExpCode.apply(init_weight)
+        # self.latent2shape = self.latent2shape.apply(init_weight)
+        # self.latent2exp = self.latent2exp.apply(init_weight)
+        # self.Latent2AlbedoLitCode = self.Latent2AlbedoLitCode.apply(init_weight)
+        # self.latent2albedo = self.latent2albedo.apply(init_weight)
+        # self.latent2lit = self.latent2lit.apply(init_weight)
 
         self.flame = FLAME(self.flame_config).to('cuda')
         self.flametex = FLAMETex(self.flame_config).to('cuda')
