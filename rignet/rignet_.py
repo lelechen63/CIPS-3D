@@ -18,7 +18,7 @@ class Latent2CodeModule():
         self.visualizer = Visualizer(opt)
         self.device = opt.cuda
         self.latent2code = Latent2Code( flame_config, opt)
-        self.latent2code = nn.DataParallel(self.latent2code)
+        
         self.optimizer = optim.Adam( list(self.latent2code.Latent2ShapeExpCode.parameters()) + \
                                   list(self.latent2code.Latent2AlbedoLitCode.parameters()) + \
                                   list(self.latent2code.latent2shape.parameters()) + \
