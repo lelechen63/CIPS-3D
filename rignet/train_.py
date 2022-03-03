@@ -46,7 +46,7 @@ opt = TrainOptions().parse()
 #     opt.nThreads = 1
 print (opt.batchSize, '=+++++++')
 
-os.environ['CUDA_VISIBLE_DEVICES'] = opt.gpu_ids
+# os.environ['CUDA_VISIBLE_DEVICES'] = opt.gpu_ids
 
 opt.manualSeed = random.randint(1, 10000)
 print("Random Seed: ", opt.manualSeed)
