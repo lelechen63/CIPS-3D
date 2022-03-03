@@ -88,10 +88,10 @@ class Latent2CodeModule():
                 genimage = np.ascontiguousarray(genimage, dtype=np.uint8)
                 genimage = np.clip(genimage, 0, 255)
 
-                genlmark = util.batch_orth_proj(landmarks3d, batch['cam'])
+                genlmark = util.batch_orth_proj(landmarks3d, batch['cam'].to(self.device))
                 genlmark[..., 1:] = - genlmark[..., 1:]
 
-                genlmark = util.tensor_vis_landmarks(batch['gt_image'][visind].unsqueeze(0),genlmark[visind].unsqueeze(0))
+                genlmark = util.tensor_vis_landmarks(batch['gt_image'].to(self.device)[visind].unsqueeze(0),genlmark[visind].unsqueeze(0))
                 genlmark = genlmark.squeeze(0)
                 genlmark = tensor_util.tensor2im(genlmark  , normalize = False)
                 genlmark = np.ascontiguousarray(genlmark, dtype=np.uint8)
