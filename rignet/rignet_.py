@@ -194,7 +194,7 @@ class Latent2CodeModule():
             ('genimage', genimage),
             ('genlmark', genlmark )
             ])
-            self.visualizer.display_current_results(visuals, 0, 1) 
+            self.visualizer.display_current_results(visuals, step, 1) 
 
     def debug(self):
         for p in self.latent2code.parameters():
