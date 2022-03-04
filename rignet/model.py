@@ -159,14 +159,12 @@ class Latent2Code(nn.Module):
             recons_albedos = self.flametex(flametex, self.image_size) / 255.
             recons_ops = self.render(recons_vertices, recons_trans_vertices, recons_albedos, flamelit)
             recons_images = recons_ops['images']
-
-            return landmarks3d, predicted_images, recons_images
-        return landmarks3d, predicted_images, predicted_images
-    def visualize(self, shapecode, expcode,albedocode, litcode, cam, pose ):
+        else:
+            recons_images = predicted_images
 
         
-
-        return landmarks3d, predicted_images
+        return landmarks3d, predicted_images, recons_images
+    
 
     def _initialize_weights(self):
         for m in self.modules():
