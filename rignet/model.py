@@ -185,8 +185,7 @@ class RigNerft(nn.Module):
         
         # funtion F networks
         latent2code = Latent2Code(flame_config, opt)
-        self.Latent2ShapeExpCode, self.latent2shape, self.latent2exp \
-        self.Latent2AlbedoLitCode, self.latent2albedo, self.latent2lit = self.get_f(Latent2Code)
+        self.Latent2ShapeExpCode, self.latent2shape, self.latent2exp, self.Latent2AlbedoLitCode, self.latent2albedo, self.latent2lit = self.get_f(Latent2Code)
         
         self.WGanEncoder = build_WGanEncoder(weight = '' if opt.isTrain else opt.WGanEncoder_weight )
 
