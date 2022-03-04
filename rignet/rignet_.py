@@ -75,7 +75,7 @@ class Latent2CodeModule():
                 self.visualizer.print_current_errors(epoch, step, errors, 0)
 
             if epoch % self.opt.save_step == 0:  
-                recons_images, recons_landmarks = self.latent2code.module.visualize(
+                recons_landmarks, recons_images = self.latent2code.module.visualize(
                                                 batch['shape'].to(self.device),
                                                 batch['exp'].to(self.device),
                                                 batch['tex'].to(self.device),
