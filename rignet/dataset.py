@@ -79,7 +79,7 @@ class FFHQDataset(torch.utils.data.Dataset):
         _file.close()
 
         if opt.debug:
-            self.data_list = self.data_list[:513]
+            self.data_list = self.data_list[:100]
 
         _file = open(zip_path, "rb")
         self.total_data = pickle.load(_file)
