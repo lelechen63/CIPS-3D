@@ -11,7 +11,7 @@ from tqdm import tqdm
 import  os, time
 import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
-
+import copy
 from torch.utils.data.dataloader import (
     _SingleProcessDataLoaderIter,
     _MultiProcessingDataLoaderIter,
@@ -94,7 +94,7 @@ class FFHQDataset(torch.utils.data.Dataset):
         t = time.time()
         name = self.data_list[index]
 
-        data = self.total_data[self.data_list[index]]
+        data = copy.copy(self.total_data[self.data_list[index]])
         """
             data[name] ={'shape': shape, 
                  'exp': exp,
