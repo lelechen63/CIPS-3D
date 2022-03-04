@@ -179,7 +179,14 @@ class RigNerft(nn.Module):
     def __init__(self, flame_config, opt ):
         super().__init__()
         self.opt = opt
-        # self.save_hyperparameters()
+        
+        self.nerf_latent_dim = 256
+        self.gan_latent_dim = 512
+        self.shape_dim = 100
+        self.exp_dim = 50
+        self.albedo_dim = 50
+        self.lit_dim = 27
+
         self.flame_config = flame_config
         self.image_size = self.flame_config.image_size
         
@@ -188,6 +195,17 @@ class RigNerft(nn.Module):
         self.Latent2ShapeExpCode, self.latent2shape, self.latent2exp, self.Latent2AlbedoLitCode, self.latent2albedo, self.latent2lit = self.get_f(Latent2Code)
         
         self.WGanEncoder = build_WGanEncoder(weight = '' if opt.isTrain else opt.WGanEncoder_weight )
+        self.ShapeEncoder = build_ShapeEncoder(weight = '' if opt.isTrain else opt.shapeEncoder_weight )
+        self.ExpEncoder = build_ExpEncoder(weight = '' if opt.isTrain else opt.ExpEncoder_weight )
+
+        self.WGanDecoder = build_WGanDecoder(weight = '' if opt.isTrain else opt.WGanDecoder_weight )
+
+        self.WNerfEncoder = build_WNerfEncoder(weight = '' if opt.isTrain else opt.WNerfEncoder_weight )
+        self.AlbedoEncoder = build_AlbedoEncoder(weight = '' if opt.isTrain else opt.AlbedoEncoder_weight )
+        self.LitEncoder = build_LitEncoder(weight = '' if opt.isTrain else opt.LitEncoder_weight )
+
+        self.WNerfDecoder = build_WNerfDecoder(weight = '' if opt.isTrain else opt.WNerfDecoder_weight )
+
 
         # Flame
         self.flame = FLAME(self.flame_config).to('cuda')
@@ -227,7 +245,7 @@ class RigNerft(nn.Module):
     
     def build_WGanEncoder(self, weight = ''):
         WGanEncoder = th.nn.Sequential(
-            LinearWN( self.shape_dim , 256 ),
+            LinearWN( self.gan_latent_dim , 256 ),
             th.nn.LeakyReLU( 0.2, inplace = True ),
             LinearWN( 256, 256 ),
             th.nn.LeakyReLU( 0.2, inplace = True )
@@ -237,6 +255,84 @@ class RigNerft(nn.Module):
             WGanEncoder.load_state_dict(torch.load(weight))
         return WGanEncoder
     
+    def build_ShapeEncoder(self, weight = ''):
+        ShapeEncoder = th.nn.Sequential(
+            LinearWN( self.shape_dim , 128 ),
+            th.nn.LeakyReLU( 0.2, inplace = True ),
+            LinearWN( 128, 128 ),
+            th.nn.LeakyReLU( 0.2, inplace = True )
+        )
+        if len(weight) > 0:
+            print ('loading weights for ShapeEncoder  network')
+            ShapeEncoder.load_state_dict(torch.load(weight))
+        return ShapeEncoder
+    def build_ExpEncoder(self, weight = ''):
+        ExpEncoder = th.nn.Sequential(
+            LinearWN( self.exp_dim , 128 ),
+            th.nn.LeakyReLU( 0.2, inplace = True ),
+            LinearWN( 128, 128 ),
+            th.nn.LeakyReLU( 0.2, inplace = True )
+        )
+        if len(weight) > 0:
+            print ('loading weights for ExpEncoder  network')
+            ExpEncoder.load_state_dict(torch.load(weight))
+        return ExpEncoder
+    def build_WGanDecoder(self, weight = ''):
+        WGanDecoder = th.nn.Sequential(
+            LinearWN( 512 , 256 ),
+            th.nn.LeakyReLU( 0.2, inplace = True ),
+            LinearWN( 256, self.gan_latent_dim ),
+        )
+        if len(weight) > 0:
+            print ('loading weights for WGanDecoder  network')
+            WGanDecoder.load_state_dict(torch.load(weight))
+        return WGanDecoder
+    
+    def build_WnerfEncoder(self, weight = ''):
+        WNerfEncoder = th.nn.Sequential(
+            LinearWN( self.nerf_latent_dim , 256 ),
+            th.nn.LeakyReLU( 0.2, inplace = True ),
+            LinearWN( 256, 256 ),
+            th.nn.LeakyReLU( 0.2, inplace = True )
+        )
+        if len(weight) > 0:
+            print ('loading weights for WNerfEncoder  network')
+            WNerfEncoder.load_state_dict(torch.load(weight))
+        return WNerfEncoder
+    
+    def build_AlbedoEncoder(self, weight = ''):
+        AlbedoEncoder = th.nn.Sequential(
+            LinearWN( self.albedo_dim , 128 ),
+            th.nn.LeakyReLU( 0.2, inplace = True ),
+            LinearWN( 128, 128 ),
+            th.nn.LeakyReLU( 0.2, inplace = True )
+        )
+        if len(weight) > 0:
+            print ('loading weights for AlbedoEncoder  network')
+            AlbedoEncoder.load_state_dict(torch.load(weight))
+        return AlbedoEncoder
+    def build_LitEncoder(self, weight = ''):
+        LitEncoder = th.nn.Sequential(
+            LinearWN( self.lit_dim , 128 ),
+            th.nn.LeakyReLU( 0.2, inplace = True ),
+            LinearWN( 128, 128 ),
+            th.nn.LeakyReLU( 0.2, inplace = True )
+        )
+        if len(weight) > 0:
+            print ('loading weights for LitEncoder  network')
+            LitEncoder.load_state_dict(torch.load(weight))
+        return LitEncoder
+    def build_WNerfDecoder(self, weight = ''):
+        WNerfDecoder = th.nn.Sequential(
+            LinearWN( 512 , 256 ),
+            th.nn.LeakyReLU( 0.2, inplace = True ),
+            LinearWN( 256, self.nerf_latent_dim ),
+        )
+        if len(weight) > 0:
+            print ('loading weights for WNerfDecoder  network')
+            WNerfDecoder.load_state_dict(torch.load(weight))
+        return WNerfDecoder
+
 
     def _setup_renderer(self):
         mesh_file = '/home/uss00022/lelechen/basic/flame_data/data/head_template_mesh.obj'
