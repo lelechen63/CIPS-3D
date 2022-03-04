@@ -185,7 +185,7 @@ class RigNerft(nn.Module):
         
         # funtion F networks
         latent2code = Latent2Code(flame_config, opt)
-        self.Latent2ShapeExpCode, self.latent2shape, self.latent2exp\
+        self.Latent2ShapeExpCode, self.latent2shape, self.latent2exp \
         self.Latent2AlbedoLitCode, self.latent2albedo, self.latent2lit = self.get_f(Latent2Code)
         
         self.WGanEncoder = build_WGanEncoder(weight = '' if opt.isTrain else opt.WGanEncoder_weight )
@@ -227,18 +227,16 @@ class RigNerft(nn.Module):
         return shapecode, expcode, albedocode, litcode
     
     def build_WGanEncoder(self, weight = ''):
-        Latent2ShapeExpCode = th.nn.Sequential(
-            LinearWN( self.nerf_latent_dim , 256 ),
-            th.nn.LeakyReLU( 0.2, inplace = True ),
-            LinearWN( 256, 256 ),
+        WGanEncoder = th.nn.Sequential(
+            LinearWN( self.shape_dim , 256 ),
             th.nn.LeakyReLU( 0.2, inplace = True ),
             LinearWN( 256, 256 ),
             th.nn.LeakyReLU( 0.2, inplace = True )
         )
         if len(weight) > 0:
-            print ('loading weights for latent2ShapeExpCode feature extraction network')
-            Latent2ShapeExpCode.load_state_dict(torch.load(weight))
-        return Latent2ShapeExpCode
+            print ('loading weights for WGanEncoder  network')
+            WGanEncoder.load_state_dict(torch.load(weight))
+        return WGanEncoder
     
 
     def _setup_renderer(self):
