@@ -233,7 +233,7 @@ class Latent2CodeModule():
                 recons_trans_vertices[..., 1:] = -recons_trans_vertices[..., 1:]
 
                 ## render
-                recons_albedos = self.latent2code.flametex(batch['albedo'].to(self.device), self.latent2code.image_size) / 255.
+                recons_albedos = self.latent2code.flametex(batch['tex'].to(self.device), self.latent2code.image_size) / 255.
                 recons_ops = self.latent2code.render(recons_vertices, recons_trans_vertices, recons_albedos, batch['lit'].to(self.device))
                 recons_images = recons_ops['images']
 
