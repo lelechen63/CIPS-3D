@@ -234,7 +234,7 @@ class Latent2CodeModule():
 
                 ## render
                 recons_albedos = self.latent2code.flametex(batch['tex'].to(self.device), self.latent2code.image_size) / 255.
-                recons_ops = self.latent2code.render(recons_vertices, recons_trans_vertices, recons_albedos, batch['lit'].to(self.device))
+                recons_ops = self.latent2code.render(recons_vertices, recons_trans_vertices, recons_albedos, batch['lit'].view(-1,9,3).to(self.device))
                 recons_images = recons_ops['images']
 
             losses = {}
