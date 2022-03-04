@@ -266,8 +266,7 @@ class RigNerfModule(nn.Module):
 
     def visualize(self, shapecode, expcode,albedocode, litcode, cam, pose ):
 
-        litcode = litcode.view(-1, 9,3)
-        
+        litcode = litcode.view(-1, 9,3)        
         vertices, landmarks2d, landmarks3d = self.flame(shape_params=shapecode, expression_params=expcode, pose_params=pose)
         trans_vertices = util.batch_orth_proj(vertices, cam)
         trans_vertices[..., 1:] = - trans_vertices[..., 1:]
