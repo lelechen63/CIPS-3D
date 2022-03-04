@@ -56,12 +56,16 @@ class Latent2CodeModule():
             p.requires_grad = True 
         for epoch in range( 1000):
             for step, batch in enumerate(tqdm(self.data_loader)):
-
-                landmarks3d, predicted_images = self.latent2code.forward(
+                
+                landmarks3d, predicted_images, recons_images = self.latent2code.forward(
                             batch['shape_latent'].to(self.device),
                             batch['appearance_latent'].to(self.device),
                             batch['cam'].to(self.device), 
-                            batch['pose'].to(self.device))
+                            batch['pose'].to(self.device),
+                            batch['shape'].to(self.device),
+                            batch['exp'].to(self.device),
+                            batch['tex'].to(self.device),
+                            batch['lit'].to(self.device))
                 losses = {}
                 losses['landmark'] = util.l2_distance(landmarks3d[:, 17:, :2], batch['gt_landmark'][:, 17:, :2].to(self.device)) * self.flame_config.w_lmks
                 losses['photometric_texture'] = (batch['img_mask'].to(self.device) * (predicted_images - batch['gt_image'].to(self.device) ).abs()).mean() * self.flame_config.w_pho
@@ -75,14 +79,6 @@ class Latent2CodeModule():
                 self.visualizer.print_current_errors(epoch, step, errors, 0)
 
             if epoch % self.opt.save_step == 0:  
-                recons_landmarks, recons_images = self.latent2code.module.visualize(
-                                                batch['shape'].to(self.device),
-                                                batch['exp'].to(self.device),
-                                                batch['tex'].to(self.device),
-                                                batch['lit'].to(self.device),
-                                                batch['cam'].to(self.device),
-                                                batch['pose'].to(self.device))
-
                 
                 visind = 0
                 gtimage = batch['gt_image'].data[0].cpu()

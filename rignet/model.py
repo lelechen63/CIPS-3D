@@ -129,8 +129,9 @@ class Latent2Code(nn.Module):
         mesh_file = '/home/uss00022/lelechen/basic/flame_data/data/head_template_mesh.obj'
         self.render = Renderer(self.image_size, obj_filename=mesh_file).to('cuda')
     
-    def forward(self, shape_latent, appearance_latent, cam, pose ):
+    def forward(self, shape_latent, appearance_latent, cam, pose, flameshape = None, flameexp= None, flametex= None, flamelit= None ):
         
+
         shape_fea = self.Latent2ShapeExpCode(shape_latent)
         shapecode = self.latent2shape(shape_fea)
         expcode = self.latent2exp(shape_fea)
@@ -147,21 +148,26 @@ class Latent2Code(nn.Module):
         albedos = self.flametex(albedocode, self.image_size) / 255.
         ops = self.render(vertices, trans_vertices, albedos, litcode)
         predicted_images = ops['images']
-        return landmarks3d, predicted_images
+
+        if flameshape != None:
+            flamelit = flamelit.view(-1, 9,3)        
+            recons_vertices, _, recons_landmarks3d = self.flame(shape_params=flameshape, expression_params=flameexp, pose_params=pose)
+            recons_trans_vertices = util.batch_orth_proj(recons_vertices, cam)
+            recons_trans_vertices[..., 1:] = - recons_trans_vertices[..., 1:]
+
+            ## render
+            recons_albedos = self.flametex(flametex, self.image_size) / 255.
+            recons_ops = self.render(recons_vertices, recons_trans_vertices, recons_albedos, flamelit)
+            recons_images = recons_ops['images']
+
+            return landmarks3d, predicted_images, recons_images
+        return landmarks3d, predicted_images, predicted_images
     def visualize(self, shapecode, expcode,albedocode, litcode, cam, pose ):
 
-        litcode = litcode.view(-1, 9,3)        
-        vertices, landmarks2d, landmarks3d = self.flame(shape_params=shapecode, expression_params=expcode, pose_params=pose)
-        trans_vertices = util.batch_orth_proj(vertices, cam)
-        trans_vertices[..., 1:] = - trans_vertices[..., 1:]
-
-        ## render
-        albedos = self.flametex(albedocode, self.image_size) / 255.
-        ops = self.render(vertices, trans_vertices, albedos, litcode)
-        predicted_images = ops['images']
+        
 
         return landmarks3d, predicted_images
-        
+
     def _initialize_weights(self):
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
