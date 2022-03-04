@@ -261,7 +261,22 @@ class RigNerfModule(nn.Module):
         albedos = self.flametex(albedocode, self.image_size) / 255.
         ops = self.render(vertices, trans_vertices, albedos, litcode)
         predicted_images = ops['images']
-       
+
+        return landmarks3d, predicted_images
+
+    def visualize(self, shapecode, expcode,albedocode, litcode, cam, pose ):
+
+        litcode = litcode.view(-1, 9,3)
+        
+        vertices, landmarks2d, landmarks3d = self.flame(shape_params=shapecode, expression_params=expcode, pose_params=pose)
+        trans_vertices = util.batch_orth_proj(vertices, cam)
+        trans_vertices[..., 1:] = - trans_vertices[..., 1:]
+
+        ## render
+        albedos = self.flametex(albedocode, self.image_size) / 255.
+        ops = self.render(vertices, trans_vertices, albedos, litcode)
+        predicted_images = ops['images']
+
         return landmarks3d, predicted_images
 
     def training_step(self, batch, batch_idx):

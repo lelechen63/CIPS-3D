@@ -58,9 +58,10 @@ class Latent2CodeModule():
             for step, batch in enumerate(tqdm(self.data_loader)):
 
                 landmarks3d, predicted_images = self.latent2code.forward(
-                            batch['shape_latent'].to(self.device), \
-                            batch['appearance_latent'].to(self.device), \
-                            batch['cam'].to(self.device), batch['pose'].to(self.device))
+                            batch['shape_latent'].to(self.device),
+                            batch['appearance_latent'].to(self.device),
+                            batch['cam'].to(self.device), 
+                            batch['pose'].to(self.device))
                 losses = {}
                 losses['landmark'] = util.l2_distance(landmarks3d[:, 17:, :2], batch['gt_landmark'][:, 17:, :2].to(self.device)) * self.flame_config.w_lmks
                 losses['photometric_texture'] = (batch['img_mask'].to(self.device) * (predicted_images - batch['gt_image'].to(self.device) ).abs()).mean() * self.flame_config.w_pho
@@ -73,7 +74,15 @@ class Latent2CodeModule():
                 errors = {k: v.data.item() if not isinstance(v, int) else v for k, v in tqdm_dict.items()} 
                 self.visualizer.print_current_errors(epoch, step, errors, 0)
 
-            if epoch % self.opt.save_step == 0:
+            if epoch % self.opt.save_step == 0:  
+                recons_images, recons_landmarks = self.latent2code.visualize(
+                                                batch['shape'].to(self.device),
+                                                batch['exp'].to(self.device),
+                                                batch['tex'].to(self.device),
+                                                batch['cam'].to(self.device),
+                                                batch['pose'].to(self.device))
+
+                
                 visind = 0
                 gtimage = batch['gt_image'].data[0].cpu()
                 gtimage = tensor_util.tensor2im(gtimage  , normalize = False)
@@ -100,6 +109,13 @@ class Latent2CodeModule():
                 genimage = np.ascontiguousarray(genimage, dtype=np.uint8)
                 genimage = np.clip(genimage, 0, 255)
 
+                reconsimage = recons_images.data[0].cpu() #  * self.stdtex + self.meantex 
+                reconsimage = tensor_util.tensor2im(reconsimage  , normalize = False)
+                reconsimage = np.ascontiguousarray(reconsimage, dtype=np.uint8)
+                reconsimage = tensor_util.writeText(reconsimage, batch['image_path'][0])
+                reconsimage = np.ascontiguousarray(reconsimage, dtype=np.uint8)
+                reconsimage = np.clip(reconsimage, 0, 255)
+
                 genlmark = util.batch_orth_proj(landmarks3d, batch['cam'].to(self.device))
                 genlmark[..., 1:] = - genlmark[..., 1:]
 
@@ -115,11 +131,11 @@ class Latent2CodeModule():
                 ('gtimage', gtimage),
                 ('gtlmark', gtlmark ),
                 ('genimage', genimage),
+                ('reconsimage', reconsimage),
                 ('genlmark', genlmark )
                 ])
         
                 self.visualizer.display_current_results(visuals, epoch, self.opt.save_step) 
-                torch.save(self.latent2code.state_dict(), os.path.join( self.ckpt_path, 'latent2code.pth'))
 
                 # torch.save(self.latent2code.module.Latent2ShapeExpCode.state_dict(), os.path.join( self.ckpt_path, 'Latent2ShapeExpCode.pth'))
                 # torch.save(self.latent2code.module.Latent2AlbedoLitCode.state_dict(), os.path.join( self.ckpt_path, 'Latent2AlbedoLitCode.pth'))
