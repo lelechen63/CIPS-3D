@@ -210,7 +210,7 @@ class RigNerft(nn.Module):
         print ('loading weights for latent2albedo feature extraction network')
         network.latent2lit.load_state_dict(torch.load(self.opt.latent2lit_weight))
         
-        return network.Latent2ShapeExpCode, network.latent2shape, network.latent2exp\
+        return network.Latent2ShapeExpCode, network.latent2shape, network.latent2exp, \
                network.Latent2AlbedoLitCode, network.latent2albedo, network.latent2lit
     
     def latent2params(self, shape_latent, appearance_latent):
