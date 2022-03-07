@@ -194,18 +194,17 @@ class RigNerft(nn.Module):
         latent2code = Latent2Code(flame_config, opt)
         self.Latent2ShapeExpCode, self.latent2shape, self.latent2exp, self.Latent2AlbedoLitCode, self.latent2albedo, self.latent2lit = self.get_f(Latent2Code)
         
+        # rigNet
+        # appearance part
         self.WGanEncoder = build_WGanEncoder(weight = '' if opt.isTrain else opt.WGanEncoder_weight )
-        self.ShapeEncoder = build_ShapeEncoder(weight = '' if opt.isTrain else opt.shapeEncoder_weight )
+        self.ShapeEncoder = build_ShapeEncoder(weight = '' if opt.isTrain else opt.ShapeEncoder_weight )
         self.ExpEncoder = build_ExpEncoder(weight = '' if opt.isTrain else opt.ExpEncoder_weight )
-
         self.WGanDecoder = build_WGanDecoder(weight = '' if opt.isTrain else opt.WGanDecoder_weight )
-
+        # shape part
         self.WNerfEncoder = build_WNerfEncoder(weight = '' if opt.isTrain else opt.WNerfEncoder_weight )
         self.AlbedoEncoder = build_AlbedoEncoder(weight = '' if opt.isTrain else opt.AlbedoEncoder_weight )
         self.LitEncoder = build_LitEncoder(weight = '' if opt.isTrain else opt.LitEncoder_weight )
-
         self.WNerfDecoder = build_WNerfDecoder(weight = '' if opt.isTrain else opt.WNerfDecoder_weight )
-
 
         # Flame
         self.flame = FLAME(self.flame_config).to('cuda')
@@ -214,6 +213,7 @@ class RigNerft(nn.Module):
 
         self.ckpt_path = os.path.join(opt.checkpoints_dir, opt.name)
         os.makedirs(self.ckpt_path, exist_ok = True)
+
     def get_f(self,negtwork):
         print ('loading weights for Latent2ShapeExpCode feature extraction network')
         network.Latent2ShapeExpCode.load_state_dict(torch.load(self.opt.Latent2ShapeExpCode_weight))
@@ -240,8 +240,8 @@ class RigNerft(nn.Module):
         app_fea = self.Latent2AlbedoLitCode(appearance_latent)
         albedocode = self.latent2albedo(app_fea)
         litcode = self.latent2lit(app_fea).view(shape_latent.shape[0], 9,3)
-        
-        return shapecode, expcode, albedocode, litcode
+        paramset = [shapecode, expcode, albedocode, litcode]
+        return paramset
     
     def build_WGanEncoder(self, weight = ''):
         WGanEncoder = th.nn.Sequential(
@@ -333,46 +333,92 @@ class RigNerft(nn.Module):
             WNerfDecoder.load_state_dict(torch.load(weight))
         return WNerfDecoder
 
-
     def _setup_renderer(self):
         mesh_file = '/home/uss00022/lelechen/basic/flame_data/data/head_template_mesh.obj'
         self.render = Renderer(self.image_size, obj_filename=mesh_file).to('cuda')
     
-    def forward(self, shape_latent, appearance_latent, cam, pose, flameshape = None, flameexp= None, flametex= None, flamelit= None ):
-        
+    def rig(self,wgan, wnerf, p):
+        shapecode, expcode, albedocode, litcode = p[0], p[1],p[2], p[3]
+        lgan = self.WGanEncoder(wgan)
+        fshape = self.ShapeEncoder(shapecode)
+        fexp = self.ExpEncoder(expcode)
+        deltagan = self.WGanDecoder(torch.cat([lgan, fshape, fexp], axis = 1))
 
-        shape_fea = self.Latent2ShapeExpCode(shape_latent)
-        shapecode = self.latent2shape(shape_fea)
-        expcode = self.latent2exp(shape_fea)
-        
-        app_fea = self.Latent2AlbedoLitCode(appearance_latent)
-        albedocode = self.latent2albedo(app_fea)
-        litcode = self.latent2lit(app_fea).view(shape_latent.shape[0], 9,3)
-        
+        lnerf = self.WGanEncoder(wnerf)
+        falbedo = self.ShapeEncoder(albedocode)
+        flit = self.ExpEncoder(litcode)
+        deltanerf = self.WNerfDecoder(torch.cat([lnerf, falbedo, flit], axis = 1))
+
+        return deltagan + wgan, deltanerf + wnerf
+    
+    def flame_render(p, pose, cam):
+        shapecode,expcode,albedocode, litcode = p[0],p[1],p[2],p[3]
         vertices, landmarks2d, landmarks3d = self.flame(shape_params=shapecode, expression_params=expcode, pose_params=pose)
         trans_vertices = util.batch_orth_proj(vertices, cam)
         trans_vertices[..., 1:] = - trans_vertices[..., 1:]
-
         ## render
         albedos = self.flametex(albedocode, self.image_size) / 255.
         ops = self.render(vertices, trans_vertices, albedos, litcode)
         predicted_images = ops['images']
+        
+        return landmarks3d, predicted_images
+    
+    def forward(self, shape_latent_v, appearance_latent_v, shape_latent_w, appearance_latent_w, \ 
+                    cam, pose, flameshape_v = None, flameexp_v = None, flametex_v = None, flamelit_v = None,\
+                     flameshape_w = None, flameexp_w = None, flametex_w = None, flamelit_w = None):
+        
+        p_v = latent2params(shape_latent_v, appearance_latent_v)
+        p_w = latent2params(shape_latent_w, appearance_latent_w)
 
-        if flameshape != None:
-            flamelit = flamelit.view(-1, 9,3)        
-            recons_vertices, _, recons_landmarks3d = self.flame(shape_params=flameshape, expression_params=flameexp, pose_params=pose)
-            recons_trans_vertices = util.batch_orth_proj(recons_vertices, cam)
-            recons_trans_vertices[..., 1:] = - recons_trans_vertices[..., 1:]
+        # if we input paired WGan and WNerf with P, output same WGan & Wnerf
+        shape_latent_w_same, appearance_latent_w_same = rig(appearance_latent_w, shape_latent_w, p_w)
+        p_w_same = latent2params(shape_latent_w_same, appearance_latent_w_same)
 
-            ## render
-            recons_albedos = self.flametex(flametex, self.image_size) / 255.
-            recons_ops = self.render(recons_vertices, recons_trans_vertices, recons_albedos, flamelit)
-            recons_images = recons_ops['images']
+        # randomly choose one params to be edited
+        choice = torch.randint(0, 4 ,(1,)).item()
+        
+        # if we input WGan and Wnerf, and P_v, output hat_WGan, hat_WNerf
+        p_w_replaced = []
+        for i in range(4):
+            if i != choice:
+                p_w_replaced.append(p_w[i])
+            else:
+                p_w_replaced.append(p_v[i])
+
+
+        shape_latent_w_hat, shape_latent_w_hat = rig(appearance_latent_w, shape_latent_w, p_w_replaced)
+        # map chagned w back to P
+        p_w_mapped = latent2params(shape_latent_w_hat, appearance_latent_w_hat)
+
+        p_v_ = []
+        p_w_ = []
+        for j in range(4):
+            if j != choice:
+                p_w_.append(p_w_mapped[j])
+                p_v_.append(p_v[j])
+            else:
+                p_w_append(p_w[j])
+                p_v_.append(p_w_mapped[j])
+        
+        landmark_same, render_img_same = flame_render(p_w_same, pose, cam):
+        landmark_w_, render_img_w_ = flame_render(p_w_, pose, cam):
+        landmark_v_, render_img_v_ = flame_render(p_v_, pose, cam):
+
+        if flameshape_v != None:
+            p_v_vis = [flameshape_v, flameexp_v, flametex_v, flamelit_v.view(-1, 9,3)] 
+            p_w_vis = [flameshape_w, flameexp_w, flametex_w, flamelit_w.view(-1, 9,3)] 
+            recons_images_v = self.flame_render(p_v_vis, pose, cam)
+            recons_images_w = self.flame_render(p_w_vis, pose, cam)
+
         else:
-            recons_images = predicted_images
+            recons_images_v = render_img_w_
+            recons_images_w = render_img_w_
 
         
-        return landmarks3d, predicted_images, recons_images
+        return landmark_same, render_img_same, \
+                landmark_w_, render_img_w_ ,
+                landmark_v_, render_img_v_ ,
+                recons_images_v, recons_images_w 
     
 
     def _initialize_weights(self):

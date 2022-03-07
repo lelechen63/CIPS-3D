@@ -66,6 +66,17 @@ class BaseOptions():
         self.opt.latent2albedo_weight = os.path.join(expr_dir,'latent2albedo.pth' )
         self.opt.latent2lit_weight = os.path.join(expr_dir,'latent2lit.pth' )
 
+        self.opt.WGanEncoder_weight = os.path.join(expr_dir,'WGanEncoder_weight.pth' )
+        self.opt.ShapeEncoder_weight = os.path.join(expr_dir,'ShapeEncoder_weight.pth' )
+        self.opt.ExpEncoder_weight = os.path.join(expr_dir,'ExpEncoder_weight.pth' )
+        self.opt.WGanDecoder_weight = os.path.join(expr_dir,'WGanDecoder_weight.pth' )
+        
+        self.opt.WNerfEncoder_weight = os.path.join(expr_dir,'WNerfEncoder_weight.pth' )
+        self.opt.AlbedoEncoder_weight = os.path.join(expr_dir,'AlbedoEncoder_weight.pth' )
+        self.opt.LitEncoder_weight = os.path.join(expr_dir,'LitEncoder_weight.pth' )
+        self.opt.WNerfDecoder_weight = os.path.join(expr_dir,'WNerfDecoder_weight.pth' )
+
+
         args = vars(self.opt)
 
         print('------------ Options -------------')
