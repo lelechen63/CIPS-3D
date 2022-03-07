@@ -363,8 +363,8 @@ class RigNerft(nn.Module):
         
         return landmarks3d, predicted_images
     
-    def forward(self, shape_latent_v, appearance_latent_v, shape_latent_w, appearance_latent_w, \ 
-                    cam, pose, flameshape_v = None, flameexp_v = None, flametex_v = None, flamelit_v = None,\
+    def forward(self, shape_latent_v, appearance_latent_v, shape_latent_w, appearance_latent_w, \
+                    cam, pose, flameshape_v = None, flameexp_v = None, flametex_v = None, flamelit_v = None, \
                      flameshape_w = None, flameexp_w = None, flametex_w = None, flamelit_w = None):
         
         p_v = latent2params(shape_latent_v, appearance_latent_v)
