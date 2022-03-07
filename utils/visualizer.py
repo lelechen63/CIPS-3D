@@ -5,7 +5,7 @@ import time
 import sys
 sys.path.append('/home/uss00022/lelechen/github/CIPS-3D')
 import util
-from utils import html
+from utils import html_
 
 import scipy.misc
 try:
@@ -55,7 +55,7 @@ class Visualizer():
                 util.save_image(image_numpy, img_path)
 
             # update website
-            webpage = html.HTML(self.web_dir, 'Experiment name = %s' % self.name, refresh=30)
+            webpage = html_.HTML(self.web_dir, 'Experiment name = %s' % self.name, refresh=30)
             for n in range(epoch, 0, -step):
                 webpage.add_header('epoch [%d]' % n)
                 ims = []

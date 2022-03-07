@@ -15,7 +15,7 @@ while l:
     tmp = l[:-1].split(' ')
     l_land = tmp[7]
     l_tex =tmp[9]
-    print (l_land, l_tex)
+    # print (l_land, l_tex)
     loss_land.append(float(l_land))
     loss_tex.append(float(l_tex))
     axis.append(ss)
