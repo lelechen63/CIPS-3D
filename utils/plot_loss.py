@@ -19,7 +19,7 @@ while l:
         loss_land.append(float(l_land))
         loss_tex.append(float(l_tex))
     except:
-        oss_land = []
+        loss_land = []
         loss_tex = []
         
     ss += 1
