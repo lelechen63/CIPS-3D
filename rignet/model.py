@@ -416,8 +416,8 @@ class RigNerft(nn.Module):
 
         
         return landmark_same, render_img_same, \
-                landmark_w_, render_img_w_ ,
-                landmark_v_, render_img_v_ ,
+                landmark_w_, render_img_w_ , \
+                landmark_v_, render_img_v_ , \
                 recons_images_v, recons_images_w 
     
 

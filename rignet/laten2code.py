@@ -20,40 +20,34 @@ class Latent2CodeModule():
             self.device = torch.device("cuda")
         self.latent2code = Latent2Code( flame_config, opt)
         
-        self.optimizer =  optim.Adam(self.latent2code.parameters(),lr= self.opt.lr , betas=(self.opt.beta1, 0.999))
-        # self.optimizer = optim.Adam( list(self.latent2code.Latent2ShapeExpCode.parameters()) + \
-        #                           list(self.latent2code.Latent2AlbedoLitCode.parameters()) + \
-        #                           list(self.latent2code.latent2shape.parameters()) + \
-        #                           list(self.latent2code.latent2exp.parameters()) + \
-        #                           list(self.latent2code.latent2albedo.parameters()) + \
-        #                           list(self.latent2code.latent2lit.parameters()) \
-        #                           , lr= self.opt.lr , betas=(self.opt.beta1, 0.999))
+        # self.optimizer =  optim.Adam(self.latent2code.parameters(),lr= self.opt.lr , betas=(self.opt.beta1, 0.999))
+        self.optimizer = optim.Adam( list(self.latent2code.Latent2ShapeExpCode.parameters()) + \
+                                  list(self.latent2code.Latent2AlbedoLitCode.parameters()) + \
+                                  list(self.latent2code.latent2shape.parameters()) + \
+                                  list(self.latent2code.latent2exp.parameters()) + \
+                                  list(self.latent2code.latent2albedo.parameters()) + \
+                                  list(self.latent2code.latent2lit.parameters()) \
+                                  , lr= self.opt.lr , betas=(self.opt.beta1, 0.999))
         if opt.isTrain:
             self.latent2code =torch.nn.DataParallel(self.latent2code, device_ids=range(len(self.opt.gpu_ids)))
         self.latent2code = self.latent2code.to(self.device)
-        self.dataset  = FFHQDataset(opt)
-        if opt.isTrain:
-            self.data_loader = DataLoaderWithPrefetch(self.dataset, \
-                        batch_size=opt.batchSize,\
-                        drop_last=True,\
-                        shuffle = True,\
-                        num_workers = opt.nThreads, \
-                        prefetch_size = min(8, opt.nThreads))
+        if opt.name == 'Latent2Code':
+            self.dataset  = FFHQDataset(opt)
         else:
-            self.data_loader = DataLoaderWithPrefetch(self.dataset, \
-                        batch_size=opt.batchSize,\
-                        drop_last=False,\
-                        shuffle = False,\
-                        num_workers = opt.nThreads, \
-                        prefetch_size = min(8, opt.nThreads))
-
+            print ('!!!!!!!!!!WRONG name for dataset')
+        
+        self.data_loader = DataLoaderWithPrefetch(self.dataset, \
+                    batch_size=opt.batchSize,\
+                    drop_last=opt.isTrain,\
+                    shuffle = opt.isTrain,\
+                    num_workers = opt.nThreads, \
+                    prefetch_size = min(8, opt.nThreads))
         print ('========', len(self.data_loader),'========')
         self.ckpt_path = os.path.join(opt.checkpoints_dir, opt.name)
         os.makedirs(self.ckpt_path, exist_ok = True)
 
     def train(self):
-        for p in self.latent2code.parameters():
-            p.requires_grad = True 
+    
         for epoch in range( 1000):
             for step, batch in enumerate(tqdm(self.data_loader)):
                 

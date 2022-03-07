@@ -53,9 +53,12 @@ random.seed(opt.manualSeed)
 torch.manual_seed(opt.manualSeed)
 
 if  opt.name == 'Latent2Code':
-    from rignet_ import Latent2CodeModule as module
+    from latent2code import Latent2CodeModule as module
     model = module(flame_config, opt )
-
+elif opt.name =='rig':
+    from rig import RigModule as module
+    model = module(flame_config, opt)
+    
 print (opt.isTrain,'!!!!!')
 if opt.isTrain:
     print ( opt.name)
