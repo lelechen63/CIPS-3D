@@ -8,7 +8,7 @@ loss_land = []
 loss_tex = []
 while l:
     print (l)
-    tmp = l[-1].split(' ')
+    tmp = l[:-1].split(' ')
     print (tmp)
     loss_land.append(1)
     ss += 1
