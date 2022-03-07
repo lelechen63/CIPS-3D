@@ -400,9 +400,9 @@ class RigNerft(nn.Module):
                 p_w_append(p_w[j])
                 p_v_.append(p_w_mapped[j])
         
-        landmark_same, render_img_same = flame_render(p_w_same, pose, cam):
-        landmark_w_, render_img_w_ = flame_render(p_w_, pose, cam):
-        landmark_v_, render_img_v_ = flame_render(p_v_, pose, cam):
+        landmark_same, render_img_same = flame_render(p_w_same, pose, cam)
+        landmark_w_, render_img_w_ = flame_render(p_w_, pose, cam)
+        landmark_v_, render_img_v_ = flame_render(p_v_, pose, cam)
 
         if flameshape_v != None:
             p_v_vis = [flameshape_v, flameexp_v, flametex_v, flamelit_v.view(-1, 9,3)] 
