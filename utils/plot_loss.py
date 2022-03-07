@@ -6,7 +6,6 @@ l = reader.readline()
 ss = 0
 while l:
     print (l)
-    print ('=====')
     ss += 1
     if ss == 10:
         break
