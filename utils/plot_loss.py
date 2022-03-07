@@ -9,7 +9,9 @@ loss_tex = []
 while l:
     print (l)
     tmp = l[:-1].split(' ')
-    print (tmp)
+    l_land = tmp[7]
+    l_tex =tmp[9]
+    print (l_land, l_tex)
     loss_land.append(1)
     ss += 1
     if ss == 10:
