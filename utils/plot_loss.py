@@ -23,8 +23,8 @@ while l:
         loss_tex = []
         
     ss += 1
-    if ss == 1000:
-        break
+    # if ss == 1000:
+    #     break
     l = reader.readline()
 reader.close()
 
