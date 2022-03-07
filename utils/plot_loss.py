@@ -6,12 +6,12 @@ import matplotlib.pyplot as plt
 losstxt = '/home/uss00022/lelechen/github/CIPS-3D/checkpoints_debug3/Latent2Code/loss_log.txt'
 reader = open(losstxt)
 l = reader.readline()
+l = reader.readline()
 ss = 0
 loss_land = []
 loss_tex = []
 axis =[]
 while l:
-    l = reader.readline()
     print (l)
     tmp = l[:-1].split(' ')
     l_land = tmp[7]
@@ -24,7 +24,7 @@ while l:
     ss += 1
     if ss == 1000:
         break
-    
+    l = reader.readline()
 reader.close()
 
 plt.plot(axis, loss_land, 'r--', axis, loss_tex, 'b--')
