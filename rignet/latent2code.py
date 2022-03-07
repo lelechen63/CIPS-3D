@@ -28,6 +28,9 @@ class Latent2CodeModule():
                                   list(self.latent2code.latent2albedo.parameters()) + \
                                   list(self.latent2code.latent2lit.parameters()) \
                                   , lr= self.opt.lr , betas=(self.opt.beta1, 0.999))
+        for p in self.latent2code.flame.parameters():
+            p.requires_grad = False 
+        
         if opt.isTrain:
             self.latent2code =torch.nn.DataParallel(self.latent2code, device_ids=range(len(self.opt.gpu_ids)))
         self.latent2code = self.latent2code.to(self.device)
