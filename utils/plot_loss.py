@@ -11,6 +11,7 @@ loss_land = []
 loss_tex = []
 axis =[]
 while l:
+    l = reader.readline()
     print (l)
     tmp = l[:-1].split(' ')
     l_land = tmp[7]
@@ -23,7 +24,7 @@ while l:
     ss += 1
     if ss == 1000:
         break
-    l = reader.readline()
+    
 reader.close()
 
 plt.plot(axis, loss_land, 'r--', axis, loss_tex, 'b--')
