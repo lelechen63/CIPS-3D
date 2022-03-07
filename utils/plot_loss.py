@@ -22,7 +22,7 @@ while l:
         loss_land = []
         loss_tex = []
         
-    ss += 1
+    # ss += 1
     # if ss == 1000:
     #     break
     l = reader.readline()
