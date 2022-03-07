@@ -12,21 +12,23 @@ loss_land = []
 loss_tex = []
 axis =[]
 while l:
-    print (l)
     tmp = l[:-1].split(' ')
     l_land = tmp[7]
     l_tex =tmp[9]
-    print (l_land, l_tex)
-
-    loss_land.append(float(l_land))
-    loss_tex.append(float(l_tex))
-    axis.append(ss)
+    try:
+        loss_land.append(float(l_land))
+        loss_tex.append(float(l_tex))
+    except:
+        oss_land = []
+        loss_tex = []
+        
     ss += 1
     if ss == 1000:
         break
     l = reader.readline()
 reader.close()
 
+axis = [i for i in range(len(loss_tex))]
 plt.plot(axis, loss_land, 'r--', axis, loss_tex, 'b--')
 plt.show()
 plt.savefig('./gg.png')
