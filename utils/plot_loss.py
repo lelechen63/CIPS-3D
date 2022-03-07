@@ -27,8 +27,8 @@ while l:
     #     break
     l = reader.readline()
 reader.close()
-# loss_tex = loss_tex[100:]
-# loss_land = loss_land[100:]
+loss_tex = loss_tex[100:]
+loss_land = loss_land[100:]
 
 axis = [i for i in range(len(loss_tex))]
 plt.plot(axis, loss_land, 'r--', axis, loss_tex, 'b--')
