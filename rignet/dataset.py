@@ -78,8 +78,7 @@ class FFHQDataset(torch.utils.data.Dataset):
         self.data_list = pickle.load(_file)
         _file.close()
 
-        if opt.debug:
-            self.data_list = self.data_list[:opt.datanum]
+        
 
         _file = open(zip_path, "rb")
         self.total_data = pickle.load(_file)
@@ -87,15 +86,24 @@ class FFHQDataset(torch.utils.data.Dataset):
 
         transform_list = [transforms.ToTensor()]
         self.transform = transforms.Compose(transform_list)
+        if opt.debug:
+            self.data_list = self.data_list[:opt.datanum]
+            for i in range(opt.datanum):
+                name = self.data_list[i]
+                img_path = os.path.join(self.opt.dataroot, 'images',name)
+                img = cv2.imread(img_path)
+                img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
+                maskimg_path = os.path.join(self.opt.dataroot, 'imagemasks',name[:-3] +'npy')
+                self.total_data[name]['img_mask'] = np.load(maskimg_path)
+
+                self.total_data[name]['gt_image'] = self.transform(img)
+                self.total_data[name]['image_path'] = name
+
+        
         print ('******************', len(self.data_list), len(self.total_data))
         self.total_t = []
-    def __getitem__(self, index):
-        t = time.time()
-        name = self.data_list[index]
-
-        data = copy.copy(self.total_data[self.data_list[index]])
-        """
+    """
             data[name] ={'shape': shape, 
                  'exp': exp,
                  'pose': pose,
@@ -110,15 +118,20 @@ class FFHQDataset(torch.utils.data.Dataset):
                  #'img_mask':image_masks
                 }
         """
-        img_path = os.path.join(self.opt.dataroot, 'images',name)
-        img = cv2.imread(img_path)
-        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    def __getitem__(self, index):
+        
+        name = self.data_list[index]
+        data = copy.copy(self.total_data[name])
+        if not self.opt.debug:
+            img_path = os.path.join(self.opt.dataroot, 'images',name)
+            img = cv2.imread(img_path)
+            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
-        maskimg_path = os.path.join(self.opt.dataroot, 'imagemasks',name[:-3] +'npy')
-        data['img_mask'] = np.load(maskimg_path)
+            maskimg_path = os.path.join(self.opt.dataroot, 'imagemasks',name[:-3] +'npy')
+            data['img_mask'] = np.load(maskimg_path)
 
-        data['gt_image'] = self.transform(img)
-        data['image_path'] = name
+            data['gt_image'] = self.transform(img)
+            data['image_path'] = name
         return data
 
     def __len__(self):
