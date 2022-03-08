@@ -349,7 +349,7 @@ class RigNerft(nn.Module):
         deltagan = self.WGanDecoder(torch.cat([lgan, fshape, fexp], axis = 1))
         lnerf = self.WNerfEncoder(wnerf)
         falbedo = self.AlbedoEncoder(albedocode)
-        flit = self.LitEncoder(litcode)
+        flit = self.LitEncoder(litcode.view(-1, 27))
         deltanerf = self.WNerfDecoder(torch.cat([lnerf, falbedo, flit], axis = 1))
 
         return deltagan + wgan, deltanerf + wnerf
