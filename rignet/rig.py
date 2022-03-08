@@ -42,7 +42,7 @@ class RigModule():
             p.requires_grad = False 
         for p in self.rig.latent2lit.parameters():
             p.requires_grad = False 
-        or p in self.rig.flame.parameters():
+        for p in self.rig.flame.parameters():
             p.requires_grad = False    
        
 
