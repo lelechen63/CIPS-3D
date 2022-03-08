@@ -395,7 +395,7 @@ class RigModule():
             ])
             self.visualizer.display_current_results(visuals, step, 1) 
            
-def vis_tensor(image_tensor = None, image_path = None, land_tensor = None, cam = None,  visind =0, device):
+def vis_tensor(image_tensor = None, image_path = None, land_tensor = None, cam = None,  visind =0, device = torch.device("cuda")):
     if land_tensor is not None:
         lmark = util.batch_orth_proj(land_tensor, cam.to(device))
         lmark[..., 1:] = - lmark[..., 1:]
