@@ -28,6 +28,23 @@ class RigModule():
                                   list(self.rig.latent2albedo.parameters()) + \
                                   list(self.rig.latent2lit.parameters()) \
                                   , lr= self.opt.lr , betas=(self.opt.beta1, 0.999))
+        for p in self.rig.Latent2ShapeExpCode.parameters():
+            p.requires_grad = False 
+        for p in self.rig.Latent2AlbedoLitCode.parameters():
+            p.requires_grad = False 
+        for p in self.rig.latent2shape.parameters():
+            p.requires_grad = False 
+        for p in self.rig.latent2exp.parameters():
+            p.requires_grad = False 
+        for p in self.rig.latent2albedo.parameters():
+            p.requires_grad = False 
+        for p in self.rig.latent2lit.parameters():
+            p.requires_grad = False 
+        or p in self.rig.flame.parameters():
+            p.requires_grad = False    
+       
+
+
         if opt.isTrain:
             self.rig =torch.nn.DataParallel(self.rig, device_ids=range(len(self.opt.gpu_ids)))
         self.rig = self.rig.to(self.device)
@@ -110,7 +127,7 @@ class RigModule():
                 
                 visind = 0
                 # visualize the image close to v
-                image_w = vis_tensor(image_tensor= batch[0]['gt_image'], 
+                image_v = vis_tensor(image_tensor= batch[0]['gt_image'], 
                                         image_path = batch[0]['image_path'][0] +'---V',
                                         device = self.device
                                          )
@@ -181,11 +198,23 @@ class RigModule():
 
                 
                 visuals = OrderedDict([
-                ('gtimage', gtimage),
-                ('gtlmark', gtlmark ),
-                ('genimage', genimage),
-                ('reconsimage', reconsimage),
-                ('genlmark', genlmark )
+                ('image_v', image_v),
+                ('lmark_v', lmark_v),
+                ('recons_images_v', recons_images_v),
+
+                ('image_w', image_w),
+                ('lmark_w', lmark_w),
+                ('recons_images_w', recons_images_w),
+                
+                ('genlmark_same_W', genlmark_same ),
+                ('genimage_same_W', genimage_same),
+
+                ('genlmark_w', genlmark_w),
+                ('genimage_w', genimage_w )
+                ])
+
+                ('genlmark_v', genlmark_v),
+                ('genimage_v', genimage_v )
                 ])
         
                 self.visualizer.display_current_results(visuals, epoch, self.opt.save_step) 
