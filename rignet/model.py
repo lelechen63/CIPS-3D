@@ -236,7 +236,6 @@ class RigNerft(nn.Module):
                network.Latent2AlbedoLitCode, network.latent2albedo, network.latent2lit
     
     def latent2params(self, shape_latent, appearance_latent):
-        print (shape_latent.shape,'++++++')
         shape_fea = self.Latent2ShapeExpCode(shape_latent)
         shapecode = self.latent2shape(shape_fea)
         expcode = self.latent2exp(shape_fea)
@@ -389,7 +388,7 @@ class RigNerft(nn.Module):
                 p_w_replaced.append(p_v[i])
 
 
-        shape_latent_w_hat, shape_latent_w_hat = self.rig(appearance_latent_w, shape_latent_w, p_w_replaced)
+        shape_latent_w_hat, appearance_latent_w_hat = self.rig(appearance_latent_w, shape_latent_w, p_w_replaced)
         # map chagned w back to P
         p_w_mapped = self.latent2params(shape_latent_w_hat, appearance_latent_w_hat)
 
