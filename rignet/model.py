@@ -353,7 +353,7 @@ class RigNerft(nn.Module):
 
         return deltanerf + wnerf, deltagan + wgan
     
-    def flame_render(p, pose, cam):
+    def flame_render(self,p, pose, cam):
         shapecode,expcode,albedocode, litcode = p[0],p[1],p[2],p[3]
         vertices, landmarks2d, landmarks3d = self.flame(shape_params=shapecode, expression_params=expcode, pose_params=pose)
         trans_vertices = util.batch_orth_proj(vertices, cam)
