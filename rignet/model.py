@@ -352,7 +352,7 @@ class RigNerft(nn.Module):
         flit = self.LitEncoder(litcode.view(-1, 27))
         deltanerf = self.WNerfDecoder(torch.cat([lnerf, falbedo, flit], axis = 1))
 
-        return deltagan + wgan, deltanerf + wnerf
+        return deltanerf + wnerf, deltagan + wgan
     
     def flame_render(p, pose, cam):
         shapecode,expcode,albedocode, litcode = p[0],p[1],p[2],p[3]
