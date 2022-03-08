@@ -142,7 +142,7 @@ class RigModule():
                                          )
                
 
-                image_w = vis_tensor(image_tensor= batch[1]['gt_image'], 
+                image_w = vis_tensor(image_tensor= batch[1]['gt_image'].to(self.device), 
                                         image_path = batch[1]['image_path'][0] +'---W',
                                         device = self.device
                                          )
