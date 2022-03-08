@@ -69,7 +69,7 @@ class Latent2CodeModule():
                 losses = {}
                 t2 = time.time()
                 if self.opt.supervision =='render':
-                    landmarks3d, predicted_images, recons_images  = return_list['landmarks3d'], return_list['predicted_images'],return_list['recons_images']
+                    landmarks3d, predicted_images  = return_list['landmarks3d'], return_list['predicted_images']
                     
                     losses['landmark'] = util.l2_distance(landmarks3d[:, 17:, :2], batch['gt_landmark'][:, 17:, :2].to(self.device)) * self.flame_config.w_lmks
                     losses['photometric_texture'] = (batch['img_mask'].to(self.device) * (predicted_images - batch['gt_image'].to(self.device) ).abs()).mean() * self.flame_config.w_pho
