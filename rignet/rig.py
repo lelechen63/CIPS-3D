@@ -219,15 +219,15 @@ class RigModule():
         
                 self.visualizer.display_current_results(visuals, epoch, self.opt.save_step) 
 
-                torch.save(self.latent2code.module.WGanEncoder.state_dict(), self.opt.WGanEncoder_weight)
-                torch.save(self.latent2code.module.ShapeEncoder.state_dict(),self.opt.ShapeEncoder_weight)
-                torch.save(self.latent2code.module.ExpEncoder.state_dict(), self.opt.ExpEncoder_weight)
-                torch.save(self.latent2code.module.WGanDecoder.state_dict(), self.opt.WGanDecoder_weight)
+                torch.save(self.rig.module.WGanEncoder.state_dict(), self.opt.WGanEncoder_weight)
+                torch.save(self.rig.module.ShapeEncoder.state_dict(),self.opt.ShapeEncoder_weight)
+                torch.save(self.rig.module.ExpEncoder.state_dict(), self.opt.ExpEncoder_weight)
+                torch.save(self.rig.module.WGanDecoder.state_dict(), self.opt.WGanDecoder_weight)
                 
-                torch.save(self.latent2code.module.WNerfEncoder.state_dict(), self.opt.WNerfEncoder_weight)
-                torch.save(self.latent2code.module.AlbedoEncoder.state_dict(),self.opt.AlbedoEncoder_weight)
-                torch.save(self.latent2code.module.LitEncoder.state_dict(),self.opt.LitEncoder_weight)
-                torch.save(self.latent2code.module.WNerfDecoder.state_dict(),self.opt.WNerfDecoder_weight)
+                torch.save(self.rig.module.WNerfEncoder.state_dict(), self.opt.WNerfEncoder_weight)
+                torch.save(self.rig.module.AlbedoEncoder.state_dict(),self.opt.AlbedoEncoder_weight)
+                torch.save(self.rig.module.LitEncoder.state_dict(),self.opt.LitEncoder_weight)
+                torch.save(self.rig.module.WNerfDecoder.state_dict(),self.opt.WNerfDecoder_weight)
     def test(self):
         for p in self.latent2code.parameters():
             p.requires_grad = False 
