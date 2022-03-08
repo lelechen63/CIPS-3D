@@ -59,7 +59,7 @@ class RigModule():
                             batch[0]['shape_latent'].to(self.device),
                             batch[0]['appearance_latent'].to(self.device),
                             batch[1]['shape_latent'].to(self.device),
-                            batch[2]['appearance_latent'].to(self.device),
+                            batch[1]['appearance_latent'].to(self.device),
                             batch[0]['cam'].to(self.device), 
                             batch[0]['pose'].to(self.device),
                             batch[0]['shape'].to(self.device),
