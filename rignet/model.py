@@ -399,7 +399,7 @@ class RigNerft(nn.Module):
                 p_w_.append(p_w_mapped[j])
                 p_v_.append(p_v[j])
             else:
-                p_w_append(p_w[j])
+                p_w_.append(p_w[j])
                 p_v_.append(p_w_mapped[j])
         
         landmark_same, render_img_same = self.flame_render(p_w_same, pose, cam)
