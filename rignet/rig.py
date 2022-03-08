@@ -142,7 +142,7 @@ class RigModule():
                                          )
                
 
-                image_w = vis_tensor(image_tensor= batch[1]['gt_image'].to(self.device), 
+                image_w = vis_tensor(image_tensor= batch[1]['gt_image'], 
                                         image_path = batch[1]['image_path'][0] +'---W',
                                         device = self.device
                                          )
@@ -397,7 +397,7 @@ class RigModule():
            
 def vis_tensor(image_tensor = None, image_path = None, land_tensor = None, cam = None,  visind =0, device = torch.device("cuda")):
     if land_tensor is not None:
-        lmark = util.batch_orth_proj(land_tensor, cam.to(device))
+        lmark = util.batch_orth_proj(land_tensor.to(device), cam.to(device))
         lmark[..., 1:] = - lmark[..., 1:]
         lmark = util.tensor_vis_landmarks(image_tensor.to(device)[visind].unsqueeze(0),lmark[visind].unsqueeze(0))
         output = lmark.squeeze(0)
