@@ -3,6 +3,8 @@ from .base_options import BaseOptions
 class TrainOptions(BaseOptions):
     def initialize(self):
         BaseOptions.initialize(self)
+        # supervision type 
+        self.parser.add_argument('--supervision', type=str, default='render', help='supervised by renderred image+landamrk or by flame code')
 
         # for displays
         self.parser.add_argument('--debug', action='store_true', help='only do one epoch and displays at each iteration')

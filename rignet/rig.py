@@ -88,6 +88,9 @@ class RigModule():
                             batch[0]['exp'].to(self.device),
                             batch[0]['tex'].to(self.device),
                             batch[0]['lit'].to(self.device),
+                            batch[1]['cam'].to(self.device), 
+                            batch[1]['pose'].to(self.device),
+                            
                             batch[1]['shape'].to(self.device),
                             batch[1]['exp'].to(self.device),
                             batch[1]['tex'].to(self.device),
@@ -183,7 +186,7 @@ class RigModule():
                                          )
 
                 genimage_w = vis_tensor(image_tensor= render_img_w_, 
-                                        image_path = batch[1]['image_path'][0] +'---close-V',
+                                        image_path = batch[1]['image_path'][0] +'---close-W',
                                         device = self.device
                                          )
 

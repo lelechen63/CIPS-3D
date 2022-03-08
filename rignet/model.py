@@ -366,8 +366,8 @@ class RigNerft(nn.Module):
         return landmarks3d, predicted_images
     
     def forward(self, shape_latent_v, appearance_latent_v, shape_latent_w, appearance_latent_w, \
-                    cam, pose, flameshape_v = None, flameexp_v = None, flametex_v = None, flamelit_v = None, \
-                     flameshape_w = None, flameexp_w = None, flametex_w = None, flamelit_w = None):
+                    cam_v=None, pose_v=None, flameshape_v = None, flameexp_v = None, flametex_v = None,\
+                    flamelit_v = None, cam_w=None, pose_w=None, flameshape_w = None, flameexp_w = None, flametex_w = None, flamelit_w = None):
         
         p_v = self.latent2params(shape_latent_v, appearance_latent_v)
         p_w = self.latent2params(shape_latent_w, appearance_latent_w)
@@ -402,15 +402,15 @@ class RigNerft(nn.Module):
                 p_w_.append(p_w[j])
                 p_v_.append(p_w_mapped[j])
         
-        landmark_same, render_img_same = self.flame_render(p_w_same, pose, cam)
-        landmark_w_, render_img_w_ = self.flame_render(p_w_, pose, cam)
-        landmark_v_, render_img_v_ = self.flame_render(p_v_, pose, cam)
+        landmark_same, render_img_same = self.flame_render(p_w_same, pose_w, cam_w)
+        landmark_w_, render_img_w_ = self.flame_render(p_w_, pose_w, cam_w)
+        landmark_v_, render_img_v_ = self.flame_render(p_v_, pose_w, cam_w)
 
         if flameshape_v != None:
             p_v_vis = [flameshape_v, flameexp_v, flametex_v, flamelit_v.view(-1, 9,3)] 
             p_w_vis = [flameshape_w, flameexp_w, flametex_w, flamelit_w.view(-1, 9,3)] 
-            _, recons_images_v = self.flame_render(p_v_vis, pose, cam)
-            _, recons_images_w = self.flame_render(p_w_vis, pose, cam)
+            _, recons_images_v = self.flame_render(p_v_vis, pose_v, cam_v)
+            _, recons_images_w = self.flame_render(p_w_vis, pose_w, cam_w)
 
         else:
             recons_images_v = render_img_w_
