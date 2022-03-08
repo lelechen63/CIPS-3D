@@ -91,6 +91,7 @@ class Latent2CodeModule():
                 loss.backward()
                 self.optimizer.step()
                 t3 = time.time()
+                tqdm_dict ={}
                 for key in losses.keys():
                     tqdm_dict[key] = losses[key].data
                 
