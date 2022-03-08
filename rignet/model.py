@@ -214,7 +214,7 @@ class RigNerft(nn.Module):
         self.ckpt_path = os.path.join(opt.checkpoints_dir, opt.name)
         os.makedirs(self.ckpt_path, exist_ok = True)
 
-    def get_f(self,negtwork):
+    def get_f(self,network):
         print ('loading weights for Latent2ShapeExpCode feature extraction network')
         network.Latent2ShapeExpCode.load_state_dict(torch.load(self.opt.Latent2ShapeExpCode_weight))
         print ('loading weights for latent2shape feature extraction network')
