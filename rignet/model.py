@@ -26,7 +26,6 @@ import face_alignment
 class Latent2Code(nn.Module):
     def __init__(self, flame_config, opt ):
         super().__init__()
-        print ("'@@@@@@@@@@@@@@@@@")
         self.opt = opt
         # self.save_hyperparameters()
         self.flame_config = flame_config
@@ -193,7 +192,10 @@ class RigNerft(nn.Module):
         
         # funtion F networks
         latent2code = Latent2Code(flame_config, opt)
-        self.Latent2ShapeExpCode, self.latent2shape, self.latent2exp, self.Latent2AlbedoLitCode, self.latent2albedo, self.latent2lit = self.get_f(Latent2Code)
+
+        self.Latent2ShapeExpCode, self.latent2shape, \
+        self.latent2exp, self.Latent2AlbedoLitCode, \
+        self.latent2albedo, self.latent2lit = self.get_f(latent2code)
         
         # rigNet
         # appearance part

@@ -21,12 +21,12 @@ class RigModule():
             self.device = torch.device("cuda")
         self.rig = RigNerft( flame_config, opt)
         print (self.rig)
-        self.optimizer = optim.Adam( list(self.latent2code.Latent2ShapeExpCode.parameters()) + \
-                                  list(self.latent2code.Latent2AlbedoLitCode.parameters()) + \
-                                  list(self.latent2code.latent2shape.parameters()) + \
-                                  list(self.latent2code.latent2exp.parameters()) + \
-                                  list(self.latent2code.latent2albedo.parameters()) + \
-                                  list(self.latent2code.latent2lit.parameters()) \
+        self.optimizer = optim.Adam( list(self.rig.Latent2ShapeExpCode.parameters()) + \
+                                  list(self.rig.Latent2AlbedoLitCode.parameters()) + \
+                                  list(self.rig.latent2shape.parameters()) + \
+                                  list(self.rig.latent2exp.parameters()) + \
+                                  list(self.rig.latent2albedo.parameters()) + \
+                                  list(self.rig.latent2lit.parameters()) \
                                   , lr= self.opt.lr , betas=(self.opt.beta1, 0.999))
         if opt.isTrain:
             self.rig =torch.nn.DataParallel(self.rig, device_ids=range(len(self.opt.gpu_ids)))
