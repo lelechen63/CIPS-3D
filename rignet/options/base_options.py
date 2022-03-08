@@ -58,7 +58,7 @@ class BaseOptions():
         # save to the disk        
         expr_dir = os.path.join(self.opt.checkpoints_dir, self.opt.name)
         os.makedirs(expr_dir, exist_ok = True )
-        latent2code_dir = os.path.join(self.opt.checkpoints_dir, Latent2Code)
+        latent2code_dir = os.path.join(self.opt.checkpoints_dir, "Latent2Code")
         self.opt.Latent2ShapeExpCode_weight = os.path.join(latent2code_dir,'Latent2ShapeExpCode.pth' )
         self.opt.Latent2AlbedoLitCode_weight = os.path.join(latent2code_dir,'Latent2AlbedoLitCode.pth' )
         self.opt.latent2shape_weight = os.path.join(latent2code_dir,'latent2shape.pth' )
