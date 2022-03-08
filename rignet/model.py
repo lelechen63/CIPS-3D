@@ -166,10 +166,7 @@ class Latent2Code(nn.Module):
             recons_ops = self.render(recons_vertices, recons_trans_vertices, recons_albedos, flamelit)
             recons_images = recons_ops['images']
             return_list['recons_images'] = recons_images
-        else:
-            recons_images = predicted_images
-            return_list['recons_images'] = recons_images
-
+       
         
         return return_list
     
