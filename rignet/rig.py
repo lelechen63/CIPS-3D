@@ -110,84 +110,76 @@ class RigModule():
                 
                 visind = 0
                 # visualize the image close to v
-                image_v = batch[0]['gt_image'].data[0].cpu()
-                image_v = tensor_util.tensor2im(image_v  , normalize = False)
-                image_v = np.ascontiguousarray(image_v, dtype=np.uint8)
-                image_v = tensor_util.writeText(image_v, batch[0]['image_path'][0])
-                image_v = np.ascontiguousarray(image_v, dtype=np.uint8)
-                image_v = np.clip(image_v, 0, 255)
+                image_w = vis_tensor(image_tensor= batch[0]['gt_image'], 
+                                        image_path = batch[0]['image_path'][0] +'---V',
+                                        device = self.device
+                                         )
 
-                lmark_v = util.batch_orth_proj(batch[0]['gt_landmark'], batch[0]['cam'])
-                lmark_v[..., 1:] = - lmark_v[..., 1:]
-                lmark_v = util.tensor_vis_landmarks(batch[0]['gt_image'][visind].unsqueeze(0), lmark_v[visind].unsqueeze(0))
-                lmark_v = lmark_v.squeeze(0)
-                lmark_v = tensor_util.tensor2im(lmark_v  , normalize = False)
-                lmark_v = np.ascontiguousarray(lmark_v, dtype=np.uint8)
-                lmark_v = util.writeText(lmark_v, batch[0]['image_path'][0])
-                lmark_v = np.ascontiguousarray(lmark_v, dtype=np.uint8)
-                lmark_v = np.clip(lmark_v, 0, 255)
+                lmark_v = vis_tensor(image_tensor= batch[0]['gt_image'], 
+                                        image_path = batch[0]['image_path'][0] +'--V',
+                                        land_tensor = batch[0]['gt_landmark'],
+                                        cam = batch[0]['cam'], 
+                                        device = self.device
+                                         )
+               
 
-                image_w = batch[1]['gt_image'].data[0].cpu()
-                image_w = tensor_util.tensor2im(image_w  , normalize = False)
-                image_w = np.ascontiguousarray(image_w, dtype=np.uint8)
-                image_w = tensor_util.writeText(image_w, batch[1]['image_path'][0])
-                image_w = np.ascontiguousarray(image_w, dtype=np.uint8)
-                image_w = np.clip(image_w, 0, 255)
+                image_w = vis_tensor(image_tensor= batch[1]['gt_image'], 
+                                        image_path = batch[1]['image_path'][0] +'---W',
+                                        device = self.device
+                                         )
 
-                lmark_w = util.batch_orth_proj(batch[1]['gt_landmark'], batch[1]['cam'])
-                lmark_w[..., 1:] = - lmark_w[..., 1:]
-                lmark_w = util.tensor_vis_landmarks(batch[1]['gt_image'][visind].unsqueeze(0), lmark_w[visind].unsqueeze(0))
-                lmark_w = lmark_w.squeeze(0)
-                lmark_w = tensor_util.tensor2im(lmark_w  , normalize = False)
-                lmark_w = np.ascontiguousarray(lmark_w, dtype=np.uint8)
-                lmark_w = util.writeText(lmark_w, batch[1]['image_path'][0])
-                lmark_w = np.ascontiguousarray(lmark_w, dtype=np.uint8)
-                lmark_w = np.clip(lmark_w, 0, 255)
+                lmark_w = vis_tensor(image_tensor= batch[1]['gt_image'], 
+                                        image_path = batch[1]['image_path'][0] +'--W',
+                                        land_tensor = batch[1]['gt_landmark'],
+                                        cam = batch[1]['cam'], 
+                                        device = self.device
+                                         )
 
-                reconsimage = recons_images.data[0].cpu() #  * self.stdtex + self.meantex 
-                reconsimage = tensor_util.tensor2im(reconsimage  , normalize = False)
-                reconsimage = np.ascontiguousarray(reconsimage, dtype=np.uint8)
-                reconsimage = tensor_util.writeText(reconsimage, batch[1]['image_path'][0])
-                reconsimage = np.ascontiguousarray(reconsimage, dtype=np.uint8)
-                reconsimage = np.clip(reconsimage, 0, 255)
+              
+                recons_images_w = vis_tensor(image_tensor= recons_images_w, 
+                                        image_path = batch[1]['image_path'][0] +'---recons-W',
+                                        device = self.device
+                                         )
+                recons_images_v = vis_tensor(image_tensor= recons_images_v, 
+                                        image_path = batch[0]['image_path'][0] +'---recons-V',
+                                        device = self.device
+                                         )
 
-                genlmark_same = util.batch_orth_proj(landmark_same, batch[1]['cam'].to(self.device))
-                genlmark_same[..., 1:] = - genlmark_same[..., 1:]
+                genlmark_same = vis_tensor(image_tensor= batch[1]['gt_image'], 
+                                        image_path = batch[1]['image_path'][0] +'---same-W',
+                                        land_tensor = landmark_same,
+                                        cam = batch[1]['cam'], 
+                                        device = self.device
+                                         )
+        
+                genimage_same = vis_tensor(image_tensor= render_img_same, 
+                                        image_path = batch[1]['image_path'][0] +'---same-V',
+                                        device = self.device
+                                         )
+          
+                genlmark_w = vis_tensor(image_tensor= batch[1]['gt_image'], 
+                                        image_path = batch[1]['image_path'][0] +'---close-W',
+                                        land_tensor = landmark_w_,
+                                        cam = batch[1]['cam'], 
+                                        device = self.device
+                                         )
 
-                genlmark_same = util.tensor_vis_landmarks(batch[1]['gt_image'].to(self.device)[visind].unsqueeze(0), genlmark_same[visind].unsqueeze(0))
-                genlmark_same = genlmark_same.squeeze(0)
-                genlmark_same = tensor_util.tensor2im(genlmark_same  , normalize = False)
-                genlmark_same = np.ascontiguousarray(genlmark_same, dtype=np.uint8)
-                genlmark_same = util.writeText(genlmark_same, batch[1]['image_path'][0])
-                genlmark_same = np.ascontiguousarray(genlmark_same, dtype=np.uint8)
-                genlmark_same = np.clip(genlmark_same, 0, 255)
+                genimage_w = vis_tensor(image_tensor= render_img_w_, 
+                                        image_path = batch[1]['image_path'][0] +'---close-V',
+                                        device = self.device
+                                         )
+
+                genlmark_v = vis_tensor(image_tensor= batch[0]['gt_image'], 
+                                        image_path = batch[0]['image_path'][0] +'---close-V',
+                                        land_tensor = landmark_v_,
+                                        cam = batch[0]['cam'], 
+                                        device = self.device
+                                         )
+                genimage_v = vis_tensor(image_tensor = render_img_v_, 
+                                        image_path = batch[0]['image_path'][0]+'---close-V', 
+                                        device = self.device)
 
                 
-                genimage_same = render_img_same.data[0].cpu() #  * self.stdtex + self.meantex 
-                genimage = tensor_util.tensor2im(genimage  , normalize = False)
-                genimage = np.ascontiguousarray(genimage, dtype=np.uint8)
-                genimage = tensor_util.writeText(genimage, batch[1]['image_path'][0])
-                genimage = np.ascontiguousarray(genimage, dtype=np.uint8)
-                genimage = np.clip(genimage, 0, 255)
-
-                reconsimage = recons_images.data[0].cpu() #  * self.stdtex + self.meantex 
-                reconsimage = tensor_util.tensor2im(reconsimage  , normalize = False)
-                reconsimage = np.ascontiguousarray(reconsimage, dtype=np.uint8)
-                reconsimage = tensor_util.writeText(reconsimage, batch[1]['image_path'][0])
-                reconsimage = np.ascontiguousarray(reconsimage, dtype=np.uint8)
-                reconsimage = np.clip(reconsimage, 0, 255)
-
-                genlmark = util.batch_orth_proj(landmarks3d, batch[1]['cam'].to(self.device))
-                genlmark[..., 1:] = - genlmark[..., 1:]
-
-                genlmark = util.tensor_vis_landmarks(batch[1]['gt_image'].to(self.device)[visind].unsqueeze(0),genlmark[visind].unsqueeze(0))
-                genlmark = genlmark.squeeze(0)
-                genlmark = tensor_util.tensor2im(genlmark  , normalize = False)
-                genlmark = np.ascontiguousarray(genlmark, dtype=np.uint8)
-                genlmark = util.writeText(genlmark, batch[1]['image_path'][0])
-                genlmark = np.ascontiguousarray(genlmark, dtype=np.uint8)
-                genlmark = np.clip(genlmark, 0, 255)
-
                 visuals = OrderedDict([
                 ('gtimage', gtimage),
                 ('gtlmark', gtlmark ),
@@ -349,7 +341,7 @@ class RigModule():
             reconsimage = np.ascontiguousarray(reconsimage, dtype=np.uint8)
             reconsimage = np.clip(reconsimage, 0, 255)
 
-
+            
             genlmark = util.batch_orth_proj(landmarks3d, batch['cam'].to(self.device))
             genlmark[..., 1:] = - genlmark[..., 1:]
 
@@ -370,6 +362,21 @@ class RigModule():
             ])
             self.visualizer.display_current_results(visuals, step, 1) 
            
+def vis_tensor(image_tensor = None, image_path = None, land_tensor = None, cam = None,  visind =0, device):
+    if land_tensor is not None:
+        lmark = util.batch_orth_proj(land_tensor, cam.to(device))
+        lmark[..., 1:] = - lmark[..., 1:]
+        lmark = util.tensor_vis_landmarks(image_tensor.to(device)[visind].unsqueeze(0),lmark[visind].unsqueeze(0))
+        output = lmark.squeeze(0)
+    else:
+        output = image_tensor.data[visind].cpu() #  * self.stdtex + self.meantex 
+    output = tensor_util.tensor2im(output  , normalize = False)
+    output = np.ascontiguousarray(output, dtype=np.uint8)
+    output = util.writeText(output, image_path)
+    output = np.ascontiguousarray(output, dtype=np.uint8)
+    output = np.clip(output, 0, 255)
+
+    return output
 
 
 class Latent2CodeModule():
