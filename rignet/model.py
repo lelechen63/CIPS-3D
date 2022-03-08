@@ -26,6 +26,7 @@ import face_alignment
 class Latent2Code(nn.Module):
     def __init__(self, flame_config, opt ):
         super().__init__()
+        print ("'@@@@@@@@@@@@@@@@@")
         self.opt = opt
         # self.save_hyperparameters()
         self.flame_config = flame_config
