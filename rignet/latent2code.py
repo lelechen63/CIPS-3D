@@ -31,6 +31,7 @@ class Latent2CodeModule():
                                   , lr= self.opt.lr , betas=(self.opt.beta1, 0.999))
         for p in self.latent2code.flame.parameters():
             p.requires_grad = False 
+        
         for p in self.latent2code.flametex.parameters():
             p.requires_grad = False 
         
