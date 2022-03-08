@@ -44,8 +44,6 @@ opt = TrainOptions().parse()
 
 # if opt.debug:
 #     opt.nThreads = 1
-print (opt.batchSize, '=+++++++')
-
 
 opt.manualSeed = random.randint(1, 10000)
 print("Random Seed: ", opt.manualSeed)
@@ -58,7 +56,7 @@ if  opt.name == 'Latent2Code':
 elif opt.name =='rig':
     from rig import RigModule as module
     model = module(flame_config, opt)
-    
+
 print (opt.isTrain,'!!!!!')
 if opt.isTrain:
     print ( opt.name)

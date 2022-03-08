@@ -9,6 +9,7 @@ sys.path.append('/home/uss00022/lelechen/github/CIPS-3D/utils')
 from visualizer import Visualizer
 import util
 from dataset import *
+import time 
 
 class RigModule():
     def __init__(self, flame_config, opt ):
@@ -19,7 +20,7 @@ class RigModule():
         if opt.cuda:
             self.device = torch.device("cuda")
         self.rig = Rig( flame_config, opt)
-        
+        print (self.rig)
         self.optimizer = optim.Adam( list(self.latent2code.Latent2ShapeExpCode.parameters()) + \
                                   list(self.latent2code.Latent2AlbedoLitCode.parameters()) + \
                                   list(self.latent2code.latent2shape.parameters()) + \
@@ -50,16 +51,26 @@ class RigModule():
         
         for epoch in range( 1000):
             for step, batch in enumerate(tqdm(self.data_loader)):
-                
-                landmarks3d, predicted_images, recons_images = self.latent2code.forward(
-                            batch['shape_latent'].to(self.device),
-                            batch['appearance_latent'].to(self.device),
-                            batch['cam'].to(self.device), 
-                            batch['pose'].to(self.device),
-                            batch['shape'].to(self.device),
-                            batch['exp'].to(self.device),
-                            batch['tex'].to(self.device),
-                            batch['lit'].to(self.device))
+                landmark_same, render_img_same, \
+                landmark_w_, render_img_w_ , \
+                landmark_v_, render_img_v_ , \
+                recons_images_v, recons_images_w \
+                = self.rig.forward(
+                            batch[0]['shape_latent'].to(self.device),
+                            batch[0]['appearance_latent'].to(self.device),
+                            batch[1]['shape_latent'].to(self.device),
+                            batch[2]['appearance_latent'].to(self.device),
+                            batch[0]['cam'].to(self.device), 
+                            batch[0]['pose'].to(self.device),
+                            batch[0]['shape'].to(self.device),
+                            batch[0]['exp'].to(self.device),
+                            batch[0]['tex'].to(self.device),
+                            batch[0]['lit'].to(self.device),
+                            batch[1]['shape'].to(self.device),
+                            batch[1]['exp'].to(self.device),
+                            batch[1]['tex'].to(self.device),
+                            batch[1]['lit'].to(self.device)
+                            )
                 losses = {}
                 losses['landmark'] = util.l2_distance(landmarks3d[:, 17:, :2], batch['gt_landmark'][:, 17:, :2].to(self.device)) * self.flame_config.w_lmks
                 losses['photometric_texture'] = (batch['img_mask'].to(self.device) * (predicted_images - batch['gt_image'].to(self.device) ).abs()).mean() * self.flame_config.w_pho
