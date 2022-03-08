@@ -199,15 +199,15 @@ class RigNerft(nn.Module):
         
         # rigNet
         # appearance part
-        self.WGanEncoder = build_WGanEncoder(weight = '' if opt.isTrain else opt.WGanEncoder_weight )
-        self.ShapeEncoder = build_ShapeEncoder(weight = '' if opt.isTrain else opt.ShapeEncoder_weight )
-        self.ExpEncoder = build_ExpEncoder(weight = '' if opt.isTrain else opt.ExpEncoder_weight )
-        self.WGanDecoder = build_WGanDecoder(weight = '' if opt.isTrain else opt.WGanDecoder_weight )
+        self.WGanEncoder = self.build_WGanEncoder(weight = '' if opt.isTrain else opt.WGanEncoder_weight )
+        self.ShapeEncoder = self.build_ShapeEncoder(weight = '' if opt.isTrain else opt.ShapeEncoder_weight )
+        self.ExpEncoder = self.build_ExpEncoder(weight = '' if opt.isTrain else opt.ExpEncoder_weight )
+        self.WGanDecoder = self.build_WGanDecoder(weight = '' if opt.isTrain else opt.WGanDecoder_weight )
         # shape part
-        self.WNerfEncoder = build_WNerfEncoder(weight = '' if opt.isTrain else opt.WNerfEncoder_weight )
-        self.AlbedoEncoder = build_AlbedoEncoder(weight = '' if opt.isTrain else opt.AlbedoEncoder_weight )
-        self.LitEncoder = build_LitEncoder(weight = '' if opt.isTrain else opt.LitEncoder_weight )
-        self.WNerfDecoder = build_WNerfDecoder(weight = '' if opt.isTrain else opt.WNerfDecoder_weight )
+        self.WNerfEncoder = self.build_WNerfEncoder(weight = '' if opt.isTrain else opt.WNerfEncoder_weight )
+        self.AlbedoEncoder = self.build_AlbedoEncoder(weight = '' if opt.isTrain else opt.AlbedoEncoder_weight )
+        self.LitEncoder = self.build_LitEncoder(weight = '' if opt.isTrain else opt.LitEncoder_weight )
+        self.WNerfDecoder = self.build_WNerfDecoder(weight = '' if opt.isTrain else opt.WNerfDecoder_weight )
 
         # Flame
         self.flame = FLAME(self.flame_config).to('cuda')
