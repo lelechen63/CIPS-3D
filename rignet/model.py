@@ -292,7 +292,7 @@ class RigNerft(nn.Module):
             WGanDecoder.load_state_dict(torch.load(weight))
         return WGanDecoder
     
-    def build_WnerfEncoder(self, weight = ''):
+    def build_WNerfEncoder(self, weight = ''):
         WNerfEncoder = th.nn.Sequential(
             LinearWN( self.nerf_latent_dim , 256 ),
             th.nn.LeakyReLU( 0.2, inplace = True ),
