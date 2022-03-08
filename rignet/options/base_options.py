@@ -58,19 +58,19 @@ class BaseOptions():
         # save to the disk        
         expr_dir = os.path.join(self.opt.checkpoints_dir, self.opt.name)
         os.makedirs(expr_dir, exist_ok = True )
-        
-        self.opt.Latent2ShapeExpCode_weight = os.path.join(expr_dir,'Latent2ShapeExpCode.pth' )
-        self.opt.Latent2AlbedoLitCode_weight = os.path.join(expr_dir,'Latent2AlbedoLitCode.pth' )
-        self.opt.latent2shape_weight = os.path.join(expr_dir,'latent2shape.pth' )
-        self.opt.latent2exp_weight = os.path.join(expr_dir,'latent2exp.pth' )
-        self.opt.latent2albedo_weight = os.path.join(expr_dir,'latent2albedo.pth' )
-        self.opt.latent2lit_weight = os.path.join(expr_dir,'latent2lit.pth' )
+        latent2code_dir = os.path.join(self.opt.checkpoints_dir, Latent2Code)
+        self.opt.Latent2ShapeExpCode_weight = os.path.join(latent2code_dir,'Latent2ShapeExpCode.pth' )
+        self.opt.Latent2AlbedoLitCode_weight = os.path.join(latent2code_dir,'Latent2AlbedoLitCode.pth' )
+        self.opt.latent2shape_weight = os.path.join(latent2code_dir,'latent2shape.pth' )
+        self.opt.latent2exp_weight = os.path.join(latent2code_dir,'latent2exp.pth' )
+        self.opt.latent2albedo_weight = os.path.join(latent2code_dir,'latent2albedo.pth' )
+        self.opt.latent2lit_weight = os.path.join(latent2code_dir,'latent2lit.pth' )
 
         self.opt.WGanEncoder_weight = os.path.join(expr_dir,'WGanEncoder_weight.pth' )
         self.opt.ShapeEncoder_weight = os.path.join(expr_dir,'ShapeEncoder_weight.pth' )
         self.opt.ExpEncoder_weight = os.path.join(expr_dir,'ExpEncoder_weight.pth' )
         self.opt.WGanDecoder_weight = os.path.join(expr_dir,'WGanDecoder_weight.pth' )
-        
+
         self.opt.WNerfEncoder_weight = os.path.join(expr_dir,'WNerfEncoder_weight.pth' )
         self.opt.AlbedoEncoder_weight = os.path.join(expr_dir,'AlbedoEncoder_weight.pth' )
         self.opt.LitEncoder_weight = os.path.join(expr_dir,'LitEncoder_weight.pth' )
