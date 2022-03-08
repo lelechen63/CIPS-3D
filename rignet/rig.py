@@ -48,9 +48,10 @@ class RigModule():
         os.makedirs(self.ckpt_path, exist_ok = True)
 
     def train(self):
-        
+        t0 = time.time()
         for epoch in range( 1000):
             for step, batch in enumerate(tqdm(self.data_loader)):
+                t1 = time.time()
                 landmark_same, render_img_same, \
                 landmark_w_, render_img_w_ , \
                 landmark_v_, render_img_v_ , \
@@ -60,8 +61,10 @@ class RigModule():
                             batch[0]['appearance_latent'].to(self.device),
                             batch[1]['shape_latent'].to(self.device),
                             batch[1]['appearance_latent'].to(self.device),
+                            
                             batch[0]['cam'].to(self.device), 
                             batch[0]['pose'].to(self.device),
+                            
                             batch[0]['shape'].to(self.device),
                             batch[0]['exp'].to(self.device),
                             batch[0]['tex'].to(self.device),
@@ -71,18 +74,38 @@ class RigModule():
                             batch[1]['tex'].to(self.device),
                             batch[1]['lit'].to(self.device)
                             )
+                t2 = time.time()
                 losses = {}
-                losses['landmark'] = util.l2_distance(landmarks3d[:, 17:, :2], batch['gt_landmark'][:, 17:, :2].to(self.device)) * self.flame_config.w_lmks
-                losses['photometric_texture'] = (batch['img_mask'].to(self.device) * (predicted_images - batch['gt_image'].to(self.device) ).abs()).mean() * self.flame_config.w_pho
-                loss = losses['landmark'] + losses['photometric_texture']
+                # keep batch[1], w the same
+                losses['landmark_same'] = util.l2_distance(landmark_same[:, 17:, :2], batch[1]['gt_landmark'][:, 17:, :2].to(self.device)) * self.flame_config.w_lmks
+                losses['photometric_texture_same'] = (batch['img_mask'].to(self.device) * (render_img_same - batch[1]['gt_image'].to(self.device) ).abs()).mean() * self.flame_config.w_pho
+                
+                # close to w
+                losses['landmark_w_'] = util.l2_distance(landmark_w_[:, 17:, :2], batch[1]['gt_landmark'][:, 17:, :2].to(self.device)) * self.flame_config.w_lmks
+                losses['photometric_texture_w_'] = (batch['img_mask'].to(self.device) * (render_img_w_ - batch[1]['gt_image'].to(self.device) ).abs()).mean() * self.flame_config.w_pho
+                
+                # close to v
+                losses['landmark_v_'] = util.l2_distance(landmark_v_[:, 17:, :2], batch[0]['gt_landmark'][:, 17:, :2].to(self.device)) * self.flame_config.w_lmks
+                losses['photometric_texture_v_'] = (batch['img_mask'].to(self.device) * (render_img_v_ - batch[0]['gt_image'].to(self.device) ).abs()).mean() * self.flame_config.w_pho
+                
+                loss = losses['landmark'] + losses['photometric_texture'] + \
+                       losses['landmark_w_'] + losses['photometric_texture_w_'] + \
+                       losses['landmark_v_'] + losses['photometric_texture_v_']
                 
                 self.optimizer.zero_grad()
                 loss.backward()
                 self.optimizer.step()
-                tqdm_dict = {'loss_landmark': losses['landmark'].data, 'loss_tex': losses['photometric_texture'].data  }
+                tqdm_dict = {'landmark_same': losses['landmark_same'].data, \
+                             'photometric_texture_same': losses['photometric_texture_same'].data \
+                             'landmark_w_': losses['landmark_w_'].data, \
+                             'photometric_texture_w_': losses['photometric_texture_w_'].data, \
+                             'landmark_v_': losses['landmark_v_'].data, \
+                             'photometric_texture_v_': losses['photometric_texture_v_'].data
+                               }
                 errors = {k: v.data.item() if not isinstance(v, int) else v for k, v in tqdm_dict.items()} 
-                self.visualizer.print_current_errors(epoch, step, errors, 0)
-
+                t3 = time.time()
+                self.visualizer.print_current_errors(epoch, step, errors, t1-t0, t2-t1, t3-t2)
+                t0 = time.time()
             if epoch % self.opt.save_step == 0:  
                 
                 visind = 0
