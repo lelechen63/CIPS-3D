@@ -135,14 +135,25 @@ class Latent2Code(nn.Module):
         albedocode = self.latent2albedo(app_fea)
         litcode = self.latent2lit(app_fea).view(shape_latent.shape[0], 9,3)
         
-        vertices, landmarks2d, landmarks3d = self.flame(shape_params=shapecode, expression_params=expcode, pose_params=pose)
-        trans_vertices = util.batch_orth_proj(vertices, cam)
-        trans_vertices[..., 1:] = - trans_vertices[..., 1:]
+        return_list = {}
+        if self.opt.supervision =='render' or flameshape != None:
+            vertices, landmarks2d, landmarks3d = self.flame(shape_params=shapecode, expression_params=expcode, pose_params=pose)
+            trans_vertices = util.batch_orth_proj(vertices, cam)
+            trans_vertices[..., 1:] = - trans_vertices[..., 1:]
 
-        ## render
-        albedos = self.flametex(albedocode, self.image_size) / 255.
-        ops = self.render(vertices, trans_vertices, albedos, litcode)
-        predicted_images = ops['images']
+            ## render
+            albedos = self.flametex(albedocode, self.image_size) / 255.
+            ops = self.render(vertices, trans_vertices, albedos, litcode)
+            predicted_images = ops['images']
+
+            return_list['landmarks3d'] = landmarks3d
+            return_list['predicted_images'] = predicted_images
+        else:
+            return_list['expcode'] = expcode
+            return_list['shapecode'] = shapecode
+            return_list['litcode'] = litcode
+            return_list['albedocode'] = albedocode
+            
 
         if flameshape != None:
             flamelit = flamelit.view(-1, 9,3)        
@@ -154,11 +165,13 @@ class Latent2Code(nn.Module):
             recons_albedos = self.flametex(flametex, self.image_size) / 255.
             recons_ops = self.render(recons_vertices, recons_trans_vertices, recons_albedos, flamelit)
             recons_images = recons_ops['images']
+            return_list['recons_images'] = recons_images
         else:
             recons_images = predicted_images
+            return_list['recons_images'] = recons_images
 
         
-        return landmarks3d, predicted_images, recons_images
+        return return_list
     
 
     def _initialize_weights(self):
@@ -342,13 +355,13 @@ class RigNerft(nn.Module):
     def rig(self,wgan, wnerf, p):
         shapecode, expcode, albedocode, litcode = p[0], p[1],p[2], p[3]
         lgan = self.WGanEncoder(wgan)
-        fshape = self.ShapeEncoder(shapecode)
-        fexp = self.ExpEncoder(expcode)
-        deltagan = self.WGanDecoder(torch.cat([lgan, fshape, fexp], axis = 1))
+        lshape = self.ShapeEncoder(shapecode)
+        lexp = self.ExpEncoder(expcode)
+        deltagan = self.WGanDecoder(torch.cat([lgan, lshape, lexp], axis = 1))
         lnerf = self.WNerfEncoder(wnerf)
-        falbedo = self.AlbedoEncoder(albedocode)
-        flit = self.LitEncoder(litcode.view(-1, 27))
-        deltanerf = self.WNerfDecoder(torch.cat([lnerf, falbedo, flit], axis = 1))
+        lalbedo = self.AlbedoEncoder(albedocode)
+        llit = self.LitEncoder(litcode.view(-1, 27))
+        deltanerf = self.WNerfDecoder(torch.cat([lnerf, lalbedo, llit], axis = 1))
 
         return deltanerf + wnerf, deltagan + wgan
     
@@ -386,7 +399,6 @@ class RigNerft(nn.Module):
             else:
                 p_w_replaced.append(p_v[i])
 
-
         shape_latent_w_hat, appearance_latent_w_hat = self.rig(appearance_latent_w, shape_latent_w, p_w_replaced)
         # map chagned w back to P
         p_w_mapped = self.latent2params(shape_latent_w_hat, appearance_latent_w_hat)
@@ -415,7 +427,6 @@ class RigNerft(nn.Module):
             recons_images_v = render_img_w_
             recons_images_w = render_img_w_
 
-        
         return landmark_same, render_img_same, \
                 landmark_w_, render_img_w_ , \
                 landmark_v_, render_img_v_ , \

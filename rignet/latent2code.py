@@ -58,8 +58,48 @@ class Latent2CodeModule():
         for epoch in range( 100000):
             for step, batch in enumerate(tqdm(self.data_loader)):
                 t1 = time.time()
+
+                #landmarks3d, predicted_images, recons_images 
+                return_list = self.latent2code.forward(
+                            batch['shape_latent'].to(self.device),
+                            batch['appearance_latent'].to(self.device),
+                            batch['cam'].to(self.device), 
+                            batch['pose'].to(self.device)
+                            )
+                losses = {}
+                t2 = time.time()
+                if self.opt.supervision =='render':
+                    landmarks3d, predicted_images, recons_images  = return_list['landmarks3d'], return_list['predicted_images'],return_list['recons_images']
+                    
+                    losses['landmark'] = util.l2_distance(landmarks3d[:, 17:, :2], batch['gt_landmark'][:, 17:, :2].to(self.device)) * self.flame_config.w_lmks
+                    losses['photometric_texture'] = (batch['img_mask'].to(self.device) * (predicted_images - batch['gt_image'].to(self.device) ).abs()).mean() * self.flame_config.w_pho
+                    loss = losses['landmark'] + losses['photometric_texture']
+                else:
                 
-                landmarks3d, predicted_images, recons_images = self.latent2code.forward(
+                    expcode, shapecode, litcode, albedocode  = return_list['expcode'], return_list['shapecode'], return_list['litcode'], return_list['albedocode']
+                    
+                    losses['expcode'] = util.l2_distance(expcode, batch['exp'].to(self.device))
+                    losses['shapecode'] = util.l2_distance(shapecode, batch['shape'].to(self.device))
+                    losses['litcode'] = util.l2_distance(litcode, batch['lit'].to(self.device))
+                    losses['albedocode'] = util.l2_distance(albedocode, batch['tex'].to(self.device))
+                
+                loss = 0
+                for key in losses.keys():
+                    loss += losses[key]
+
+                self.optimizer.zero_grad()
+                loss.backward()
+                self.optimizer.step()
+                t3 = time.time()
+                for key in losses.keys():
+                    tqdm_dict[key] = losses[key].data
+                
+                errors = {k: v.data.item() if not isinstance(v, int) else v for k, v in tqdm_dict.items()} 
+                self.visualizer.print_current_errors(epoch, step, errors, t1-t0, t2-t1, t3-t2 )
+                t0 = time.time()
+            
+            if epoch % self.opt.save_step == 0:
+                return_list = self.latent2code.forward(
                             batch['shape_latent'].to(self.device),
                             batch['appearance_latent'].to(self.device),
                             batch['cam'].to(self.device), 
@@ -68,67 +108,35 @@ class Latent2CodeModule():
                             batch['exp'].to(self.device),
                             batch['tex'].to(self.device),
                             batch['lit'].to(self.device))
-                t2 = time.time()
-                losses = {}
-                losses['landmark'] = util.l2_distance(landmarks3d[:, 17:, :2], batch['gt_landmark'][:, 17:, :2].to(self.device)) * self.flame_config.w_lmks
-                losses['photometric_texture'] = (batch['img_mask'].to(self.device) * (predicted_images - batch['gt_image'].to(self.device) ).abs()).mean() * self.flame_config.w_pho
-                loss = losses['landmark'] + losses['photometric_texture']
-                
-                self.optimizer.zero_grad()
-                loss.backward()
-                self.optimizer.step()
-                t3 = time.time()
 
-                tqdm_dict = {'loss_landmark': losses['landmark'].data, 'loss_tex': losses['photometric_texture'].data  }
-                errors = {k: v.data.item() if not isinstance(v, int) else v for k, v in tqdm_dict.items()} 
-                self.visualizer.print_current_errors(epoch, step, errors, t1-t0, t2-t1, t3-t2 )
-                t0 = time.time()
-            if epoch % self.opt.save_step == 0:  
-                
                 visind = 0
-                gtimage = batch['gt_image'].data[0].cpu()
-                gtimage = tensor_util.tensor2im(gtimage  , normalize = False)
-                gtimage = np.ascontiguousarray(gtimage, dtype=np.uint8)
-                gtimage = tensor_util.writeText(gtimage, batch['image_path'][0])
-                gtimage = np.ascontiguousarray(gtimage, dtype=np.uint8)
-                gtimage = np.clip(gtimage, 0, 255)
+                gtimage = vis_tensor(image_tensor= batch['gt_image'], 
+                                        image_path = batch['image_path'][0] ,
+                                        device = self.device
+                                         )
 
-                gtlmark = util.batch_orth_proj(batch['gt_landmark'], batch['cam'])
-                gtlmark[..., 1:] = - gtlmark[..., 1:]
+                gtlmark = vis_tensor(image_tensor= batch['gt_image'], 
+                                        image_path = batch['image_path'][0],
+                                        land_tensor = batch['gt_landmark'],
+                                        cam = batch['cam'], 
+                                        device = self.device
+                                         )
+                genimage = vis_tensor(image_tensor= return_list['predicted_images'], 
+                                        image_path = batch['image_path'][0] ,
+                                        device = self.device
+                                         )
 
-                gtlmark = util.tensor_vis_landmarks(batch['gt_image'][visind].unsqueeze(0), gtlmark[visind].unsqueeze(0))
-                gtlmark = gtlmark.squeeze(0)
-                gtlmark = tensor_util.tensor2im(gtlmark  , normalize = False)
-                gtlmark = np.ascontiguousarray(gtlmark, dtype=np.uint8)
-                gtlmark = util.writeText(gtlmark, batch['image_path'][0])
-                gtlmark = np.ascontiguousarray(gtlmark, dtype=np.uint8)
-                gtlmark = np.clip(gtlmark, 0, 255)
-
-                genimage = predicted_images.data[0].cpu() #  * self.stdtex + self.meantex 
-                genimage = tensor_util.tensor2im(genimage  , normalize = False)
-                genimage = np.ascontiguousarray(genimage, dtype=np.uint8)
-                genimage = tensor_util.writeText(genimage, batch['image_path'][0])
-                genimage = np.ascontiguousarray(genimage, dtype=np.uint8)
-                genimage = np.clip(genimage, 0, 255)
-
-                reconsimage = recons_images.data[0].cpu() #  * self.stdtex + self.meantex 
-                reconsimage = tensor_util.tensor2im(reconsimage  , normalize = False)
-                reconsimage = np.ascontiguousarray(reconsimage, dtype=np.uint8)
-                reconsimage = tensor_util.writeText(reconsimage, batch['image_path'][0])
-                reconsimage = np.ascontiguousarray(reconsimage, dtype=np.uint8)
-                reconsimage = np.clip(reconsimage, 0, 255)
-
-                genlmark = util.batch_orth_proj(landmarks3d, batch['cam'].to(self.device))
-                genlmark[..., 1:] = - genlmark[..., 1:]
-
-                genlmark = util.tensor_vis_landmarks(batch['gt_image'].to(self.device)[visind].unsqueeze(0),genlmark[visind].unsqueeze(0))
-                genlmark = genlmark.squeeze(0)
-                genlmark = tensor_util.tensor2im(genlmark  , normalize = False)
-                genlmark = np.ascontiguousarray(genlmark, dtype=np.uint8)
-                genlmark = util.writeText(genlmark, batch['image_path'][0])
-                genlmark = np.ascontiguousarray(genlmark, dtype=np.uint8)
-                genlmark = np.clip(genlmark, 0, 255)
-
+                
+                reconsimage = vis_tensor(image_tensor= return_list['recons_images'], 
+                                        image_path = batch['image_path'][0],
+                                        device = self.device
+                                         )
+                genlmark = vis_tensor(image_tensor= batch['gt_image'], 
+                                        image_path = batch['image_path'][0],
+                                        land_tensor = landmarks3d,
+                                        cam = batch['cam'], 
+                                        device = self.device
+                                         )
                 visuals = OrderedDict([
                 ('gtimage', gtimage),
                 ('gtlmark', gtlmark ),
@@ -310,4 +318,20 @@ class Latent2CodeModule():
             ('genlmark', genlmark )
             ])
             self.visualizer.display_current_results(visuals, step, 1) 
+
            
+def vis_tensor(image_tensor = None, image_path = None, land_tensor = None, cam = None,  visind =0, device = torch.device("cuda")):
+    if land_tensor is not None:
+        lmark = util.batch_orth_proj(land_tensor.to(device), cam.to(device))
+        lmark[..., 1:] = - lmark[..., 1:]
+        lmark = util.tensor_vis_landmarks(image_tensor.to(device)[visind].unsqueeze(0),lmark[visind].unsqueeze(0))
+        output = lmark.squeeze(0)
+    else:
+        output = image_tensor.data[visind].cpu() #  * self.stdtex + self.meantex 
+    output = tensor_util.tensor2im(output  , normalize = False)
+    output = np.ascontiguousarray(output, dtype=np.uint8)
+    output = util.writeText(output, image_path)
+    output = np.ascontiguousarray(output, dtype=np.uint8)
+    output = np.clip(output, 0, 255)
+
+    return output
