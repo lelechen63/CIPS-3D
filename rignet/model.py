@@ -127,7 +127,6 @@ class Latent2Code(nn.Module):
     
     def forward(self, shape_latent, appearance_latent, cam, pose, flameshape = None, flameexp= None, flametex= None, flamelit= None ):
         
-
         shape_fea = self.Latent2ShapeExpCode(shape_latent)
         shapecode = self.latent2shape(shape_fea)
         expcode = self.latent2exp(shape_fea)
@@ -404,7 +403,7 @@ class RigNerft(nn.Module):
         
         landmark_same, render_img_same = self.flame_render(p_w_same, pose_w, cam_w)
         landmark_w_, render_img_w_ = self.flame_render(p_w_, pose_w, cam_w)
-        landmark_v_, render_img_v_ = self.flame_render(p_v_, pose_w, cam_w)
+        landmark_v_, render_img_v_ = self.flame_render(p_v_, pose_v, cam_v)
 
         if flameshape_v != None:
             p_v_vis = [flameshape_v, flameexp_v, flametex_v, flamelit_v.view(-1, 9,3)] 

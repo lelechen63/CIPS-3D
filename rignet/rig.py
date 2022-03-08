@@ -83,11 +83,11 @@ class RigModule():
                             
                             batch[0]['cam'].to(self.device), 
                             batch[0]['pose'].to(self.device),
-                            
                             batch[0]['shape'].to(self.device),
                             batch[0]['exp'].to(self.device),
                             batch[0]['tex'].to(self.device),
                             batch[0]['lit'].to(self.device),
+
                             batch[1]['cam'].to(self.device), 
                             batch[1]['pose'].to(self.device),
                             
