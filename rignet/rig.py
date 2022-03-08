@@ -21,12 +21,14 @@ class RigModule():
             self.device = torch.device("cuda")
         self.rig = RigNerft( flame_config, opt)
         print (self.rig)
-        self.optimizer = optim.Adam( list(self.rig.Latent2ShapeExpCode.parameters()) + \
-                                  list(self.rig.Latent2AlbedoLitCode.parameters()) + \
-                                  list(self.rig.latent2shape.parameters()) + \
-                                  list(self.rig.latent2exp.parameters()) + \
-                                  list(self.rig.latent2albedo.parameters()) + \
-                                  list(self.rig.latent2lit.parameters()) \
+        self.optimizer = optim.Adam( list(self.rig.WGanEncoder.parameters()) + \
+                                  list(self.rig.ShapeEncoder.parameters()) + \
+                                  list(self.rig.ExpEncoder.parameters()) + \
+                                  list(self.rig.WGanDecoder.parameters()) + \
+                                  list(self.rig.WNerfEncoder.parameters()) + \
+                                  list(self.rig.AlbedoEncoder.parameters()) \
+                                  list(self.rig.LitEncoder.parameters()) \
+                                  list(self.rig.WNerfDecoder.parameters()) \
                                   , lr= self.opt.lr , betas=(self.opt.beta1, 0.999))
         for p in self.rig.Latent2ShapeExpCode.parameters():
             p.requires_grad = False 
@@ -219,12 +221,15 @@ class RigModule():
         
                 self.visualizer.display_current_results(visuals, epoch, self.opt.save_step) 
 
-                torch.save(self.latent2code.module.Latent2ShapeExpCode.state_dict(), self.opt.Latent2ShapeExpCode_weight)
-                torch.save(self.latent2code.module.Latent2AlbedoLitCode.state_dict(),self.opt.Latent2AlbedoLitCode_weight)
-                torch.save(self.latent2code.module.latent2shape.state_dict(), self.opt.latent2shape_weight)
-                torch.save(self.latent2code.module.latent2exp.state_dict(), self.opt.latent2exp_weight)
-                torch.save(self.latent2code.module.latent2albedo.state_dict(), self.opt.latent2albedo_weight)
-                torch.save(self.latent2code.module.latent2lit.state_dict(),self.opt.latent2lit_weight)
+                torch.save(self.latent2code.module.WGanEncoder.state_dict(), self.opt.WGanEncoder_weight)
+                torch.save(self.latent2code.module.ShapeEncoder.state_dict(),self.opt.ShapeEncoder_weight)
+                torch.save(self.latent2code.module.ExpEncoder.state_dict(), self.opt.ExpEncoder_weight)
+                torch.save(self.latent2code.module.WGanDecoder.state_dict(), self.opt.WGanDecoder_weight)
+                
+                torch.save(self.latent2code.module.WNerfEncoder.state_dict(), self.opt.WNerfEncoder_weight)
+                torch.save(self.latent2code.module.AlbedoEncoder.state_dict(),self.opt.AlbedoEncoder_weight)
+                torch.save(self.latent2code.module.LitEncoder.state_dict(),self.opt.LitEncoder_weight)
+                torch.save(self.latent2code.module.WNerfDecoder.state_dict(),self.opt.WNerfDecoder_weight)
     def test(self):
         for p in self.latent2code.parameters():
             p.requires_grad = False 
