@@ -26,9 +26,9 @@ class RigModule():
                                   list(self.rig.ExpEncoder.parameters()) + \
                                   list(self.rig.WGanDecoder.parameters()) + \
                                   list(self.rig.WNerfEncoder.parameters()) + \
-                                  list(self.rig.AlbedoEncoder.parameters()) \
-                                  list(self.rig.LitEncoder.parameters()) \
-                                  list(self.rig.WNerfDecoder.parameters()) \
+                                  list(self.rig.AlbedoEncoder.parameters()) + \
+                                  list(self.rig.LitEncoder.parameters()) + \
+                                  list(self.rig.WNerfDecoder.parameters()) + \
                                   , lr= self.opt.lr , betas=(self.opt.beta1, 0.999))
         for p in self.rig.Latent2ShapeExpCode.parameters():
             p.requires_grad = False 
