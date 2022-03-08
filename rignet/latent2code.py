@@ -17,6 +17,8 @@ class Latent2CodeModule():
         self.opt = opt
         self.flame_config = flame_config
         self.visualizer = Visualizer(opt)
+        self.l2_loss = nn.MSELoss()
+
         if opt.cuda:
             self.device = torch.device("cuda")
         self.latent2code = Latent2Code( flame_config, opt)
@@ -78,10 +80,10 @@ class Latent2CodeModule():
                 
                     expcode, shapecode, litcode, albedocode  = return_list['expcode'], return_list['shapecode'], return_list['litcode'], return_list['albedocode']
                     print (expcode.shape, batch['exp'].shape, '=++++')
-                    losses['expcode'] = util.l2_distance(expcode, batch['exp'].to(self.device))
-                    losses['shapecode'] = util.l2_distance(shapecode, batch['shape'].to(self.device))
-                    losses['litcode'] = util.l2_distance(litcode, batch['lit'].to(self.device))
-                    losses['albedocode'] = util.l2_distance(albedocode, batch['tex'].to(self.device))
+                    losses['expcode'] = self.l2_loss(expcode, batch['exp'].to(self.device))
+                    losses['shapecode'] = self.l2_loss(shapecode, batch['shape'].to(self.device))
+                    losses['litcode'] = self.l2_loss(litcode, batch['lit'].to(self.device))
+                    losses['albedocode'] = self.l2_loss(albedocode, batch['tex'].to(self.device))
                 
                 loss = 0
                 for key in losses.keys():
