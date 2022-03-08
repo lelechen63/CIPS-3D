@@ -213,7 +213,6 @@ class RigModule():
 
                 ('genlmark_w', genlmark_w),
                 ('genimage_w', genimage_w )
-                ])
 
                 ('genlmark_v', genlmark_v),
                 ('genimage_v', genimage_v )
