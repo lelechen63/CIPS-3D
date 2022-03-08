@@ -19,7 +19,7 @@ class RigModule():
         self.visualizer = Visualizer(opt)
         if opt.cuda:
             self.device = torch.device("cuda")
-        self.rig = Rig( flame_config, opt)
+        self.rig = RigNerft( flame_config, opt)
         print (self.rig)
         self.optimizer = optim.Adam( list(self.latent2code.Latent2ShapeExpCode.parameters()) + \
                                   list(self.latent2code.Latent2AlbedoLitCode.parameters()) + \
