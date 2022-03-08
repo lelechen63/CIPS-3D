@@ -96,7 +96,7 @@ class RigModule():
                 loss.backward()
                 self.optimizer.step()
                 tqdm_dict = {'landmark_same': losses['landmark_same'].data, \
-                             'photometric_texture_same': losses['photometric_texture_same'].data \
+                             'photometric_texture_same': losses['photometric_texture_same'].data, \
                              'landmark_w_': losses['landmark_w_'].data, \
                              'photometric_texture_w_': losses['photometric_texture_w_'].data, \
                              'landmark_v_': losses['landmark_v_'].data, \
