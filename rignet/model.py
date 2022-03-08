@@ -236,7 +236,7 @@ class RigNerft(nn.Module):
                network.Latent2AlbedoLitCode, network.latent2albedo, network.latent2lit
     
     def latent2params(self, shape_latent, appearance_latent):
-        
+        print (shape_latent.shape,'++++++')
         shape_fea = self.Latent2ShapeExpCode(shape_latent)
         shapecode = self.latent2shape(shape_fea)
         expcode = self.latent2exp(shape_fea)
