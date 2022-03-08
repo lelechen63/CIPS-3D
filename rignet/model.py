@@ -216,7 +216,7 @@ class RigNerft(nn.Module):
 
     def get_f(self,network):
         print ('loading weights for Latent2ShapeExpCode feature extraction network')
-        network.Latent2ShapeExpCode.load_state_dict(torch.load(self.opt.Latent2ShapeExpCode_weight))
+        network.module.Latent2ShapeExpCode.load_state_dict(torch.load(self.opt.Latent2ShapeExpCode_weight))
         print ('loading weights for latent2shape feature extraction network')
         network.latent2shape.load_state_dict(torch.load(self.opt.latent2shape_weight))
         print ('loading weights for latent2exp feature extraction network')
