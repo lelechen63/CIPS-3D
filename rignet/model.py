@@ -371,12 +371,12 @@ class RigNerft(nn.Module):
                     cam, pose, flameshape_v = None, flameexp_v = None, flametex_v = None, flamelit_v = None, \
                      flameshape_w = None, flameexp_w = None, flametex_w = None, flamelit_w = None):
         
-        p_v = latent2params(shape_latent_v, appearance_latent_v)
-        p_w = latent2params(shape_latent_w, appearance_latent_w)
+        p_v = self.latent2params(shape_latent_v, appearance_latent_v)
+        p_w = self.latent2params(shape_latent_w, appearance_latent_w)
 
         # if we input paired WGan and WNerf with P, output same WGan & Wnerf
-        shape_latent_w_same, appearance_latent_w_same = rig(appearance_latent_w, shape_latent_w, p_w)
-        p_w_same = latent2params(shape_latent_w_same, appearance_latent_w_same)
+        shape_latent_w_same, appearance_latent_w_same = self.rig(appearance_latent_w, shape_latent_w, p_w)
+        p_w_same = self.latent2params(shape_latent_w_same, appearance_latent_w_same)
 
         # randomly choose one params to be edited
         choice = torch.randint(0, 4 ,(1,)).item()
@@ -390,9 +390,9 @@ class RigNerft(nn.Module):
                 p_w_replaced.append(p_v[i])
 
 
-        shape_latent_w_hat, shape_latent_w_hat = rig(appearance_latent_w, shape_latent_w, p_w_replaced)
+        shape_latent_w_hat, shape_latent_w_hat = self.rig(appearance_latent_w, shape_latent_w, p_w_replaced)
         # map chagned w back to P
-        p_w_mapped = latent2params(shape_latent_w_hat, appearance_latent_w_hat)
+        p_w_mapped = self.latent2params(shape_latent_w_hat, appearance_latent_w_hat)
 
         p_v_ = []
         p_w_ = []
@@ -404,9 +404,9 @@ class RigNerft(nn.Module):
                 p_w_append(p_w[j])
                 p_v_.append(p_w_mapped[j])
         
-        landmark_same, render_img_same = flame_render(p_w_same, pose, cam)
-        landmark_w_, render_img_w_ = flame_render(p_w_, pose, cam)
-        landmark_v_, render_img_v_ = flame_render(p_v_, pose, cam)
+        landmark_same, render_img_same = self.flame_render(p_w_same, pose, cam)
+        landmark_w_, render_img_w_ = self.flame_render(p_w_, pose, cam)
+        landmark_v_, render_img_v_ = self.flame_render(p_v_, pose, cam)
 
         if flameshape_v != None:
             p_v_vis = [flameshape_v, flameexp_v, flametex_v, flamelit_v.view(-1, 9,3)] 
