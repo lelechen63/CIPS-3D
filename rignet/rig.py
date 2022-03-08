@@ -154,7 +154,6 @@ class RigModule():
                                         device = self.device
                                          )
 
-                print (recons_images_w.shape)
                 recons_images_w = vis_tensor(image_tensor= recons_images_w, 
                                         image_path = batch[1]['image_path'][0] +'---recons-W',
                                         device = self.device

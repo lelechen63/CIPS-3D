@@ -409,8 +409,8 @@ class RigNerft(nn.Module):
         if flameshape_v != None:
             p_v_vis = [flameshape_v, flameexp_v, flametex_v, flamelit_v.view(-1, 9,3)] 
             p_w_vis = [flameshape_w, flameexp_w, flametex_w, flamelit_w.view(-1, 9,3)] 
-            recons_images_v = self.flame_render(p_v_vis, pose, cam)
-            recons_images_w = self.flame_render(p_w_vis, pose, cam)
+            _, recons_images_v = self.flame_render(p_v_vis, pose, cam)
+            _, recons_images_w = self.flame_render(p_w_vis, pose, cam)
 
         else:
             recons_images_v = render_img_w_
