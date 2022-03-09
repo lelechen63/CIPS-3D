@@ -208,13 +208,16 @@ def vertex_normals(vertices, faces):
 def tensor_vis_landmarks(images, landmarks, gt_landmarks=None, color='g', isScale=True):
     # visualize landmarks
     vis_landmarks = []
-    images = images.cpu().numpy()
-    predicted_landmarks = landmarks.detach().cpu().numpy()
+    if type(images) !=np.ndarray:
+        images = images.detach().cpu().numpy()
+    if type(landmarks) !=np.ndarray:
+        predicted_landmarks = landmarks.detach().cpu().numpy()
     if gt_landmarks is not None:
+            if type(gt_landmarks_np) !=np.ndarray:
         gt_landmarks_np = gt_landmarks.detach().cpu().numpy()
     for i in range(images.shape[0]):
         image = images[i]
-        image = image.transpose(1, 2, 0)[:, :, [2, 1, 0]].copy();
+        image = image.transpose(1, 2, 0)[:, :, [2, 1, 0]].copy()
         image = (image * 255)
         if isScale:
             predicted_landmark = predicted_landmarks[i] * image.shape[0] / 2 + image.shape[0] / 2
