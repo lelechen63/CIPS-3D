@@ -136,7 +136,7 @@ class Latent2CodeModule():
                                          )
                 genlmark = vis_tensor(image_tensor= batch['gt_image'], 
                                         image_path = batch['image_path'][0],
-                                        land_tensor = landmarks3d,
+                                        land_tensor = return_list['landmarks3d'],
                                         cam = batch['cam'], 
                                         device = self.device
                                          )
