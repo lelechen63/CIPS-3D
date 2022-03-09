@@ -133,7 +133,7 @@ class Latent2Code(nn.Module):
         
         app_fea = self.Latent2AlbedoLitCode(appearance_latent)
         albedocode = self.latent2albedo(app_fea)
-        litcode = self.latent2lit(app_fea).view(shape_latent.shape[0], 9,3)
+        litcode = self.latent2lit(app_fea)
         
         return_list = {}
         if self.opt.supervision =='render' or flameshape != None:
@@ -143,7 +143,7 @@ class Latent2Code(nn.Module):
 
             ## render
             albedos = self.flametex(albedocode, self.image_size) / 255.
-            ops = self.render(vertices, trans_vertices, albedos, litcode)
+            ops = self.render(vertices, trans_vertices, albedos, litcode.view(shape_latent.shape[0], 9,3))
             predicted_images = ops['images']
 
             return_list['landmarks3d'] = landmarks3d
