@@ -79,7 +79,7 @@ class Latent2CodeModule():
                 else:
                 
                     expcode, shapecode, litcode, albedocode  = return_list['expcode'], return_list['shapecode'], return_list['litcode'], return_list['albedocode']
-                    print (expcode.shape, batch['exp'].shape, '=++++')
+                    print (litcode.shape, batch['lit'].shape, '=++++')
                     losses['expcode'] = self.l2_loss(expcode, batch['exp'].to(self.device))
                     losses['shapecode'] = self.l2_loss(shapecode, batch['shape'].to(self.device))
                     losses['litcode'] = self.l2_loss(litcode, batch['lit'].to(self.device))
