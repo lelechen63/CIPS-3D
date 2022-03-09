@@ -214,7 +214,7 @@ def tensor_vis_landmarks(images, landmarks, gt_landmarks=None, color='g', isScal
         predicted_landmarks = landmarks.detach().cpu().numpy()
     if gt_landmarks is not None:
             if type(gt_landmarks_np) !=np.ndarray:
-        gt_landmarks_np = gt_landmarks.detach().cpu().numpy()
+                gt_landmarks_np = gt_landmarks.detach().cpu().numpy()
     for i in range(images.shape[0]):
         image = images[i]
         image = image.transpose(1, 2, 0)[:, :, [2, 1, 0]].copy()
