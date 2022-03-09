@@ -329,7 +329,7 @@ def vis_tensor(image_tensor = None, image_path = None, land_tensor = None, cam =
         lmark = util.tensor_vis_landmarks(image_tensor.to(device)[visind].unsqueeze(0),lmark[visind].unsqueeze(0))
         output = lmark.squeeze(0)
     else:
-        output = image_tensor.data[visind].cpu() #  * self.stdtex + self.meantex 
+        output = image_tensor.data[visind].detach().cpu() #  * self.stdtex + self.meantex 
     output = tensor_util.tensor2im(output  , normalize = False)
     output = np.ascontiguousarray(output, dtype=np.uint8)
     output = util.writeText(output, image_path)
