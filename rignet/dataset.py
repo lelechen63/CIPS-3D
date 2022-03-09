@@ -121,7 +121,8 @@ class FFHQDataset(torch.utils.data.Dataset):
     def __getitem__(self, index):
         
         name = self.data_list[index]
-        data = copy.copy(self.total_data[name])
+        data = self.total_data[name]
+        # data = copy.copy(self.total_data[name])
         if not self.opt.debug:
             # img_path = os.path.join(self.opt.dataroot, 'images',name)
             # img = cv2.imread(img_path)
