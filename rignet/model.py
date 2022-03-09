@@ -154,7 +154,6 @@ class Latent2Code(nn.Module):
             return_list['litcode'] = litcode
             return_list['albedocode'] = albedocode
             
-
         if flameshape != None:
             flamelit = flamelit.view(-1, 9,3)        
             recons_vertices, _, recons_landmarks3d = self.flame(shape_params=flameshape, expression_params=flameexp, pose_params=pose)

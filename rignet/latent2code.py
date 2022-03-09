@@ -33,7 +33,6 @@ class Latent2CodeModule():
                                   , lr= self.opt.lr , betas=(self.opt.beta1, 0.999))
         for p in self.latent2code.flame.parameters():
             p.requires_grad = False 
-        
         for p in self.latent2code.flametex.parameters():
             p.requires_grad = False 
         
@@ -79,7 +78,6 @@ class Latent2CodeModule():
                 else:
                 
                     expcode, shapecode, litcode, albedocode  = return_list['expcode'], return_list['shapecode'], return_list['litcode'], return_list['albedocode']
-                    print (litcode.shape, batch['lit'].shape, '=++++')
                     losses['expcode'] = self.l2_loss(expcode, batch['exp'].to(self.device))
                     losses['shapecode'] = self.l2_loss(shapecode, batch['shape'].to(self.device))
                     losses['litcode'] = self.l2_loss(litcode, batch['lit'].to(self.device))
