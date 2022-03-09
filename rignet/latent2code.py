@@ -111,17 +111,12 @@ class Latent2CodeModule():
                             batch['lit'].to(self.device))
 
                 visind = 0
-                gtimage = vis_tensor(image_tensor= batch['gt_image'], 
-                                        image_path = batch['image_path'][0] ,
-                                        device = self.device
-                                         )
+                # gtimage = vis_tensor(image_tensor= batch['gt_image'], 
+                #                         image_path = batch['image_path'][0] ,
+                #                         device = self.device
+                #                          )
 
-                gtlmark = vis_tensor(image_tensor= batch['gt_image'], 
-                                        image_path = batch['image_path'][0],
-                                        land_tensor = batch['gt_landmark'],
-                                        cam = batch['cam'], 
-                                        device = self.device
-                                         )
+                
                 genimage = vis_tensor(image_tensor= return_list['predicted_images'], 
                                         image_path = batch['image_path'][0] ,
                                         device = self.device
@@ -132,6 +127,12 @@ class Latent2CodeModule():
                                         image_path = batch['image_path'][0],
                                         device = self.device
                                          )
+                gtlmark = vis_tensor(image_tensor= return_list['recons_images'], 
+                                        image_path = batch['image_path'][0],
+                                        land_tensor = batch['gt_landmark'],
+                                        cam = batch['cam'], 
+                                        device = self.device
+                                         )
                 genlmark = vis_tensor(image_tensor= batch['gt_image'], 
                                         image_path = batch['image_path'][0],
                                         land_tensor = return_list['landmarks3d'],
@@ -139,7 +140,7 @@ class Latent2CodeModule():
                                         device = self.device
                                          )
                 visuals = OrderedDict([
-                ('gtimage', gtimage),
+                # ('gtimage', gtimage),
                 ('gtlmark', gtlmark ),
                 ('genimage', genimage),
                 ('reconsimage', reconsimage),
