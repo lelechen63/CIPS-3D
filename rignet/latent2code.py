@@ -13,7 +13,7 @@ import time
 
 class Latent2CodeModule():
     def __init__(self, flame_config, opt ):
-        super().__init__()
+        super().__init__()ssh 
         self.opt = opt
         self.flame_config = flame_config
         self.visualizer = Visualizer(opt)
@@ -21,7 +21,7 @@ class Latent2CodeModule():
 
         if opt.cuda:
             self.device = torch.device("cuda")
-        self.latent2code = Latent2Code( flame_config, opt)
+        self.latent2code = Latent2Code2( flame_config, opt)
         
         # self.optimizer =  optim.Adam(self.latent2code.parameters(),lr= self.opt.lr , betas=(self.opt.beta1, 0.999))
         self.optimizer = optim.Adam( list(self.latent2code.Latent2ShapeExpCode.parameters()) + \
