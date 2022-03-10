@@ -13,7 +13,7 @@ import time
 
 class Latent2CodeModule():
     def __init__(self, flame_config, opt ):
-        super().__init__()ssh 
+        super().__init__()
         self.opt = opt
         self.flame_config = flame_config
         self.visualizer = Visualizer(opt)
