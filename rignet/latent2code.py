@@ -31,7 +31,7 @@ class Latent2CodeModule():
         #                           list(self.latent2code.latent2albedo.parameters()) + \
         #                           list(self.latent2code.latent2lit.parameters()) \
         #                           , lr= self.opt.lr , betas=(self.opt.beta1, 0.999))
-        self.optimizer = optim.Adam( list(self.latent2code.Latent2Code.parameters()) + \
+        self.optimizer = optim.Adam( list(self.Latent2fea.Latent2Code.parameters()) + \
                                 #   list(self.latent2code.Latent2AlbedoLitCode.parameters()) + \
                                   list(self.latent2code.latent2shape.parameters()) + \
                                   list(self.latent2code.latent2exp.parameters()) + \
@@ -155,7 +155,7 @@ class Latent2CodeModule():
                 ])
         
                 self.visualizer.display_current_results(visuals, epoch, self.opt.save_step) 
-                torch.save(self.latent2code.module.Latent2Code.state_dict(), self.opt.Latent2ShapeExpCode_weight)
+                torch.save(self.latent2code.module.Latent2fea.state_dict(), self.opt.Latent2ShapeExpCode_weight)
                 # torch.save(self.latent2code.module.Latent2ShapeExpCode.state_dict(), self.opt.Latent2ShapeExpCode_weight)
                 # torch.save(self.latent2code.module.Latent2AlbedoLitCode.state_dict(),self.opt.Latent2AlbedoLitCode_weight)
                 torch.save(self.latent2code.module.latent2shape.state_dict(), self.opt.latent2shape_weight)
