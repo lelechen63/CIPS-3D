@@ -31,7 +31,7 @@ class Latent2CodeModule():
         #                           list(self.latent2code.latent2albedo.parameters()) + \
         #                           list(self.latent2code.latent2lit.parameters()) \
         #                           , lr= self.opt.lr , betas=(self.opt.beta1, 0.999))
-        self.optimizer = optim.Adam( list(self.Latent2fea.Latent2fea.parameters()) + \
+        self.optimizer = optim.Adam( list(self.latent2code.Latent2fea.parameters()) + \
                                 #   list(self.latent2code.Latent2AlbedoLitCode.parameters()) + \
                                   list(self.latent2code.latent2shape.parameters()) + \
                                   list(self.latent2code.latent2exp.parameters()) + \
