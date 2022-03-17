@@ -13,6 +13,8 @@ def get_train( debug = False):
         img_lists = img_lists[:200]
     traindata = {}
     testdata = {}
+    trainlist = []
+    testlist  =[]
     traintest_threashhold = int(0.8*len(img_lists))
     for it, name in enumerate(tqdm(img_lists)):
         k = name[:-4]
