@@ -400,7 +400,7 @@ def main_ffhq_stylenerf(config = config):
         # try:
             img_p = os.path.join( root, 'images', '%06d.png'%idx)
             if not os.path.exists( config.savefolder + '/%06d/flame_p.pickle'%idx):
-                os.makedirs(config.savefolder + '/%0d'%idx, exist_ok = True)
+                os.makedirs(config.savefolder + '/%06d'%idx, exist_ok = True)
                 img = cv2.imread(img_p)
                 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
