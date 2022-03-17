@@ -260,7 +260,6 @@ class PhotometricFitting(object):
         images = torch.cat(images, dim=0)
         image_masks = torch.cat(image_masks, dim=0)
         landmarks = torch.cat(landmarks, dim=0)
-        print (images.shape, image_masks.shape, '+++++++')
         # optimize
         single_params = self.optimize(images, landmarks , image_masks, savefolder= vis_folder)
         # self.render.save_obj(filename=savefile[:-4]+'.obj',
@@ -392,6 +391,7 @@ def main_ffhq_stylenerf(config = config):
     
     k =  parse_args().k
     config.batch_size = 1
+    config.image_size = 256
     fitting = PhotometricFitting(config, device="cuda:%d"%0)
 
     root = '/nfs/STG/CodecAvatar/lelechen/FFHQ/generated_stylenerf'
