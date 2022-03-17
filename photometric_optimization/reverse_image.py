@@ -260,6 +260,7 @@ class PhotometricFitting(object):
         images = torch.cat(images, dim=0)
         image_masks = torch.cat(image_masks, dim=0)
         landmarks = torch.cat(landmarks, dim=0)
+        print (images.shape, image_masks.shape, '+++++++')
         # optimize
         single_params = self.optimize(images, landmarks , image_masks, savefolder= vis_folder)
         # self.render.save_obj(filename=savefile[:-4]+'.obj',
