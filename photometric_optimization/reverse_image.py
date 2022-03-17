@@ -405,7 +405,7 @@ def main_ffhq_stylenerf(config = config):
                 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
                 imgmask_path = os.path.join( root, 'imagemasks', '%06d.npy'%idx)
-                params = fitting.run(img, vis_folder = config.            + '%06d'%idx, imgmask_path=imgmask_path)
+                params = fitting.run(img, vis_folder = config.savefolder + '%06d'%idx, imgmask_path=imgmask_path)
             else:
                 print (img_p,'======')
         # except:
