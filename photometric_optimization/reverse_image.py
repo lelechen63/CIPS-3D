@@ -231,7 +231,7 @@ class PhotometricFitting(object):
         }
         return single_params
 
-    def run(self, img, vis_folder ):
+    def run(self, img, vis_folder, imgmask_path = None ):
         # The implementation is potentially able to optimize with images(batch_size>1),
         # here we show the example with a single image fitting
         images = []
@@ -247,6 +247,9 @@ class PhotometricFitting(object):
         image_mask = self.get_front_face_mask(img)
         image_mask = image_mask[..., None].astype('float32')
         image_mask = image_mask.transpose(2, 0, 1)
+        np.save(imgmask_path, image_mask)
+
+
         image_masks.append(torch.from_numpy(image_mask[None, :, :, :]).to(self.device))
 
         landmark = self.get_face_landmarks(img).astype(np.float32)
@@ -270,12 +273,7 @@ class PhotometricFitting(object):
         return single_params
 
 
-def demo():
-    image_path = "/home/uss00022/lelechen/github/CIPS-3D/results/model_interpolation/0.png"
-    img = cv2.imread(image_path)
-    img = cv2.resize(img, (512,512), interpolation = cv2.INTER_AREA)
-
-    config = {
+config = {
         # FLAME
         'flame_model_path': '/home/uss00022/lelechen/basic/flame_data/data/generic_model.pkl',  # acquire it from FLAME project page
         'flame_lmk_embedding_path': '/home/uss00022/lelechen/basic/flame_data/data/landmark_embedding.npy',
@@ -291,8 +289,6 @@ def demo():
         'image_size': 512,
         'e_lr': 0.005,
         'e_wd': 0.0001,
-        'savefolder': '/home/uss00022/lelechen/github/CIPS-3D/photometric_optimization/gg',
-        # weights of losses and reg terms
         'w_pho': 8,
         'w_lmks': 1,
         'w_shape_reg': 1e-4,
@@ -300,7 +296,16 @@ def demo():
         'w_pose_reg': 0,
     }
 
-    config = util.dict2obj(config)
+config = util.dict2obj(config)
+
+
+def demo(config):
+    image_path = "/home/uss00022/lelechen/github/CIPS-3D/results/model_interpolation/0.png"
+    img = cv2.imread(image_path)
+    img = cv2.resize(img, (512,512), interpolation = cv2.INTER_AREA)
+
+    
+    config.savefolder=  '/home/uss00022/lelechen/github/CIPS-3D/photometric_optimization/gg'        
     
     k =  parse_args().k
     gpuid = k % 7
@@ -321,36 +326,11 @@ def parse_args():
     return parser.parse_args()
 
 
-def main_ffhq_cips3d(start_idx =1):
+def main_ffhq_cips3d(config,start_idx =1):
     # image_path = "./test_images/69956.png"
     # img = imageio.imread(image_path)
 
-    config = {
-        # FLAME
-        'flame_model_path': '/home/uss00022/lelechen/basic/flame_data/data/generic_model.pkl',  # acquire it from FLAME project page
-        'flame_lmk_embedding_path': '/home/uss00022/lelechen/basic/flame_data/data/landmark_embedding.npy',
-        'tex_space_path': '/home/uss00022/lelechen/basic/flame_data/data/FLAME_texture.npz',  # acquire it from FLAME project page
-        'camera_params': 3,
-        'shape_params': 100,
-        'expression_params': 50,
-        'pose_params': 6,
-        'tex_params': 50,
-        'use_face_contour': True,
-
-        'batch_size': 1,
-        'image_size': 512,
-        'e_lr': 0.005,
-        'e_wd': 0.0001,
-        'savefolder': '/nfs/STG/CodecAvatar/lelechen/FFHQ/generated_cips3d/flame/',
-        # weights of losses and reg terms
-        'w_pho': 8,
-        'w_lmks': 1,
-        'w_shape_reg': 1e-4,
-        'w_expr_reg': 1e-4,
-        'w_pose_reg': 0,
-    }
-
-    config = util.dict2obj(config)
+    config.savefolder = '/nfs/STG/CodecAvatar/lelechen/FFHQ/generated_cips3d/flame/'
     
     k =  parse_args().k
     # gpuid = k % 7
@@ -375,33 +355,8 @@ def main_ffhq_cips3d(start_idx =1):
             continue 
 
 
-def main_ffhq():
-    config = {
-        # FLAME
-        'flame_model_path': '/home/uss00022/lelechen/basic/flame_data/data/generic_model.pkl',  # acquire it from FLAME project page
-        'flame_lmk_embedding_path': '/home/uss00022/lelechen/basic/flame_data/data/landmark_embedding.npy',
-        'tex_space_path': '/home/uss00022/lelechen/basic/flame_data/data/FLAME_texture.npz',  # acquire it from FLAME project page
-        'camera_params': 3,
-        'shape_params': 100,
-        'expression_params': 50,
-        'pose_params': 6,
-        'tex_params': 50,
-        'use_face_contour': True,
-
-        'batch_size': 1,
-        'image_size': 512,
-        'e_lr': 0.005,
-        'e_wd': 0.0001,
-        'savefolder': '/nfs/STG/CodecAvatar/lelechen/FFHQ/generated_cips3d/flame/',
-        # weights of losses and reg terms
-        'w_pho': 8,
-        'w_lmks': 1,
-        'w_shape_reg': 1e-4,
-        'w_expr_reg': 1e-4,
-        'w_pose_reg': 0,
-    }
-
-    config = util.dict2obj(config)
+def main_ffhq(config):
+    config.savefolder = '/nfs/STG/CodecAvatar/lelechen/FFHQ/generated_cips3d/flame/'
     
     k =  parse_args().k
     gpuid = k % 7
@@ -430,5 +385,30 @@ def main_ffhq():
                 continue 
 
 
+def main_ffhq_stylenerf(config = config):
 
-main_ffhq_cips3d()
+    config.savefolder = '/nfs/STG/CodecAvatar/lelechen/FFHQ/generated_stylenerf/flame/'
+    
+    k =  parse_args().k
+    config.batch_size = 1
+    fitting = PhotometricFitting(config, device="cuda:%d"%0)
+
+    root = '/nfs/STG/CodecAvatar/lelechen/FFHQ/generated_stylenerf'
+    
+    for idx in tqdm(range(max(10000 * k,1 ),(k + 1) * 10000 )):
+        try:
+            img_p = os.path.join( root, 'images', '%06d.png'%idx)
+            if not os.path.exists( config.savefolder + '/%06d/flame_p.pickle'%idx):
+                os.makedirs(config.savefolder + '/%d'%idx, exist_ok = True)
+                img = cv2.imread(img_p)
+                img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+
+                imgmask_path = os.path.join( root, 'imagemasks', '%06d.npy'%idx)
+                params = fitting.run(img, vis_folder = config.savefolder + '%6d'%idx, maskfolder=imgmask_path)
+            else:
+                print (img_p,'======')
+        except:
+            print (img_p, '==++++++')
+            continue 
+
+main_ffhq_stylenerf()
