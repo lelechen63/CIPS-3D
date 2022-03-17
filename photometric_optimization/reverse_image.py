@@ -396,7 +396,7 @@ def main_ffhq_stylenerf(config = config):
     root = '/nfs/STG/CodecAvatar/lelechen/FFHQ/generated_stylenerf'
     
     for idx in tqdm(range(max(10000 * k,1 ),(k + 1) * 10000 )):
-        try:
+        # try:
             img_p = os.path.join( root, 'images', '%06d.png'%idx)
             if not os.path.exists( config.savefolder + '/%06d/flame_p.pickle'%idx):
                 os.makedirs(config.savefolder + '/%d'%idx, exist_ok = True)
@@ -407,8 +407,8 @@ def main_ffhq_stylenerf(config = config):
                 params = fitting.run(img, vis_folder = config.savefolder + '%6d'%idx, maskfolder=imgmask_path)
             else:
                 print (img_p,'======')
-        except:
-            print (img_p, '==++++++')
-            continue 
+        # except:
+        #     print (img_p, '==++++++')
+        #     continue 
 
 main_ffhq_stylenerf()
