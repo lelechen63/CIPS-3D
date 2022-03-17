@@ -60,7 +60,7 @@ def get_train( debug = False):
                 testlist.append(name)
         else:
             print (flame_path, 'Does not exist!!!')
-    print (len(traindata), len(testdata))
+    print (len(traindata), len(testdata),len(trainlist), len(testlist))
     if debug:
         with open( os.path.join(root_p, "ffhq_train_debug.pkl" ), 'wb') as handle:
             pickle.dump(traindata, handle, protocol=pickle.HIGHEST_PROTOCOL)
