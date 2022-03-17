@@ -101,7 +101,7 @@ def get_flame_total(root_p, k, debug = False):
 
 # def get_cips_total():
 
-def get_train(k = 200000, debug = False):
+def get_train( debug = False):
     root_p = '/nfs/STG/CodecAvatar/lelechen/FFHQ/generated_cips3d'    
     with open(os.path.join(root_p, 'images', 'z_info.pkl'), 'rb') as handle:
         z_p = pickle.load(handle)
