@@ -57,7 +57,7 @@ def get_train( debug = False):
                         'latent': z,
                         'gt_landmark': landmark
                         }
-            testlist.append(name)
+                testlist.append(name)
         else:
             print (flame_path, 'Does not exist!!!')
     print (len(traindata), len(testdata))
