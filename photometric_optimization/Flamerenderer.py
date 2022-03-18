@@ -84,9 +84,9 @@ class Pytorch3dRasterizer(nn.Module):
         return pixel_vals
 
 
-class Renderer(nn.Module):
+class FlameRenderer(nn.Module):
     def __init__(self, image_size, obj_filename, uv_size=256):
-        super(Renderer, self).__init__()
+        super(FlameRenderer, self).__init__()
         self.image_size = image_size
         self.uv_size = uv_size
 
