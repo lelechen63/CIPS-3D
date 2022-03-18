@@ -19,7 +19,7 @@ from model import BiSeNet
 import sys
 sys.path.append('./models/')
 from FLAME import FLAME, FLAMETex
-from renderer import Renderer
+from Flamerenderer import FlameRenderer
 import util
 torch.backends.cudnn.benchmark = True
 from tl2.tl2_utils import read_image_list_from_files
