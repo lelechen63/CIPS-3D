@@ -168,8 +168,7 @@ class Latent2CodeModule():
         for step, batch in enumerate(tqdm(self.data_loader)):
             with torch.no_grad():    
                 landmarks3d, predicted_images = self.latent2code.forward(
-                        batch['shape_latent'].to(self.device), \
-                        batch['appearance_latent'].to(self.device), \
+                        batch['latent'].to(self.device), \
                         batch['cam'].to(self.device), batch['pose'].to(self.device))
             losses = {}
             losses['landmark'] = util.l2_distance(landmarks3d[:, 17:, :2], batch['gt_landmark'][:, 17:, :2].to(self.device)) * self.flame_config.w_lmks
