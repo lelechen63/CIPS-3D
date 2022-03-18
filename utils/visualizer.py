@@ -28,18 +28,21 @@ class Visualizer():
         self.use_html = True # opt.isTrain and not opt.no_html
         self.win_size = opt.display_winsize
         self.name = opt.name
+        if not opt.isTrain:
+            self.name +='_test'
+        
 
-        if not os.path.exists( os.path.join( opt.checkpoints_dir, opt.name )):
-            os.mkdir(os.path.join( opt.checkpoints_dir, opt.name ))
+        if not os.path.exists( os.path.join( opt.checkpoints_dir, self.name )):
+            os.mkdir(os.path.join( opt.checkpoints_dir, self.name ))
         print ('############################################')
-        print (os.path.join( opt.checkpoints_dir, opt.name ))
+        print (os.path.join( opt.checkpoints_dir, self.name ))
 
         if self.use_html:
-            self.web_dir = os.path.join(opt.checkpoints_dir, opt.name, 'web')
+            self.web_dir = os.path.join(opt.checkpoints_dir, self.name, 'web')
             self.img_dir = os.path.join(self.web_dir, 'images')
             print('create web directory %s...' % self.web_dir)
             mkdirs([self.web_dir, self.img_dir])
-        self.log_name = os.path.join(opt.checkpoints_dir, opt.name, 'loss_log.txt')
+        self.log_name = os.path.join(opt.checkpoints_dir, self.name, 'loss_log.txt')
         with open(self.log_name, "a") as log_file:
             now = time.strftime("%c")
             log_file.write('================ Training Loss (%s) ================\n' % now)
