@@ -398,16 +398,16 @@ def main_ffhq_stylenerf(config = config):
     
     for idx in tqdm(range(max(10000 * k,1 ),(k + 1) * 10000 )):
         try:
-            img_p = os.path.join( root, 'images', '%06d.png'%idx)
-            if not os.path.exists( config.savefolder + '/%06d/flame_p.pickle'%idx):
+                img_p = os.path.join( root, 'images', '%06d.png'%idx)
+            # if not os.path.exists( config.savefolder + '/%06d/flame_p.pickle'%idx):
                 os.makedirs(config.savefolder + '/%06d'%idx, exist_ok = True)
                 img = cv2.imread(img_p)
                 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
                 imgmask_path = os.path.join( root, 'imagemasks', '%06d.npy'%idx)
                 params = fitting.run(img, vis_folder = config.savefolder + '%06d'%idx, imgmask_path=imgmask_path)
-            else:
-                print (img_p,'======')
+            # else:
+            #     print (img_p,'======')
         except:
             print (img_p, '==++++++')
             continue 
