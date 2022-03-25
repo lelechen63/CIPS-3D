@@ -391,7 +391,7 @@ def main_ffhq_stylenerf(config = config):
     
     k =  parse_args().k
     config.batch_size = 1
-    config.image_size = 256
+    config.image_size = 1024
     fitting = PhotometricFitting(config, device="cuda:%d"%0)
 
     root = '/nfs/STG/CodecAvatar/lelechen/FFHQ/generated_stylenerf'

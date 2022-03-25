@@ -128,18 +128,19 @@ class Latent2CodeModule():
                                         image_path = batch['image_path'][0] ,
                                         device = self.device
                                          )
-
                 
                 reconsimage = vis_tensor(image_tensor= return_list['recons_images'], 
                                         image_path = batch['image_path'][0],
                                         device = self.device
                                          )
+
                 gtlmark = vis_tensor(image_tensor= return_list['recons_images'], 
                                         image_path = batch['image_path'][0],
                                         land_tensor = batch['gt_landmark'],
                                         cam = batch['cam'], 
                                         device = self.device
                                          )
+
                 genlmark = vis_tensor(image_tensor= return_list['predicted_images'], 
                                         image_path = batch['image_path'][0],
                                         land_tensor = return_list['landmarks3d'],
