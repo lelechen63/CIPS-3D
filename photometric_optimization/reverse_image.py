@@ -141,21 +141,21 @@ class PhotometricFitting(object):
             # if k % 10 == 0:
             #     print(loss_info)
 
-            if k % 999 == 0:
-                grids = {}
-                visind = range(bz)  # [0]
-                grids['images'] = torchvision.utils.make_grid(images[visind]).detach().cpu()
-                grids['landmarks_gt'] = torchvision.utils.make_grid(
-                    util.tensor_vis_landmarks(images[visind], landmarks[visind]))
-                grids['landmarks2d'] = torchvision.utils.make_grid(
-                    util.tensor_vis_landmarks(images[visind], landmarks2d[visind]))
-                grids['landmarks3d'] = torchvision.utils.make_grid(
-                    util.tensor_vis_landmarks(images[visind], landmarks3d[visind]))
+            # if k % 999 == 0:
+            #     grids = {}
+            #     visind = range(bz)  # [0]
+            #     grids['images'] = torchvision.utils.make_grid(images[visind]).detach().cpu()
+            #     grids['landmarks_gt'] = torchvision.utils.make_grid(
+            #         util.tensor_vis_landmarks(images[visind], landmarks[visind]))
+            #     grids['landmarks2d'] = torchvision.utils.make_grid(
+            #         util.tensor_vis_landmarks(images[visind], landmarks2d[visind]))
+            #     grids['landmarks3d'] = torchvision.utils.make_grid(
+            #         util.tensor_vis_landmarks(images[visind], landmarks3d[visind]))
 
-                grid = torch.cat(list(grids.values()), 1)
-                grid_image = (grid.numpy().transpose(1, 2, 0).copy() * 255)[:, :, [2, 1, 0]]
-                grid_image = np.minimum(np.maximum(grid_image, 0), 255).astype(np.uint8)
-                cv2.imwrite('{}/{}.jpg'.format(savefolder, k), grid_image)
+            #     grid = torch.cat(list(grids.values()), 1)
+            #     grid_image = (grid.numpy().transpose(1, 2, 0).copy() * 255)[:, :, [2, 1, 0]]
+            #     grid_image = np.minimum(np.maximum(grid_image, 0), 255).astype(np.uint8)
+            #     cv2.imwrite('{}/{}.jpg'.format(savefolder, k), grid_image)
 
         # non-rigid fitting of all the parameters with 68 face landmarks, photometric loss and regularization terms.
         for k in range(200, itt):
@@ -195,27 +195,27 @@ class PhotometricFitting(object):
             #     print(loss_info)
 
             # visualize
-            if k % (itt-1) == 0:
-                grids = {}
-                visind = range(bz)  # [0]
-                grids['images'] = torchvision.utils.make_grid(images[visind]).detach().cpu()
-                grids['landmarks_gt'] = torchvision.utils.make_grid(
-                    util.tensor_vis_landmarks(images[visind], landmarks[visind]))
-                grids['landmarks2d'] = torchvision.utils.make_grid(
-                    util.tensor_vis_landmarks(images[visind], landmarks2d[visind]))
-                grids['landmarks3d'] = torchvision.utils.make_grid(
-                    util.tensor_vis_landmarks(images[visind], landmarks3d[visind]))
-                grids['albedoimage'] = torchvision.utils.make_grid(
-                    (ops['albedo_images'])[visind].detach().cpu())
-                grids['render'] = torchvision.utils.make_grid(predicted_images[visind].detach().float().cpu())
-                shape_images = self.render.render_shape(vertices, trans_vertices, images)
-                grids['shape'] = torchvision.utils.make_grid(shape_images[visind]).detach().float().cpu()
-                grids['tex'] = torchvision.utils.make_grid(albedos[visind]).detach().cpu()
-                grid = torch.cat(list(grids.values()), 1)
-                grid_image = (grid.numpy().transpose(1, 2, 0).copy() * 255)[:, :, [2, 1, 0]]
-                grid_image = np.minimum(np.maximum(grid_image, 0), 255).astype(np.uint8)
+            # if k % (itt-1) == 0:
+            #     grids = {}
+            #     visind = range(bz)  # [0]
+            #     grids['images'] = torchvision.utils.make_grid(images[visind]).detach().cpu()
+            #     grids['landmarks_gt'] = torchvision.utils.make_grid(
+            #         util.tensor_vis_landmarks(images[visind], landmarks[visind]))
+            #     grids['landmarks2d'] = torchvision.utils.make_grid(
+            #         util.tensor_vis_landmarks(images[visind], landmarks2d[visind]))
+            #     grids['landmarks3d'] = torchvision.utils.make_grid(
+            #         util.tensor_vis_landmarks(images[visind], landmarks3d[visind]))
+            #     grids['albedoimage'] = torchvision.utils.make_grid(
+            #         (ops['albedo_images'])[visind].detach().cpu())
+            #     grids['render'] = torchvision.utils.make_grid(predicted_images[visind].detach().float().cpu())
+            #     shape_images = self.render.render_shape(vertices, trans_vertices, images)
+            #     grids['shape'] = torchvision.utils.make_grid(shape_images[visind]).detach().float().cpu()
+            #     grids['tex'] = torchvision.utils.make_grid(albedos[visind]).detach().cpu()
+            #     grid = torch.cat(list(grids.values()), 1)
+            #     grid_image = (grid.numpy().transpose(1, 2, 0).copy() * 255)[:, :, [2, 1, 0]]
+            #     grid_image = np.minimum(np.maximum(grid_image, 0), 255).astype(np.uint8)
 
-                cv2.imwrite('{}/{}.jpg'.format(savefolder, k), grid_image)
+            #     cv2.imwrite('{}/{}.jpg'.format(savefolder, k), grid_image)
 
         single_params = {
             'shape': shape.detach().cpu().numpy(),
