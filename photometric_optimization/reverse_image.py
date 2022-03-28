@@ -397,6 +397,8 @@ def main_ffhq_stylenerf(config = config):
     root = '/nfs/STG/CodecAvatar/lelechen/FFHQ/generated_stylenerf'
     
     for idx in tqdm(range(max(10000 * k,1 ),(k + 1) * 10000 )):
+        if idx < 182708:
+            continue
         try:
                 img_p = os.path.join( root, 'images', '%06d.png'%idx)
             # if not os.path.exists( config.savefolder + '/%06d/flame_p.pickle'%idx):
