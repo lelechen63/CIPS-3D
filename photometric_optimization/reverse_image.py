@@ -196,7 +196,7 @@ class PhotometricFitting(object):
             # if k % 10 == 0:
             #     print(loss_info)
 
-            visualize
+            
             if k % 499 == 0:
                 grids = {}
                 visind = range(bz)  # [0]
