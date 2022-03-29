@@ -401,7 +401,7 @@ def main_ffhq_stylenerf(config = config):
     for idx in tqdm(range(max(10000 * k,1 ),(k + 1) * 10000 )):
         # if idx < 104885 or  idx > 106000:
         #     continue
-        try:
+        # try:
                 img_p = os.path.join( root, 'images', '%06d.png'%idx)
 
                 # check the file modity time.
@@ -411,22 +411,22 @@ def main_ffhq_stylenerf(config = config):
 
                 # convert ti to dd-mm-yyyy hh:mm:ss
                 m_time = datetime.datetime.fromtimestamp(m_timestamp)
-                print(m_time)
-                print (type(m_time))
                 day = int(str(m_time).split('-')[2][:2])    
                 if day> 24:
                     continue
+                else:
+                    print (idx,day)
             # if not os.path.exists( config.savefolder + '/%06d/flame_p.pickle'%idx):
-                os.makedirs(config.savefolder + '/%06d'%idx, exist_ok = True)
-                img = cv2.imread(img_p)
-                img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+                # os.makedirs(config.savefolder + '/%06d'%idx, exist_ok = True)
+                # img = cv2.imread(img_p)
+                # img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
-                imgmask_path = os.path.join( root, 'imagemasks', '%06d.npy'%idx)
-                params = fitting.run(img, vis_folder = config.savefolder + '%06d'%idx, imgmask_path=imgmask_path)
+                # imgmask_path = os.path.join( root, 'imagemasks', '%06d.npy'%idx)
+                # params = fitting.run(img, vis_folder = config.savefolder + '%06d'%idx, imgmask_path=imgmask_path)
             # else:
             #     print (img_p,'======')
-        except:
-            print (img_p, '==++++++')
-            continue 
+        # except:
+        #     print (img_p, '==++++++')
+        #     continue 
 
 main_ffhq_stylenerf()
