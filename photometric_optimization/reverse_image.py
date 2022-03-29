@@ -399,7 +399,7 @@ def main_ffhq_stylenerf(config = config):
     root = '/nfs/STG/CodecAvatar/lelechen/FFHQ/generated_stylenerf'
     
     for idx in tqdm(range(max(1000 * k,1 ),(k + 1) * 1000 )):
-        if  idx < 167500 :
+        if  idx < 166500 :
             continue
         try:
                 img_p = os.path.join( root, 'images', '%06d.png'%idx)
