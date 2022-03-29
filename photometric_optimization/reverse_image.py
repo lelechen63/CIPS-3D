@@ -410,6 +410,7 @@ def main_ffhq_stylenerf(config = config):
                 m_timestamp = f_name.stat().st_mtime
 
                 # convert ti to dd-mm-yyyy hh:mm:ss
+                print (m_timestamp)
                 m_time = datetime.datetime.fromtimestamp(m_timestamp)
                 print(m_time)
                 print (gggg)
