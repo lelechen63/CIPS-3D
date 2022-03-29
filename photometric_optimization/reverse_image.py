@@ -413,6 +413,8 @@ def main_ffhq_stylenerf(config = config):
                 m_time = datetime.datetime.fromtimestamp(m_timestamp)
                 print(m_time)
                 print (type(m_time))
+                day = str(m_time).split('-')[2]
+                print (day)
                 print (gggg)
             # if not os.path.exists( config.savefolder + '/%06d/flame_p.pickle'%idx):
         #         os.makedirs(config.savefolder + '/%06d'%idx, exist_ok = True)
