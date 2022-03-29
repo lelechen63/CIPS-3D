@@ -415,7 +415,7 @@ def main_ffhq_stylenerf(config = config):
                 if day> 24:
                     continue
                
-            if not os.path.exists( config.savefolder + '/%06d/flame_p.pickle'%idx):
+            # if not os.path.exists( config.savefolder + '/%06d/flame_p.pickle'%idx):
                 os.makedirs(config.savefolder + '/%06d'%idx, exist_ok = True)
                 img = cv2.imread(img_p)
                 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
