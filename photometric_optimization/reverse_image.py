@@ -143,21 +143,21 @@ class PhotometricFitting(object):
             # if k % 10 == 0:
             #     print(loss_info)
 
-            # if k % 999 == 0:
-            #     grids = {}
-            #     visind = range(bz)  # [0]
-            #     grids['images'] = torchvision.utils.make_grid(images[visind]).detach().cpu()
-            #     grids['landmarks_gt'] = torchvision.utils.make_grid(
-            #         util.tensor_vis_landmarks(images[visind], landmarks[visind]))
-            #     grids['landmarks2d'] = torchvision.utils.make_grid(
-            #         util.tensor_vis_landmarks(images[visind], landmarks2d[visind]))
-            #     grids['landmarks3d'] = torchvision.utils.make_grid(
-            #         util.tensor_vis_landmarks(images[visind], landmarks3d[visind]))
+            if k % 499 == 0:
+                grids = {}
+                visind = range(bz)  # [0]
+                grids['images'] = torchvision.utils.make_grid(images[visind]).detach().cpu()
+                grids['landmarks_gt'] = torchvision.utils.make_grid(
+                    util.tensor_vis_landmarks(images[visind], landmarks[visind]))
+                grids['landmarks2d'] = torchvision.utils.make_grid(
+                    util.tensor_vis_landmarks(images[visind], landmarks2d[visind]))
+                grids['landmarks3d'] = torchvision.utils.make_grid(
+                    util.tensor_vis_landmarks(images[visind], landmarks3d[visind]))
 
-            #     grid = torch.cat(list(grids.values()), 1)
-            #     grid_image = (grid.numpy().transpose(1, 2, 0).copy() * 255)[:, :, [2, 1, 0]]
-            #     grid_image = np.minimum(np.maximum(grid_image, 0), 255).astype(np.uint8)
-            #     cv2.imwrite('{}/{}.jpg'.format(savefolder, k), grid_image)
+                grid = torch.cat(list(grids.values()), 1)
+                grid_image = (grid.numpy().transpose(1, 2, 0).copy() * 255)[:, :, [2, 1, 0]]
+                grid_image = np.minimum(np.maximum(grid_image, 0), 255).astype(np.uint8)
+                cv2.imwrite('{}/{}.jpg'.format(savefolder, k), grid_image)
 
         # non-rigid fitting of all the parameters with 68 face landmarks, photometric loss and regularization terms.
         for k in range(int(itt * 0.3), itt):
@@ -404,14 +404,14 @@ def main_ffhq_stylenerf(config = config):
         try:
                 img_p = os.path.join( root, 'images', '%06d.png'%idx)
 
-                # check the file modity time.
-                f_name = pathlib.Path(config.savefolder + '/%06d/flame_p.pickle'%idx)
-                # get modification time
-                m_timestamp = f_name.stat().st_mtime
-                m_time = datetime.datetime.fromtimestamp(m_timestamp)
-                day = int(str(m_time).split('-')[2][:2])    
-                if day > 24:
-                    continue
+                # # check the file modity time.
+                # f_name = pathlib.Path(config.savefolder + '/%06d/flame_p.pickle'%idx)
+                # # get modification time
+                # m_timestamp = f_name.stat().st_mtime
+                # m_time = datetime.datetime.fromtimestamp(m_timestamp)
+                # day = int(str(m_time).split('-')[2][:2])    
+                # if day > 24:
+                #     continue
                
             # if not os.path.exists( config.savefolder + '/%06d/flame_p.pickle'%idx):
                 os.makedirs(config.savefolder + '/%06d'%idx, exist_ok = True)
