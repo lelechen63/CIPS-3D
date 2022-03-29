@@ -410,7 +410,7 @@ def main_ffhq_stylenerf(config = config):
                 m_timestamp = f_name.stat().st_mtime
                 m_time = datetime.datetime.fromtimestamp(m_timestamp)
                 day = int(str(m_time).split('-')[2][:2])    
-                if day> 24:
+                if day > 24:
                     continue
                
             # if not os.path.exists( config.savefolder + '/%06d/flame_p.pickle'%idx):
