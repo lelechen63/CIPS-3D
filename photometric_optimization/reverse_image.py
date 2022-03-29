@@ -389,7 +389,7 @@ def main_ffhq(config):
 
 def main_ffhq_stylenerf(config = config):
 
-    config.savefolder = '/nfs/STG/CodecAvatar/lelechen/FFHQ/generated_stylenerf/flame/'
+    config.savefolder = '/nfs/STG/CodecAvatar/lelechen/FFHQ/generated_stylenerf/flame2/'
     
     k =  parse_args().k
     config.batch_size = 1
