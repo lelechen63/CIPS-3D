@@ -398,7 +398,7 @@ def main_ffhq_stylenerf(config = config):
 
     root = '/nfs/STG/CodecAvatar/lelechen/FFHQ/generated_stylenerf'
     
-    for idx in tqdm(range(max(50000 * k,1 ),(k + 1) * 50000 )):
+    for idx in tqdm(range(max(10000 * k,1 ),(k + 1) * 10000 )):
         # if  idx < 79000 :
         #     continue
         try:
@@ -408,8 +408,6 @@ def main_ffhq_stylenerf(config = config):
                 f_name = pathlib.Path(config.savefolder + '/%06d/flame_p.pickle'%idx)
                 # get modification time
                 m_timestamp = f_name.stat().st_mtime
-
-                # convert ti to dd-mm-yyyy hh:mm:ss
                 m_time = datetime.datetime.fromtimestamp(m_timestamp)
                 day = int(str(m_time).split('-')[2][:2])    
                 if day> 24:
