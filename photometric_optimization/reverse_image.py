@@ -422,8 +422,8 @@ def main_ffhq_stylenerf(config = config):
 
                 imgmask_path = os.path.join( root, 'imagemasks', '%06d.npy'%idx)
                 params = fitting.run(img, vis_folder = config.savefolder + '%06d'%idx, imgmask_path=imgmask_path)
-            else:
-                print (img_p,'======')
+            # else:
+            #     print (img_p,'======')
         except:
             print (img_p, '==++++++')
             continue 
