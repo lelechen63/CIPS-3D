@@ -444,7 +444,8 @@ def varify(config = config, parse = parse):
     for idx in tqdm(range(max(100 * k,1 ),(k + 1) * 100 )):
         img_p = os.path.join( root, 'images', '%06d.png'%idx)
         flame_path = config.savefolder + '/%06d/flame_p.pickle'%idx
-        flame_p = pickle.load(f, encoding='latin1')
+        with open(flame_path, 'rb') as f:
+            flame_p = pickle.load(f, encoding='latin1')
         shape = flame_p['shape']#[1,100]
         exp = flame_p['exp'] #[1,50]
         pose = flame_p['pose'] #[1,6]
