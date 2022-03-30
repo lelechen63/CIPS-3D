@@ -430,7 +430,7 @@ def main_ffhq_stylenerf(config = config, parse = parse):
             continue 
 
 
-def varify(config = config, parser = parser):
+def varify(config = config, parse = parse):
     device ='cuda'
     k =  parse.k
     config.batch_size = 1
