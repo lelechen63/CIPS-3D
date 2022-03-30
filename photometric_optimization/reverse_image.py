@@ -402,7 +402,7 @@ def main_ffhq_stylenerf(config = config, parse = parse):
     for idx in tqdm(range(max(10000 * k,1 ),(k + 1) * 10000 )):
         # if  idx > 166000 :
         #     continue
-        try:
+        # try:
                 img_p = os.path.join( root, 'images', '%06d.png'%idx)
 
                 # # check the file modity time.
@@ -424,8 +424,8 @@ def main_ffhq_stylenerf(config = config, parse = parse):
                 params = fitting.run(img, vis_folder = config.savefolder + '%06d'%idx, imgmask_path=imgmask_path,config =config)
             # else:
             #     print (img_p,'======')
-        except:
-            print (img_p, '==++++++')
-            continue 
+        # except:
+        #     print (img_p, '==++++++')
+        #     continue 
 
 main_ffhq_stylenerf()
