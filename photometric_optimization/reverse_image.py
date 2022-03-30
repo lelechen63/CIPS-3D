@@ -399,7 +399,7 @@ def main_ffhq_stylenerf(config = config, parse = parse):
 
     root = '/nfs/STG/CodecAvatar/lelechen/FFHQ/generated_stylenerf'
     
-    for idx in tqdm(range(max(10000 * k,1 ),(k + 1) * 10000 )):
+    for idx in tqdm(range(max(10 * k,1 ),(k + 1) * 10 )):
         # if  idx > 166000 :
         #     continue
         # try:
