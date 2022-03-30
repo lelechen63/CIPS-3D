@@ -263,7 +263,7 @@ class PhotometricFitting(object):
         # image_mask = image_mask.transpose(2, 0, 1)
         # np.save(imgmask_path, image_mask)
         image_mask = np.lad(imgmask_path)
-        
+
         image_masks.append(torch.from_numpy(image_mask[None, :, :, :]).to(self.device))
 
         landmark = self.get_face_landmarks(img).astype(np.float32)
@@ -399,7 +399,7 @@ def main_ffhq_stylenerf(config = config, parse = parse):
 
     root = '/nfs/STG/CodecAvatar/lelechen/FFHQ/generated_stylenerf'
     
-    for idx in tqdm(range(max(10 * k,1 ),(k + 1) * 10 )):
+    for idx in tqdm(range(max(10000 * k,1 ),(k + 1) * 10000 )):
         # if  idx > 166000 :
         #     continue
         # try:
