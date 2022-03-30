@@ -89,7 +89,7 @@ class Visualizer():
                 message += '%s: %.6f ' % (k, v)
 
         print(message)
-        with open(self.log_name, "w") as log_file:
+        with open(self.log_name, "a") as log_file:
             log_file.write('%s\n' % message)
 
     # save image to the disk
