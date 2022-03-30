@@ -453,12 +453,12 @@ def varify(config = config, parse = parse):
         tex = flame_p['tex'] #[1,50]
         lit = flame_p['lit'] #[1,9,3]
         
-        shape = torch.FloatTensor(shape).to(cuda)
-        exp = torch.FloatTensor(exp).to(cuda)
-        pose = torch.FloatTensor(pose).to(cuda)
-        cam = torch.FloatTensor(cam).to(cuda)
-        tex = torch.FloatTensor(tex).to(cuda)
-        lights = torch.FloatTensor(lit).to(cuda)
+        shape = torch.FloatTensor(shape).to(device)
+        exp = torch.FloatTensor(exp).to(device)
+        pose = torch.FloatTensor(pose).to(device)
+        cam = torch.FloatTensor(cam).to(device)
+        tex = torch.FloatTensor(tex).to(device)
+        lights = torch.FloatTensor(lit).to(device)
 
         vertices, landmarks2d, landmarks3d_save = flame(shape_params=shape, expression_params=exp, pose_params=pose)
         trans_vertices = util.batch_orth_proj(vertices, cam)
