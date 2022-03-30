@@ -32,6 +32,19 @@ import pathlib
 #----------------------------------------------------------------------------
 
 
+def parse_args():
+    parser = argparse.ArgumentParser()
+
+    parser.add_argument("--k",
+                     type=int,
+                     default=0)
+    parser.add_argument("--imgsize",
+                     type=int,
+                     default=256)
+    return parser.parse_args()
+
+parse = parse_args()
+
 class PhotometricFitting(object):
     def __init__(self, config, device='cuda'):
         self.batch_size = config.batch_size
@@ -317,18 +330,6 @@ def demo(config):
               
 
 
-def parse_args():
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument("--k",
-                     type=int,
-                     default=0)
-    parser.add_argument("--imgsize",
-                     type=int,
-                     default=256)
-    return parser.parse_args()
-
-parse = parse_args()
 
 def main_ffhq_cips3d(config,start_idx =1):
     # image_path = "./test_images/69956.png"
