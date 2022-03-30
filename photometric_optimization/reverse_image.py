@@ -262,7 +262,8 @@ class PhotometricFitting(object):
         # image_mask = image_mask[..., None].astype('float32')
         # image_mask = image_mask.transpose(2, 0, 1)
         # np.save(imgmask_path, image_mask)
-        image_mask = np.load(imgmask_path)
+        # image_mask = np.load(imgmask_path)
+        image_mask = np.expand_dims(cv2.resize(np.load(imgmask_path).transpose(1,2,0), (config.image_size,self.config.image_size), interpolation = cv2.INTER_AREA), axis = 0)
 
         image_masks.append(torch.from_numpy(image_mask[None, :, :, :]).to(self.device))
 
