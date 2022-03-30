@@ -468,7 +468,7 @@ def varify(config = config, parse = parse):
         landmarks3d = util.batch_orth_proj(landmarks3d_save, cam)
         landmarks3d[..., 1:] = - landmarks3d[..., 1:]
         ## render
-        albedos = flametex(tex, self.image_size) / 255.
+        albedos = flametex(tex, config.image_size ) / 255.
         ops = render(vertices, trans_vertices, albedos, lights)
         predicted_images = ops['images']
 
