@@ -43,7 +43,7 @@ class Visualizer():
             print('create web directory %s...' % self.web_dir)
             mkdirs([self.web_dir, self.img_dir])
         self.log_name = os.path.join(opt.checkpoints_dir, self.name, 'loss_log.txt')
-        with open(self.log_name, "a") as log_file:
+        with open(self.log_name, "w") as log_file:
             now = time.strftime("%c")
             log_file.write('================ Training Loss (%s) ================\n' % now)
 
@@ -89,7 +89,7 @@ class Visualizer():
                 message += '%s: %.6f ' % (k, v)
 
         print(message)
-        with open(self.log_name, "a") as log_file:
+        with open(self.log_name, "w") as log_file:
             log_file.write('%s\n' % message)
 
     # save image to the disk
