@@ -140,8 +140,8 @@ class PhotometricFitting(object):
             loss_info = '----iter: {}, time: {}\n'.format(k, datetime.datetime.now().strftime('%Y-%m-%d-%H:%M:%S'))
             for key in losses.keys():
                 loss_info = loss_info + '{}: {}, '.format(key, float(losses[key]))
-            # if k % 10 == 0:
-            #     print(loss_info)
+            if k % 10 == 0:
+                print(loss_info)
 
             if k % 499 == 0:
                 grids = {}
@@ -193,10 +193,8 @@ class PhotometricFitting(object):
             for key in losses.keys():
                 loss_info = loss_info + '{}: {}, '.format(key, float(losses[key]))
 
-            # if k % 10 == 0:
-            #     print(loss_info)
-
-            
+            if k % 10 == 0:
+                print(loss_info)            
             if k % 499 == 0:
                 grids = {}
                 visind = range(bz)  # [0]
@@ -233,7 +231,7 @@ class PhotometricFitting(object):
         }
         return single_params
 
-    def run(self, img, vis_folder, imgmask_path = None ):
+    def run(self, img, vis_folder, imgmask_path = None, config = None ):
         # The implementation is potentially able to optimize with images(batch_size>1),
         # here we show the example with a single image fitting
         images = []
@@ -288,7 +286,7 @@ config = {
         'use_face_contour': True,
 
         'batch_size': 1,
-        'image_size': 512,
+        'image_size': parse.imgsize,
         'e_lr': 0.005,
         'e_wd': 0.0001,
         'w_pho': 8,
@@ -325,8 +323,12 @@ def parse_args():
     parser.add_argument("--k",
                      type=int,
                      default=0)
+    parser.add_argument("--imgsize",
+                     type=int,
+                     default=256)
     return parser.parse_args()
 
+parse = parse_args()
 
 def main_ffhq_cips3d(config,start_idx =1):
     # image_path = "./test_images/69956.png"
@@ -362,11 +364,9 @@ def main_ffhq(config):
     
     k =  parse_args().k
     gpuid = k % 7
-    # gpuid = 6
     config.batch_size = 1
     fitting = PhotometricFitting(config, device="cuda:%d"%gpuid)
     
-
     root = '/nfs/STG/CodecAvatar/lelechen/FFHQ/ffhq-dataset'
     image_list_file = '/nfs/STG/CodecAvatar/lelechen/FFHQ/ffhq-dataset/downsample_ffhq_256x256.zip'
 
@@ -387,13 +387,12 @@ def main_ffhq(config):
                 continue 
 
 
-def main_ffhq_stylenerf(config = config):
+def main_ffhq_stylenerf(config = config, parse = parse):
 
-    config.savefolder = '/nfs/STG/CodecAvatar/lelechen/FFHQ/generated_stylenerf/flame2/'
-    
-    k =  parse_args().k
+    config.savefolder = '/nfs/STG/CodecAvatar/lelechen/FFHQ/generated_stylenerf/flame3/'
+    k =  parse.k
     config.batch_size = 1
-    config.image_size = 1024
+    config.image_size = parse.imgsize
     fitting = PhotometricFitting(config, device="cuda:%d"%0)
 
     root = '/nfs/STG/CodecAvatar/lelechen/FFHQ/generated_stylenerf'
@@ -417,9 +416,10 @@ def main_ffhq_stylenerf(config = config):
                 os.makedirs(config.savefolder + '/%06d'%idx, exist_ok = True)
                 img = cv2.imread(img_p)
                 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+                img = cv2.resize(img, (config.image_size,config.image_size), interpolation = cv2.INTER_AREA)
 
                 imgmask_path = os.path.join( root, 'imagemasks', '%06d.npy'%idx)
-                params = fitting.run(img, vis_folder = config.savefolder + '%06d'%idx, imgmask_path=imgmask_path)
+                params = fitting.run(img, vis_folder = config.savefolder + '%06d'%idx, imgmask_path=imgmask_path,config =config)
             # else:
             #     print (img_p,'======')
         # except:
