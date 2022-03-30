@@ -257,13 +257,13 @@ class PhotometricFitting(object):
         image = img.astype(np.float32) / 255.
         image = image.transpose(2, 0, 1)
         images.append(torch.from_numpy(image[None, :, :, :]).to(self.device))
-        # imagepath = '/nfs/STG/CodecAvatar/lelechen/FFHQ/ffhq-dataset/images1024x1024/00000/00000.png'
-        image_mask = self.get_front_face_mask(img)
-        image_mask = image_mask[..., None].astype('float32')
-        image_mask = image_mask.transpose(2, 0, 1)
-        np.save(imgmask_path, image_mask)
 
-
+        # image_mask = self.get_front_face_mask(img)
+        # image_mask = image_mask[..., None].astype('float32')
+        # image_mask = image_mask.transpose(2, 0, 1)
+        # np.save(imgmask_path, image_mask)
+        image_mask = np.lad(imgmask_path)
+        
         image_masks.append(torch.from_numpy(image_mask[None, :, :, :]).to(self.device))
 
         landmark = self.get_face_landmarks(img).astype(np.float32)
