@@ -262,7 +262,7 @@ class PhotometricFitting(object):
         # image_mask = image_mask[..., None].astype('float32')
         # image_mask = image_mask.transpose(2, 0, 1)
         # np.save(imgmask_path, image_mask)
-        image_mask = np.lad(imgmask_path)
+        image_mask = np.load(imgmask_path)
 
         image_masks.append(torch.from_numpy(image_mask[None, :, :, :]).to(self.device))
 
