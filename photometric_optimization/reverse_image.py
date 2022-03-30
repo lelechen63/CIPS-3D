@@ -290,6 +290,7 @@ class PhotometricFitting(object):
 
 config = {
         # FLAME
+        "savefolder" = '/nfs/STG/CodecAvatar/lelechen/FFHQ/generated_stylenerf/flame2/',
         'flame_model_path': '/home/uss00022/lelechen/basic/flame_data/data/generic_model.pkl',  # acquire it from FLAME project page
         'flame_lmk_embedding_path': '/home/uss00022/lelechen/basic/flame_data/data/landmark_embedding.npy',
         'tex_space_path': '/home/uss00022/lelechen/basic/flame_data/data/FLAME_texture.npz',  # acquire it from FLAME project page
@@ -392,7 +393,6 @@ def main_ffhq(config):
 
 def main_ffhq_stylenerf(config = config, parse = parse):
 
-    config.savefolder = '/nfs/STG/CodecAvatar/lelechen/FFHQ/generated_stylenerf/flame2/'
     k =  parse.k
     config.batch_size = 1
     config.image_size = parse.imgsize
@@ -429,4 +429,50 @@ def main_ffhq_stylenerf(config = config, parse = parse):
             print (img_p, '==++++++')
             continue 
 
-main_ffhq_stylenerf()
+
+def varify(config = config, parser = parser):
+    device ='cuda'
+    k =  parse.k
+    config.batch_size = 1
+    config.image_size = parse.imgsize
+    flame = FLAME(config).to(device)
+    flametex = FLAMETex(config).to(device)
+    mesh_file = '/home/uss00022/lelechen/basic/flame_data/data/head_template_mesh.obj'
+    render = Renderer(config.image_size, obj_filename=mesh_file).to(device)
+
+    root = '/nfs/STG/CodecAvatar/lelechen/FFHQ/generated_stylenerf'
+    for idx in tqdm(range(max(100 * k,1 ),(k + 1) * 100 )):
+        img_p = os.path.join( root, 'images', '%06d.png'%idx)
+        flame_path = config.savefolder + '/%06d/flame_p.pickle'%idx
+        flame_p = pickle.load(f, encoding='latin1')
+        shape = flame_p['shape']#[1,100]
+        exp = flame_p['exp'] #[1,50]
+        pose = flame_p['pose'] #[1,6]
+        cam = flame_p['cam'] #[1,3]
+        tex = flame_p['tex'] #[1,50]
+        lit = flame_p['lit'] #[1,9,3]
+        
+        shape = torch.FloatTensor(shape).to(cuda)
+        exp = torch.FloatTensor(exp).to(cuda)
+        pose = torch.FloatTensor(pose).to(cuda)
+        cam = torch.FloatTensor(cam).to(cuda)
+        tex = torch.FloatTensor(tex).to(cuda)
+        lights = torch.FloatTensor(lit).to(cuda)
+
+        vertices, landmarks2d, landmarks3d_save = flame(shape_params=shape, expression_params=exp, pose_params=pose)
+        trans_vertices = util.batch_orth_proj(vertices, cam)
+        trans_vertices[..., 1:] = - trans_vertices[..., 1:]
+        landmarks2d = util.batch_orth_proj(landmarks2d, cam)
+        landmarks2d[..., 1:] = - landmarks2d[..., 1:]
+        landmarks3d = util.batch_orth_proj(landmarks3d_save, cam)
+        landmarks3d[..., 1:] = - landmarks3d[..., 1:]
+        ## render
+        albedos = flametex(tex, self.image_size) / 255.
+        ops = render(vertices, trans_vertices, albedos, lights)
+        predicted_images = ops['images']
+
+        print (predicted_images.shape)
+        print (ggg)
+
+varify()
+# main_ffhq_stylenerf()
