@@ -350,7 +350,7 @@ def main_ffhq_cips3d(config,start_idx =1):
     for idx in tqdm(range(max(10000 * k,1 ),(k + 1) * 10000 )):
         try:
             img_p = os.path.join( root, 'images', '%d.png'%idx)
-            # if not os.path.exists( config.savefolder + '/%d/flame_p.pickle'%idx):
+            if not os.path.exists( config.savefolder + '/%d/flame_p.pickle'%idx):
                 os.makedirs(config.savefolder + '/%d'%idx, exist_ok = True)
                 img = cv2.imread(img_p)
                 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
