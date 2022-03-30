@@ -106,7 +106,7 @@ class PhotometricFitting(object):
         return msk # (h,w), 0~1
 
     def optimize(self, images, landmarks, image_masks, savefolder=None):
-        itt = 5000
+        itt = 4000
         bz = images.shape[0]
         shape = nn.Parameter(torch.zeros(bz, self.config.shape_params).float().to(self.device))
         tex = nn.Parameter(torch.zeros(bz, self.config.tex_params).float().to(self.device))
@@ -390,7 +390,7 @@ def main_ffhq(config):
 
 def main_ffhq_stylenerf(config = config, parse = parse):
 
-    config.savefolder = '/nfs/STG/CodecAvatar/lelechen/FFHQ/generated_stylenerf/flame3/'
+    config.savefolder = '/nfs/STG/CodecAvatar/lelechen/FFHQ/generated_stylenerf/flame2/'
     k =  parse.k
     config.batch_size = 1
     config.image_size = parse.imgsize
@@ -398,7 +398,7 @@ def main_ffhq_stylenerf(config = config, parse = parse):
 
     root = '/nfs/STG/CodecAvatar/lelechen/FFHQ/generated_stylenerf'
     
-    for idx in tqdm(range(max(100 * k,1 ),(k + 1) * 100 )):
+    for idx in tqdm(range(max(10000 * k,1 ),(k + 1) * 10000 )):
         # if  idx > 166000 :
         #     continue
         # try:
