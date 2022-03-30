@@ -415,16 +415,16 @@ def main_ffhq_stylenerf(config = config, parse = parse):
                 # if day > 24:
                 #     continue
                
-            # if not os.path.exists( config.savefolder + '/%06d/flame_p.pickle'%idx):
-                os.makedirs(config.savefolder + '/%06d'%idx, exist_ok = True)
-                img = cv2.imread(img_p)
-                img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-                img = cv2.resize(img, (config.image_size,config.image_size), interpolation = cv2.INTER_AREA)
+                if not os.path.exists( config.savefolder + '/%06d/flame_p.pickle'%idx):
+                    os.makedirs(config.savefolder + '/%06d'%idx, exist_ok = True)
+                    img = cv2.imread(img_p)
+                    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+                    img = cv2.resize(img, (config.image_size,config.image_size), interpolation = cv2.INTER_AREA)
 
-                imgmask_path = os.path.join( root, 'imagemasks', '%06d.npy'%idx)
-                params = fitting.run(img, vis_folder = config.savefolder + '%06d'%idx, imgmask_path=imgmask_path,config =config)
-            # else:
-            #     print (img_p,'======')
+                    imgmask_path = os.path.join( root, 'imagemasks', '%06d.npy'%idx)
+                    params = fitting.run(img, vis_folder = config.savefolder + '%06d'%idx, imgmask_path=imgmask_path,config =config)
+                # else:
+                #     print (img_p,'======')
         except:
             print (img_p, '==++++++')
             continue 
