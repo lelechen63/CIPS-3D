@@ -25,6 +25,8 @@ torch.backends.cudnn.benchmark = True
 from tl2.tl2_utils import read_image_list_from_files
 sys.path.append('../scripts/')
 from dataset_tool import *
+sys.path.append('../utils/')
+import tensor_util
 import argparse
 
 import datetime
@@ -44,6 +46,23 @@ def parse_args():
     return parser.parse_args()
 
 parse = parse_args()
+
+    
+def vis_tensor(image_tensor = None, image_path = None, land_tensor = None, cam = None,  visind =0, device = torch.device("cuda")):
+    if land_tensor is not None:
+        lmark = util.batch_orth_proj(land_tensor.to(device), cam.to(device))
+        lmark[..., 1:] = - lmark[..., 1:]
+        lmark = util.tensor_vis_landmarks(image_tensor.to(device)[visind].unsqueeze(0),lmark[visind].unsqueeze(0))
+        output = lmark.squeeze(0)
+    else:
+        output = image_tensor.data[visind].detach().cpu() #  * self.stdtex + self.meantex 
+    output = tensor_util.tensor2im(output  , normalize = False)
+    output = np.ascontiguousarray(output, dtype=np.uint8)
+    output = util.writeText(output, image_path)
+    output = np.ascontiguousarray(output, dtype=np.uint8)
+    output = np.clip(output, 0, 255)
+
+    return output
 
 class PhotometricFitting(object):
     def __init__(self, config, device='cuda'):
@@ -471,8 +490,12 @@ def varify(config = config, parse = parse):
         albedos = flametex(tex, config.image_size ) / 255.
         ops = render(vertices, trans_vertices, albedos, lights)
         predicted_images = ops['images']
+        genimage = vis_tensor(image_tensor= predicted_images, 
+                image_path = img_p ,
+                device = device
+                )
 
-        print (predicted_images.shape)
+        print  (genimage.shape)
         print (ggg)
 
 varify()
