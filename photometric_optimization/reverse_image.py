@@ -490,13 +490,16 @@ def varify(config = config, parse = parse):
         albedos = flametex(tex, config.image_size ) / 255.
         ops = render(vertices, trans_vertices, albedos, lights)
         predicted_images = ops['images']
+
         genimage = vis_tensor(image_tensor= predicted_images, 
-                image_path = img_p ,
+                image_path = img_p,
                 device = device
                 )
+        gtimage = cv2.imread(img_p)
+        gtimage = cv2.resize(gtimage, (config.image_size,config.image_size), interpolation = cv2.INTER_AREA)
 
-        print  (genimage.shape)
-        print (ggg)
+        img = cv2.hconcat([genimage, gtimage])
+        cv2.imwrite(root + '/tmp/%d.png'%idx, img)
 
 varify()
 # main_ffhq_stylenerf()
