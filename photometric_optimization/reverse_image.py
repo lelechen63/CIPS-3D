@@ -495,6 +495,7 @@ def varify(config = config, parse = parse):
                 image_path = img_p,
                 device = device
                 )
+        genimage = cv2.cvtColor(genimage, cv2.COLOR_RGB2BGR)
         gtimage = cv2.imread(img_p)
         gtimage = cv2.resize(gtimage, (config.image_size,config.image_size), interpolation = cv2.INTER_AREA)
 
