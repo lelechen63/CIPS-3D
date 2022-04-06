@@ -502,5 +502,5 @@ def varify(config = config, parse = parse):
         img = cv2.hconcat([genimage, gtimage])
         cv2.imwrite(root + '/tmp/%d.png'%idx, img)
 
-varify()
-# main_ffhq_stylenerf()
+# varify()
+main_ffhq_stylenerf()
